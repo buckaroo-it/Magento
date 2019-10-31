@@ -1,0 +1,157 @@
+<?php
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * It is available through the world-wide-web at this URL:
+ * https://tldrlegal.com/license/mit-license
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to support@buckaroo.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact support@buckaroo.nl for more information.
+ *
+ * @copyright Copyright (c) Buckaroo B.V.
+ * @license   https://tldrlegal.com/license/mit-license
+ */
+// @codingStandardsIgnoreFile
+?>
+<div id="payment-errors" class="validation-advice" style="display:none;"></div>
+
+<?php $code = $this->getMethodCode() ?>
+<ul id="payment_form_<?php echo $code ?>" style="display:none;"
+    class="buckaroo3extended_input form-list buckaroo-method">
+    <li>
+        <label for="<?php echo $code;?>_BPE_Customergender" class="required">
+            <?php echo $this->__('Salutation');?>: <em>*</em>
+        </label>
+        <div class="input-box">
+            <select name="<?php echo $code;?>_BPE_Customergender" class="validate-select validate-number"
+                    title="<?php echo $this->__('Salutation');?>" id="<?php echo $code;?>_BPE_Customergender">
+                <option value=''>
+                    <?php echo $this->__('Select'); ?>
+                </option>
+                <option value="1" <?php echo (in_array($this->getGender(), array(1, 123))) ? 'selected' : ''; ?>>
+                    <?php echo $this->__('Mr.'); ?>
+                </option>
+                <option value="2" <?php echo (in_array($this->getGender(), array(2, 124))) ? 'selected' : ''; ?>>
+                    <?php echo $this->__('Mrs.'); ?>
+                </option>
+            </select>
+        </div>
+    </li>
+
+    <li>
+        <label><?php echo $this->__('Billing name');?>:</label>
+        <div class="input-box">
+            <span class="disabled stylefix" id="<?php echo $code;?>_BPE_Customername"
+                  title="<?php echo $this->__('Name');?>">
+                <?php echo $this->escapeHtml($this->getName()); ?>
+            </span>
+        </div>
+    </li>
+
+    <?php $hasTelephone = ($this->getAddress()->getTelephone() && $this->getAddress()->getTelephone() != '-'); ?>
+    <li<?php echo ($hasTelephone ? ' style="display:none;"' : ''); ?>>
+        <label class="required" for="<?php echo $code;?>_BPE_Customerphone">
+            <?php echo $this->__('Telephone') ?>: <em>*</em>
+        </label>
+        <div class="input-box">
+            <input class="input-text required-entry"
+                   type="text"
+                   title="<?php echo $this->__('Telephone') ?>"
+                   name="<?php echo $code;?>_bpe_customer_phone_number"
+                   value="<?php echo $this->escapeHtml($this->getPhoneNumber()); ?>"
+                   id="<?php echo $code;?>_BPE_Customerphone"/>
+        </div>
+    </li>
+
+    <li>
+        <?php
+        echo $this->getLayout()->createBlock('buckaroo3extended/customer_widget_dob')
+            ->setFieldIdFormat($code . ':billing:%s')
+            ->setFieldNameFormat('payment[' . $code . '][%s]')
+            ->setIsRequired(true)
+            ->setPaymentMethodCode($code)
+            ->setDate($this->getDob())
+            ->toHtml();
+        ?>
+    </li>
+
+    <?php
+    /**
+     * Required working of the form for Klarna
+     * Billing Country: Germany         - textual content with link to Klarna CDN legal terms (de_de)
+     *                                  - Acceptance with checkbox
+     * Billing Country: Austria         - textual content with link to Klarna CDN legal terms (de_at)
+     *                                  - Acceptance with checkbox
+     * Billing Country: Netherlands     - only textual content with link to Klarna CDN legal terms (nl_nl)
+     */
+
+    switch($this->getAddress()->getCountry()){
+        case 'DE' :
+                $countryFormatKlarna = 'de_de';
+            break;
+        case 'AT' :
+                $countryFormatKlarna = 'de_at';
+            break;
+        case 'NL' :
+                $countryFormatKlarna = 'nl_nl';
+            break;
+        default:
+                $countryFormatKlarna = 'en_nl';
+            break;
+    }
+
+    ?>
+
+    <?php if (in_array($countryFormatKlarna, array('de_de','de_at'))) :?>
+        <li class="tac-accept">
+            <div class="input-box">
+                <input class="input-checkbox required-entry" type="checkbox"
+                       title="<?php echo $this->__('Terms and Conditions') ?>"
+                       name="<?php echo $code;?>_bpe_accept" value="checked"
+                       id="<?php echo $code;?>_BPE_terms_and_conditions" />
+            </div>
+            <label for="<?php echo $code;?>_BPE_terms_and_conditions" class="required">
+                <?php echo $this->__(
+                    'Mit der Übermittlung der für die Abwicklung der gewählten Klarna Zahlungsmethode und einer ' .
+                    'Identitäts- und Bonitätsprüfung erforderlichen Daten an Klarna bin ich einverstanden. ' .
+                    'Meine %sEinwilligung%s kann ich jederzeit mit Wirkung für die Zukunft widerrufen. ' .
+                    'Es gelten die AGB des Händlers',
+                    '<a style="float:none;margin:0;" target="_blank" ' .
+                    'href="https://cdn.klarna.com/1.0/shared/content/legal/terms/0/' .
+                    $countryFormatKlarna . '/consent">',
+                    '</a>'
+                ); ?> <em>*</em>
+            </label>
+        </li>
+    <?php endif;?>
+
+
+    <li>
+        <?php echo $this->__(
+            '%sInvoice payment terms%s',
+            '<a style="float:none;margin:0;" target="_blank" 
+            href="https://cdn.klarna.com/1.0/shared/content/legal/terms/0/' .
+            $countryFormatKlarna . '/invoice?fee=' .
+            $this->getPlainPaymentFee() .
+            '">',
+            '</a>'
+        ); ?>
+    </li>
+
+    <?php if (!$this->billingIsSameAsShipping()): ?>
+    <li>
+        <?php echo Mage::helper('buckaroo3extended')
+            ->__(
+                'Please note: when choosing a different billing and shipping address, the first name, ' .
+                'the last name and country have to be the same for both addresses when paying with Klarna.'
+            )?>
+    </li>
+    <?php endif;?>
+
+</ul>

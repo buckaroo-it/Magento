@@ -1,0 +1,84 @@
+<div id="payment-errors" class="validation-advice" style="display:none;"></div>
+
+<?php $code = $this->getMethodCode() ?>
+<ul id="payment_form_<?php echo $code ?>" style="display:none;"
+    class="buckaroo3extended_input form-list buckaroo-method">
+        <div class="card <?php echo $this->designValue() ?>">
+            <div class="card_front">
+
+                <div class="card_kind">
+                    <img class="creditcard-logo" alt="Credit Card type" height="35" src="<?php echo $this->getSkinUrl('images/tig_buckaroo3extended/creditcard_types/creditcard_blank.png');?>" />
+                </div>
+
+                <div class="cardType_container">
+                     <label for="buckaroo3extended_creditcard_method"><?php echo $this->__('Card'); ?></label>
+                    <div class="select_wrapper">
+                        <select id="buckaroo3extended_creditcard_method" class="required-entry" name="buckaroo3extended_creditcard_method" onchange="changeCardLogo(this.options[this.selectedIndex])">
+                            <option value="" data-logo="/creditcard_types/creditcard_blank.png"><?php echo $this->__('Please choose'); ?></option>
+                            <?php foreach ($this->selectedIssuers() as $key => $cardName) {
+                                    echo '<option value="' . $cardName['code'] . '" data-logo="' . $cardName['logo'] . '">' . $cardName['label'] . '</option>';
+                                }?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="cardNumber_container">
+                    <label for="cardNumber"><?php echo $this->__('Card number'); ?></label>
+                    <input id="cardNumber" class="required-entry validate-creditcard" type="tel" name="cardNumber" onblur="getEncryptedData()" onkeydown="removeSpaces(this)"/>
+                </div>
+
+                <div class="cardHolderName_container">
+                    <label for="cardHolderName"><?php echo $this->__('Name cardholder');?></label>
+                    <input id="cardHolderName" type="text" class="required-entry validate-cardholdername" name="cardHolderName" onblur="getEncryptedData()" />
+                </div>
+
+                <div class="expirationMonth_container">
+                    <label for="expirationMonth"><?php echo $this->__('Month');?></label>
+                    <div class="select_wrapper">
+                        <select id="expirationMonth" class="required-entry validate-month" name="expirationMonth" onblur="getEncryptedData()">
+                            <option value=""><?php echo $this->__('Select a month'); ?></option>
+                            <?php for ($m=1; $m<=12; $m++) {
+                                echo '<option' . ' value="' . $m .'">' . $m. '</option>';
+                            }?>
+                        </select>
+                    </div>
+                </div>
+                <div class="expirationYear_container">
+                    <label for="expirationMonth"><?php echo $this->__('Year'); ?></label>
+                    <div class="select_wrapper">
+                        <select id="expirationYear" class="required-entry validate-year" name="expirationYear" onblur="getEncryptedData()">
+                            <option value=""><?php echo $this->__('Select a year');?></option>
+                            <?php
+                            for ($i = 0; $i <= 10; $i++) {
+                                echo '<option' . ' value="' . (date('Y') + $i) .'">' . (date('Y') + $i).'</option>';
+                            }?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card_back">
+                <div class="magnet_stripe"></div>
+                <div class="card_security">
+                    <label for="cvc"><?php echo $this->__('Security code');?></label>
+                    <div class="field">
+                        <input id="cvc" type="text" class="required-entry validate-cvc" name="cvc" onblur="getEncryptedData()" />
+                    </div>
+                    <div class="info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="510" height="510" viewBox="0 0 510 510"><path d="M229.5 382.5h51v-153h-51V382.5zM255 0C114.8 0 0 114.8 0 255s114.8 255 255 255 255-114.7 255-255S395.3 0 255 0zM255 459c-112.2 0-204-91.8-204-204S142.8 51 255 51s204 91.8 204 204S367.2 459 255 459zM229.5 178.5h51v-51h-51V178.5z"/></svg>
+                        <div class="popup">
+                            <div><?php echo $this->__('CVV or CVC. <br/><br/>')?></div>
+                            <div><?php echo $this->__('A 3 or 4 digit code located to the right of signature strip on the back of your card, separate from the card number.')?></div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="buckaroo3extended_creditcard_encryptedCardData" id="buckaroo3extended_creditcard_encryptedCardData"/>
+            </div>
+        </div>
+</ul>
+
+<script>
+    jQuery("html").trigger("loadEncryptedDataFunction");
+</script>

@@ -1,0 +1,109 @@
+<?php // @codingStandardsIgnoreFile ?>
+<?php $code = $this->getMethodCode() ?>
+
+<div id="payment-errors" class="validation-advice" style="display:none;"></div>
+
+<ul id="payment_form_<?php echo $code ?>" style="display:none"
+    class="buckaroo3extended_input form-list buckaroo-method">
+    <li>
+        <label for="<?php echo $code;?>_BPE_Customergender" class="required">
+            <?php echo $this->__('Salutation');?>: <em>*</em>
+        </label>
+        <div class="input-box">
+            <select name="<?php echo $code;?>_BPE_Customergender" class="validate-select validate-number"
+                    title="<?php echo $this->__('Salutation');?>" id="<?php echo $code;?>_BPE_Customergender">
+                <option value=''><?php echo $this->__('Select'); ?></option>
+                <option value="1" <?php echo (in_array($this->getGender(), array(1, 123))) ? 'selected' : '';?>>
+                    <?php echo $this->__('Mr.'); ?>
+                </option>
+                <option value="2" <?php echo (in_array($this->getGender(), array(2, 124))) ? 'selected' : '';?>>
+                    <?php echo $this->__('Mrs.'); ?>
+                </option>
+            </select>
+        </div>
+    </li>
+    <li>
+        <label><?php echo $this->__('Billing name');?>:</label>
+        <div class="input-box">
+            <span class="disabled stylefix" id="<?php echo $code;?>_BPE_Customername"
+                  title="<?php echo $this->__('Name');?>">
+                <?php echo $this->escapeHtml($this->getName()); ?>
+            </span>
+        </div>
+    </li>
+    <li>
+        <?php
+        echo $this->getLayout()->createBlock('buckaroo3extended/customer_widget_dob')
+            ->setFieldIdFormat($code . ':billing:%s')
+            ->setFieldNameFormat('payment[' . $code . '][%s]')
+            ->setIsRequired(true)
+            ->setPaymentMethodCode($code)
+            ->setDate($this->getDob())
+            ->toHtml();
+        ?>
+    </li>
+    <li>
+        <label for="<?php echo $code;?>_BPE_OrderAs"><?php echo $this->__('Order As');?>:</label>
+        <div class="input-box">
+            <select name="<?php echo $code;?>_BPE_OrderAs" class="validate-select validate-number"
+                    title="<?php echo $this->__('Order As');?>" id="<?php echo $code;?>_BPE_OrderAs">
+                <option value="1" <?php echo (($this->getOrderAs()=='1')?'selected':'') ;?>>
+                    <?php echo $this->__('Private');?>
+                </option>
+                <option value="2" <?php echo (($this->getOrderAs()=='2')?'selected':'') ;?>>
+                    <?php echo $this->__('Company');?>
+                </option>
+                <option value="3" <?php echo (($this->getOrderAs()=='3')?'selected':'') ;?>>
+                    <?php echo $this->__('One-man business');?>
+                </option>
+            </select>
+        </div>
+    </li>
+    <li>
+        <?php
+        $style = '';
+        if (null === $this->getOrderAs() || $this->getOrderAs() == '1') {
+            $style = ' style="display:none;"';
+        }
+        ?>
+        <div id="<?php echo $code;?>_b2b_fields"<?php echo $style;?>>
+            <label class="required" for="<?php echo $code;?>_BPE_CompanyCOCRegistration">
+                <?php echo $this->__('COC Number');?>
+            </label>
+            <div class="input-box">
+                <input class="input-text required-entry" type="text"
+                       name="<?php echo $code;?>_BPE_CompanyCOCRegistration"
+                       id="<?php echo $code;?>_BPE_CompanyCOCRegistration"
+                       value="<?php echo $this->escapeHtml($this->getCompanyCoCRegistration());?>" />
+            </div>
+            <label class="required" for="<?php echo $code;?>_BPE_CompanyName">
+                <?php echo $this->__('Company Name');?>
+            </label>
+            <div class="input-box">
+                <input class="input-text required-entry" type="text" name="<?php echo $code;?>_BPE_CompanyName"
+                       id="<?php echo $code;?>_BPE_CompanyName"
+                       value="<?php echo $this->escapeHtml($this->getCompanyName());?>" />
+            </div>
+        </div>
+    </li>
+    <li>
+        <?php
+        echo Mage::helper('buckaroo3extended')
+            ->__('Please make sure all fields are filled in correctly before proceeding.');
+        ?>
+    </li>
+</ul>
+
+<script type="text/javascript">
+    // <![CDATA[
+    var paymentCode = '<?php echo $code;?>';
+
+    $(paymentCode + '_BPE_OrderAs').observe('change', function(event){
+        $(paymentCode + '_b2b_fields').show();
+
+        if($(paymentCode + '_BPE_OrderAs').getValue() == 1){
+            $(paymentCode + '_b2b_fields').hide();
+        }
+    });
+    // ]]>
+</script>

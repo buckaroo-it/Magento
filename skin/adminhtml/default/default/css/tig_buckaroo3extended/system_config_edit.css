@@ -1,0 +1,26 @@
+.buckaroo-section:hover {
+    background-image: url("../../images/tabs_span_bg.gif") repeat-x scroll 0 100% transparent !important;
+    background-color: #D8E6E6 !important;
+    border-bottom: medium none !important;
+    height: 18px !important;
+    padding: 6px 6px 3px 18px !important;
+}
+.buckaroo-section {
+    background: url("../../images/tabs_span_bg.gif") repeat-x scroll 0 100% transparent !important;
+    border-bottom: medium none !important;
+    height: 18px !important;
+    padding: 6px 6px 3px 18px !important;
+}
+.buckaroo-section span {
+    background: url("../../images/tig_buckaroo3extended/buckaroo_small.png") no-repeat scroll 0 0 transparent !important;
+    overflow: hidden !important;
+    padding: 18px 0 0 !important;
+    height: 0 !important;
+}
+.buckaroo-section.active {
+    background-color:white !important;
+}
+
+.module-message.buckaroo h4 {
+    margin: 3px 40px 0 40px !important;
+}

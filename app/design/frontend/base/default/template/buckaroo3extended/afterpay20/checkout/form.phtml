@@ -1,0 +1,138 @@
+<?php // @codingStandardsIgnoreFile ?>
+<?php $code = $this->getMethodCode() ?>
+<?php
+
+$requiredGender = false;
+$requiredPhoneNumber = false;
+$requiredDob = false;
+$requiredIdNumber = false;
+
+switch($this->getBillingCountry()) {
+    case 'NL' :
+    case 'BE' :
+        $requiredGender = true;
+        $requiredPhoneNumber = true;
+        $requiredDob = true;
+        break;
+    case 'FI' :
+        $requiredIdNumber = true;
+        break;
+    default:
+        break;
+}
+
+?>
+
+
+<div id="payment-errors" class="validation-advice" style="display:none;"></div>
+<fieldset class="form-list buckaroo-method">
+    <ul id="payment_form_<?php echo $code ?>" style="display:none" class="buckaroo3extended_input">
+
+        <?php if ($requiredGender == true) : ?>
+        <li>
+            <label for="<?php echo $code;?>_BPE_Customergender" class="required">
+                <?php echo $this->__('Salutation');?>: <em>*</em>
+            </label>
+            <div class="input-box">
+                <select name="<?php echo $code;?>_BPE_Customergender" class="validate-select"
+                        title="<?php echo $this->__('Salutation');?>" id="<?php echo $code;?>_BPE_Customergender">
+                    <option value=''><?php echo $this->__('Select'); ?></option>
+                    <option value="Mr" <?php echo (in_array($this->getGender(), array(1, 123, 'Mr'))) ? 'selected' : '';?>>
+                        <?php echo $this->__('Mr.'); ?>
+                    </option>
+                    <option value="Miss" <?php echo (in_array($this->getGender(), array(2, 124, 'Miss'))) ? 'selected' : '';?>>
+                        <?php echo $this->__('Miss.'); ?>
+                    </option>
+                </select>
+            </div>
+        </li>
+        <?php endif;?>
+
+        <li>
+            <label><?php echo $this->__('Billing name');?>:</label>
+            <div class="input-box">
+                <span class="disabled stylefix" id="<?php echo $code;?>_BPE_Customername"
+                      title="<?php echo $this->__('Name');?>"><?php echo $this->escapeHtml($this->getName()); ?></span>
+            </div>
+        </li>
+
+        <?php if ($requiredPhoneNumber == true) : ?>
+        <?php
+        $telephone = $this->getAddress()->getTelephone();
+        $display = ($telephone && $telephone != '-') ? 'style="display:none;"' : '';
+        ?>
+        <li <?php echo $telephone; ?>>
+            <label class="required" for="<?php echo $code;?>_BPE_Customerphone">
+                <?php echo $this->__('Telephone') ?>: <em>*</em>
+            </label>
+            <div class="input-box">
+                <input class="input-text required-entry" type="text" title="<?php echo $this->__('Telephone') ?>"
+                       name="<?php echo $code;?>_bpe_customer_phone_number"
+                       value="<?php echo $this->escapeHtml($this->getPhoneNumber()); ?>"
+                       id="<?php echo $code;?>_BPE_Customerphone"/>
+            </div>
+        </li>
+        <?php endif;?>
+
+        <?php if ($requiredDob == true) : ?>
+        <li>
+            <?php
+            echo $this->getLayout()->createBlock('buckaroo3extended/customer_widget_dob')
+                ->setFieldIdFormat($code . ':billing:%s')
+                ->setFieldNameFormat('payment[' . $code . '][%s]')
+                ->setFieldId($code.'_bpe_customer_idnumber')
+                ->setFieldName($code.'_bpe_customer_idnumber')
+                ->setIsRequired(true)
+                ->setPaymentMethodCode($code)
+                ->setDate($this->getDob())
+                ->toHtml();
+            ?>
+        </li>
+        <?php endif;?>
+
+        <?php if ($requiredIdNumber == true) : ?>
+            <li>
+                <?php
+                echo $this->getLayout()->createBlock('buckaroo3extended/customer_widget_idnumber')
+                    ->setFieldIdFormat($code . ':billing:%s')
+                    ->setFieldNameFormat('payment[' . $code . '][%s]')
+                    ->setIsRequired(true)
+                    ->setPaymentMethodCode($code)
+                    ->toHtml();
+                ?>
+            </li>
+        <?php endif;?>
+
+
+        <li class="tac-accept">
+            <div class="input-box">
+                <input class="input-checkbox required-entry" type="checkbox"
+                       title="<?php echo $this->__('Terms and Conditions') ?>"
+                       name="<?php echo $code;?>_bpe_accept" value="checked"
+                       id="<?php echo $code;?>_BPE_terms_and_conditions" />
+            </div>
+            <label for="<?php echo $code;?>_BPE_terms_and_conditions" class="required">
+                <?php echo $this->__(
+                    'Yes, I accept the %sterms and condition%s for the use of Afterpay.',
+                    '<a style="float:none;margin:0;" id="' . $code . '-tos-url" target="_blank" href="'
+                    . $this->getAcceptanceUrl() . '">',
+                    '</a>'
+                );
+                if ($this->getBillingCountry() == 'BE') {
+                    echo $this->__(
+                        '(Or click here for the French translation: %sterms and condition%s.)',
+                        '<a style="float:none;margin:0;" id="' . $code . '-tos-url" target="_blank" href="'
+                        . $this->getAcceptanceUrl('fr_be') . '">',
+                        '</a>'
+                    );
+                }?>
+                <em>*</em>
+            </label>
+        </li>
+
+        <li>
+            <?php echo Mage::helper('buckaroo3extended')
+                ->__('Please make sure all fields are filled in correctly before proceeding.')?>
+        </li>
+    </ul>
+</fieldset>

@@ -1,0 +1,61 @@
+<?php
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * It is available through the world-wide-web at this URL:
+ * https://tldrlegal.com/license/mit-license
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to support@buckaroo.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact support@buckaroo.nl for more information.
+ *
+ * @copyright Copyright (c) Buckaroo B.V.
+ * @license   https://tldrlegal.com/license/mit-license
+ */
+?>
+<?php // @codingStandardsIgnoreFile ?>
+<?php $source  = $this->getSource() ?>
+<?php if ($source): ?>
+    <tr>
+        <td class="label">
+            <label for="buckaroo_fee_amount">
+                <?php echo $this->getBuckarooFeeLabel(); ?>
+            </label>
+        </td>
+        <td>
+            <input type="text" name="creditmemo[buckaroo_fee]"
+                   value="<?php echo $this->getBuckarooFeeAmount(); ?>"
+                   class="input-text not-negative-amount" style="width:60px;text-align:right"
+                   id="buckaroo_fee_amount" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div id="buckaroo_fee_amount_advice"></div>
+        </td>
+    </tr>
+    <script type="text/javascript">
+        //<![CDATA[
+        if (typeof unblockSubmit == 'undefined') {
+            function unblockSubmit(id) {
+                $(id).observe('focus', function (event) {
+                    if ($$('button[class="scalable update-button disabled"]').size() > 0) {
+                        enableElements('submit-button');
+                    }
+                });
+            }
+        }
+
+        var buckarooFeeAmountField = $('buckaroo_fee_amount');
+        if (buckarooFeeAmountField) {
+            buckarooFeeAmountField.advaiceContainer = $('buckaroo_fee_amount_advice'); //The typo is intentional
+            unblockSubmit('buckaroo_fee_amount');
+        }
+        //]]>
+    </script>
+<?php endif; ?>

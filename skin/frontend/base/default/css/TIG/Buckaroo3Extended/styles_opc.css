@@ -1,0 +1,538 @@
+/* Form ============================================================================================================= */
+#checkout-step-payment .buckaroo-method label { font-weight:normal; float:none; }
+#checkout-step-payment .buckaroo-method select { width:auto; }
+#checkout-step-payment .buckaroo-method ul.form-list { padding:0; }
+#checkout-step-payment .buckaroo-method .input-box { float:none !important; }
+
+#checkout-step-payment .buckaroo-method .customer-dob .dob-day input.input-text,
+#checkout-step-payment .buckaroo-method .customer-dob .dob-month input.input-text { width:46px !important; }
+#checkout-step-payment .buckaroo-method .customer-dob .dob-year input.input-text  { width:134px !important; }
+
+#checkout-step-payment .buckaroo-method .ideal_container {height:20px;}
+#checkout-step-payment .buckaroo-method label { display:block; float:none; margin-bottom:2px; text-align:left !important; }
+#checkout-step-payment .buckaroo-method label img { height:15px; width:auto; margin-top:1px; display:block;}
+#checkout-step-payment .buckaroo-method label .bank_logo {display:block; height:17px; width: 40px; float: left;}
+#checkout-step-payment .buckaroo-method label input {float: left;}
+#checkout-step-payment .buckaroo-method label span.bank_name {display:block; height:17px; width:120px; margin-left: 5px; line-height: 1.2; float: left;}
+
+#checkout-step-payment .buckaroo-method .input-box .disabled { display:block; background:#f2f2f2; border:1px solid #b6b6b6; color:#999; padding:2px; height:15px; width:254px; line-height:16px; overflow:hidden; white-space:nowrap; }
+#checkout-step-payment .buckaroo-method .input-box .disabled.stylefix { height:auto; padding:8px;}
+
+/* Payment Guarantee Terms & Conditions ============================================================================= */
+#checkout-step-payment #payment_form_buckaroo3extended_paymentguarantee .tac-accept .input-checkbox { float:left; }
+#checkout-step-payment #payment_form_buckaroo3extended_paymentguarantee .tac-accept label { margin:-2px 0 0 5px; }
+#checkout-step-payment #payment_form_buckaroo3extended_paymentguarantee .tac-accept .input-checkbox.validation-failed { margin-bottom:18px; }
+#checkout-step-payment #payment_form_buckaroo3extended_paymentguarantee .tac-accept #advice-required-entry-buckaroo3extended_paymentguarantee_BPE_terms_and_conditions { position:absolute; margin-top:17px; }
+
+#checkout-step-payment #paymentguarantee_terms_and_conditions { display:none; }
+#checkout-step-payment #paymentguarantee_terms_and_conditions { position:fixed; width:100%; height:100%; top:0; left:0; background:rgba(0, 0, 0, .35); z-index:100; }
+
+#checkout-step-payment #paymentguarantee_terms_and_conditions .tac-content { position:fixed; background:#fff; width:310px; height:auto; left:50%; top:30px; margin-left:-155px; padding:8px 8px 12px; border: 1px solid #b6b6b6; z-index:200; }
+
+#checkout-step-payment #paymentguarantee_terms_and_conditions .tac-close { float:right; }
+
+#checkout-step-payment #paymentguarantee_terms_and_conditions a.button { text-decoration:none !important; cursor:pointer !important; background:none !important; }
+#checkout-step-payment #paymentguarantee_terms_and_conditions a.button span { display:block; height:19px; border:1px solid #de5400; background:#f18200; padding:0 8px; font:bold 12px/19px Arial, Helvetica, sans-serif; text-align:center; white-space:nowrap; color:#fff; }
+#checkout-step-payment #paymentguarantee_terms_and_conditions a.button span span { border:0; padding:0; }
+
+
+/* Afterpay + Payment guarantee - terms and conditions - align with checkbox */
+
+.sp-methods .form-list li {
+    clear: both;
+}
+
+#checkout-step-payment .buckaroo-method .tac-accept .input-box{
+    float: left !important;
+    width: auto;
+}
+
+#checkout-step-payment .buckaroo-method .tac-accept .input-box input {
+    width: 25px;
+    vertical-align: text-top;
+    margin-top: 2px;
+}
+
+#checkout-step-payment .buckaroo-method .tac-accept .input-box:after {
+    clear:none;
+}
+
+/* Credit Card - Default ============================================================================================ */
+
+.card.blank {
+    max-width: 220px;
+}
+
+.card.blank .cardType_container,
+.card.blank .cardHolderName_container,
+.card.blank .card_back,
+.card.blank .card_kind {
+    margin: 10px 0;
+}
+
+.card.blank .expirationMonth_container {
+    margin-top: 10px;
+}
+
+.card .card_front .expiration_container label {
+    width: 100%;
+    float: left;
+}
+
+.card.blank .card_front .expiration_container .select_wrapper {
+    float: left;
+    width: 100%;
+    position: relative;
+    cursor: pointer;
+}
+
+.card.blank .select_wrapper #cardType,
+.card.blank .select_wrapper #expirationMonth,
+.card.blank .select_wrapper #expirationYear {
+    margin-bottom: 10px;
+    width: 100% !important;
+    max-width: 156px;
+}
+
+
+/* Credit Card - Styled ============================================================================================= */
+
+/* Reset */
+.card * {
+    box-sizing: border-box;
+}
+
+dd#dd_method_buckaroo3extended_creditcard {
+    overflow: hidden;
+}
+
+/* Errors */
+
+.card.styled .validation-advice {
+    text-transform: none;
+    font-family: "Helvetica Neue", Verdana, Arial, sans-serif;
+    margin-top: 2px;
+    float: left;
+    width: 100%;
+    font-size: 12px;
+    text-align: right;
+}
+
+/* Card Kind */
+.card .card_front .card_kind {
+    margin-bottom: 10px;
+}
+
+.card.styled .card_front .card_kind {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    text-align: right;
+}
+
+/* Card Type */
+
+.card.styled .cardType_container {
+    width: 70%;
+    float:left;
+    margin-top: -6px;
+}
+
+.card.styled .cardType_container .select_wrapper {
+    width: 100%;
+    float:left;
+}
+
+/* Card Number */
+
+.card.styled .cardNumber_container {
+    width: 100%;
+    margin: 10px 0 0 0;
+    float:left;
+}
+
+.card.styled {
+    font-family: "Courier New", "Helvetica Neue", Verdana, Arial, sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin-left: -10px;
+}
+
+.card.styled label {
+    font-family: "Courier New", "Helvetica Neue", Verdana, Arial, sans-serif;
+    float:left !important;
+    margin-bottom: 0 !important;
+    display :inline;
+    line-height: 16px;
+    font-size: 14px;
+}
+
+.card.styled input[type="text"],
+.card.styled input[type="tel"] {
+    height: 35px;
+    border: 1px solid #d1d1d1;
+    padding: 0 10px;
+    background: white;
+}
+
+/* Credit Card Front */
+
+.card.styled .card_front {
+    background: #e2e2e2;
+    float:left;
+    max-width: 320px;
+    width: 100%;
+    min-height: 200px;
+    padding: 20px;
+    border-radius:8px;
+    z-index: 20;
+    position: relative;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='32' viewBox='0 0 16 32'%3E%3Cg fill='%239C92AC' fill-opacity='0.12'%3E%3Cpath fill-rule='evenodd' d='M0 24h4v2H0v-2zm0 4h6v2H0v-2zm0-8h2v2H0v-2zM0 0h4v2H0V0zm0 4h2v2H0V4zm16 20h-6v2h6v-2zm0 4H8v2h8v-2zm0-8h-4v2h4v-2zm0-20h-6v2h6V0zm0 4h-4v2h4V4zm-2 12h2v2h-2v-2zm0-8h2v2h-2V8zM2 8h10v2H2V8zm0 8h10v2H2v-2zm-2-4h14v2H0v-2zm4-8h6v2H4V4zm0 16h6v2H4v-2zM6 0h2v2H6V0zm0 24h2v2H6v-2z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.card.styled .card_front .expirationMonth_container,
+.card.styled .card_front .expirationYear_container {
+    float:left;
+    width: 50%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.card.styled .card_front .cardHolderName_container {
+    float:left;
+    width: 100%;
+    margin-bottom: 0;
+    margin-top: 10px;
+}
+
+.card.styled .card_front .cardNumber_container label {
+    width: 100%;
+    float: left;
+}
+
+.card.styled .card_front .cardNumber_container input {
+    width: 100% !important;
+    float: left;
+    margin: 0;
+}
+
+
+.card.styled .card_front .select_wrapper {
+    position: relative;
+    cursor: pointer;
+    float: left;
+    width: 100%;
+}
+
+.card.styled .card_front .expirationMonth_container {
+    float: left;
+    width: 50%;
+}
+
+.card.styled .card_front .expirationYear_container {
+    width: 43%; /* IE backup */
+    width: calc(50% - 10px);
+    margin-left: 10px;
+}
+
+.card.styled .card_front select {
+    float:left;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: white;
+    height: 35px;
+    padding: 0 25px 0 7px;
+    border-radius: 3px;
+    border: 1px solid #d1d1d1;
+    margin-top: 0;
+    width: 100% !important;
+    background-image: none !important;
+    font-size: 90%;
+}
+
+.card.styled .card_front .select_wrapper:after {
+    content: '\203A';
+    transform: rotate(90deg);
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    top: -5px;
+    pointer-events: none;
+}
+
+.card.styled .card_front .cardHolderName_container label {
+    max-width: 100%;
+    float: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card.styled .card_front .cardHolderName_container input {
+    max-width: 100%;
+    width: 100%;
+    float: left;
+    margin: 0;
+}
+
+/* Credit Card Back */
+
+.card.styled .card_back {
+    background: #e2e2e2;
+    float:left;
+    max-width: 320px;
+    width: 100%;
+    min-height: 200px;
+    z-index: 10;
+    position: relative;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='32' viewBox='0 0 16 32'%3E%3Cg fill='%239C92AC' fill-opacity='0.12'%3E%3Cpath fill-rule='evenodd' d='M0 24h4v2H0v-2zm0 4h6v2H0v-2zm0-8h2v2H0v-2zM0 0h4v2H0V0zm0 4h2v2H0V4zm16 20h-6v2h6v-2zm0 4H8v2h8v-2zm0-8h-4v2h4v-2zm0-20h-6v2h6V0zm0 4h-4v2h4V4zm-2 12h2v2h-2v-2zm0-8h2v2h-2V8zM2 8h10v2H2V8zm0 8h10v2H2v-2zm-2-4h14v2H0v-2zm4-8h6v2H4V4zm0 16h6v2H4v-2zM6 0h2v2H6V0zm0 24h2v2H6v-2z'/%3E%3C/g%3E%3C/svg%3E");
+    clear: both;
+    border-radius: 8px;
+    margin: 10px 0 10px 0;
+}
+
+.card.styled .card_back .magnet_stripe {
+    height: 50px;
+    width: 100%;
+    background: black;
+    margin:20px 0;
+}
+
+.card.styled .card_back .card_security {
+    padding: 5px 0 5px 20px;
+    background: #f5f5f5;
+    float: left;
+    width: 100%;
+    background-image: linear-gradient(transparent 50%, rgba(179, 206, 239, 0.2) 50%);
+    background-size: 7px 4px;
+    max-height: 46px;
+}
+
+.card.styled .card_back .card_security label {
+    max-width: 60%;
+    width: 100%;
+    float:left !important;
+    padding-top: 9px;
+    overflow: hidden;
+    -ms-text-overflow :ellipsis;
+    text-overflow :ellipsis;
+}
+
+.card.styled .card_back .card_security input {
+    max-width: 90%;
+    width: 100%;
+    float: left;
+    text-align: center;
+    border-color: #c4d1e6;
+}
+
+
+/* Creditcard Security Code - Tooltip =============================================================================== */
+
+.card_security, .card_kind {
+    clear:both;
+}
+
+.card .card_security .info {
+    float:left;
+    text-align :center;
+    width: 15%;
+    position: relative;
+}
+
+.card .card_security .info svg {
+    height : 20px;
+    width: 20px;
+    cursor: pointer;
+    fill: #989898;
+}
+
+.card .card_security .info .popup {
+    font-family: "Helvetica Neue", Verdana, Arial, sans-serif;
+    text-transform :none;
+    display :none;
+    background: white;
+    padding: 20px;
+    position: absolute;
+    width: 200px;
+    left: -179px;
+    top: 30px;
+    box-shadow: 1px 2px 3px rgba(144, 144, 144, 0.6196078431372549);
+    z-index: 100;
+}
+
+.card .card_security .info .popup:before {
+    position: absolute;
+    left: 187px;
+    top: -14px;
+    content: '';
+    width: 0;
+    height: 0;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #d4d4d4;
+    border-top: 7px solid transparent;
+    border-left: 7px solid transparent;
+}
+
+.card .card_security .info .popup:after {
+    position: absolute;
+    left: 187px;
+    top: -13px;
+    content: '';
+    width: 0;
+    height: 0;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #fff;
+    border-top: 7px solid transparent;
+    border-left: 7px solid transparent;
+}
+
+.card .card_security .info:hover .popup {
+    display :block;
+}
+
+@media screen and (min-width: 980px){
+    .card .card_security .info .popup {
+        left: 34px;
+        top: -17px;
+    }
+
+    .card .card_security .info .popup:before {
+        left: -15px;
+        top: 22px;
+        border-left: 7px solid transparent;
+        border-right: 7px solid #d4d4d4;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+    }
+
+
+    .card .card_security .info .popup:after {
+        left: -13.5px;
+        top: 22px;
+        border-left: 7px solid transparent;
+        border-right: 7px solid #fff;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+    }
+}
+
+/* Exceptions for Blank */
+
+.card.blank .card_security .field {
+    float:left;
+    width: 80%;
+}
+
+.card.blank .card_security .info {
+    padding: 2px 5px;
+}
+
+/* Exceptions for Styled */
+
+.card.styled .card_security .field {
+    float:left;
+    width: 25%;
+    margin: 0;
+}
+
+.card.styled .card_security .info {
+    padding: 7px 5px 0 ;
+}
+
+.card.styled .card_security .info .popup {
+    top: 36px;
+}
+
+@media screen and (min-width: 620px){
+    .card.styled .card_security .info .popup {
+        left: 34px;
+        top: -13px;
+    }
+
+    .card.styled .card_security .info .popup:before {
+        left: -14px;
+        top: 22px;
+        border-left: 7px solid transparent;
+        border-right: 7px solid #d4d4d4;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+    }
+
+
+    .card.styled .card_security .info .popup:after {
+        left: -13.5px;
+        top: 22px;
+        border-left: 7px solid transparent;
+        border-right: 7px solid #fff;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+    }
+}
+
+/* Apple Pay ======================================================================================================== */
+
+#buckaroo-apple-pay-popup {
+    box-sizing: border-box;
+    background-color: white;
+    max-width: 400px;
+    padding: 40px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1010;
+}
+
+#buckaroo-apple-pay-popup .checkout-apple-pay-wrapper {
+    position: relative;
+    float:left;
+    width: 100%;
+}
+
+#buckaroo-apple-pay-popup .checkout-apple-pay-wrapper svg {
+    height: 35px;
+    float:left;
+    width: 100%;
+    text-align: center;
+}
+
+#buckaroo-apple-pay-popup .checkout-apple-pay-wrapper span {
+    text-align: center;
+    float:left;
+    width: 100%;
+
+    margin: 20px 0;
+}
+
+#buckaroo-apple-pay-popup .checkout-apple-pay-wrapper .checkout-apple-pay-button-container {
+    float:left;
+    width: 100%;
+    text-align: center;
+}
+
+#buckaroo-apple-pay-popup .checkout-apple-pay-wrapper .close-apple-pay {
+    position: absolute;
+    color: #000;
+    top: -35px;
+    right: -20px;
+    font-size: 25px;
+}
+
+#buckaroo-apple-pay-popup .checkout-apple-pay-wrapper .close-apple-pay:hover {
+    color: #ad0000;
+    text-decoration: none;
+}
+
+.buckaroo-apple-pay-shadow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.3);
+    z-index:1000;
+}

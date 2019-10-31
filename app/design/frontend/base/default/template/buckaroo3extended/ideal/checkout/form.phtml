@@ -1,0 +1,35 @@
+<?php // @codingStandardsIgnoreFile ?>
+<?php $session = Mage::getSingleton('checkout/session'); ?>
+<?php $code = $this->getMethodCode() ?>
+<?php $value = $session->getData($code . '_BPE_Issuer'); ?>
+<?php $issuerList = $this->getIssuerList();?>
+<?php $issuerListCount = count($issuerList);?>
+<?php $validation = ''; ?>
+<div id="payment-errors" class="validation-advice" style="display:none;"></div>
+
+<fieldset class="form-list buckaroo-method">
+    <ul id="payment_form_<?php echo $code ?>" style="display:none"
+        class="buckaroo3extended_input form-list buckaroo-method">
+        <li><label class="required"><?php echo $this->__('Please, choose your bank'); ?>: <em>*</em></label></li>
+        <?php $i = 0; ?>
+        <?php foreach($issuerList as $issuer => $issuerDetails): ?>
+            <li>
+                <?php $i++; ?>
+                <?php if ($i == $issuerListCount): ?>
+                    <?php $validation = "class='validate-one-required-by-name'"; ?>
+                <?php endif; ?>
+                <label>
+                    <span class="bank_logo">
+                        <img src="<?php echo $this->getSkinUrl(
+                            "images/tig_buckaroo3extended/" . $issuerDetails['logo']
+                        );?>"/>
+                    </span>
+                    <input type="radio" name="<?php echo $code;?>_BPE_Issuer"
+                           value="<?php echo $issuer; ?>"
+                        <?php echo $validation; ?> <?php echo $issuer == $value ? "checked" : ''; ?>/>
+                    <span class="bank_name"> <?php echo $this->__($issuerDetails['name']);?></span>
+                </label>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</fieldset>

@@ -1,0 +1,45 @@
+<?php /** @var $this TIG_Buckaroo3Extended_Block_PaymentMethods_Payconiq_Checkout_Pay */ ?>
+
+<div id="tig_buckaroo_payconiq_loader"></div>
+
+<div id="tig_buckaroo_payconiq_container">
+    <div id="tig_buckaroo_payconiq_items">
+        <div id="tig_buckaroo_payconiq_qr"></div>
+
+        <button id="tig_buckaroo_payconiq_cancel" type="button" title="Cancel" class="button" onclick="cancelPayment()">
+            <span>
+                <span>Cancel</span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<script type="text/javascript" src="//checkout.buckaroo.nl/api/buckaroosdk/script"></script>
+<script type="text/javascript">
+    jQuery_1123(function() {
+        BuckarooSdk.Payconiq.initiate(
+            "#tig_buckaroo_payconiq_qr",
+            <?php // @codingStandardsIgnoreLine ?>
+            "<?php echo $this->getTransactionKey(); ?>",
+            function(status, params) {
+                switch (status) {
+                    case 'SUCCESS':
+                    case 'FAILED':
+                        jQuery_1123('#tig_buckaroo_payconiq_cancel').hide();
+                        break;
+                }
+
+                return true;
+            }
+        );
+    });
+
+    var cancelPayment = function() {
+        <?php // @codingStandardsIgnoreLine ?>
+        jQuery_1123('#tig_buckaroo_payconiq_qr').html('<?php echo $this->getCancelMessage(); ?>');
+        jQuery_1123('#tig_buckaroo_payconiq_cancel').hide();
+
+        <?php // @codingStandardsIgnoreLine ?>
+        location.href = '<?php echo $this->getCancelUrl(); ?>';
+    };
+</script>

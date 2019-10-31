@@ -1,0 +1,52 @@
+<?php
+/**
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * It is available through the world-wide-web at this URL:
+ * https://tldrlegal.com/license/mit-license
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to support@buckaroo.nl so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future. If you wish to customize this module for your
+ * needs please contact support@buckaroo.nl for more information.
+ *
+ * @copyright Copyright (c) Buckaroo B.V.
+ * @license   https://tldrlegal.com/license/mit-license
+ */
+
+$ajaxUrl = $this->getAjaxUrl();
+?>
+<?php // @codingStandardsIgnoreLine ?>
+<?php echo $this->__('You can pay at the cash register now.'); ?><br>
+<?php // @codingStandardsIgnoreLine ?>
+<?php echo $this->__('You will be redirected to the next page once the payment has been fullfilled.'); ?>
+
+<script type="text/javascript">
+    var interval = setInterval(function () {
+        checkOrderState();
+    }, 1000);
+
+    function checkOrderState()
+    {
+        <?php // @codingStandardsIgnoreLine ?>
+        new Ajax.Request('<?php echo $ajaxUrl; ?>',{
+            method: 'post',
+            parameters: null,
+            onComplete: processResponse
+        });
+    }
+
+    function processResponse(data) {
+        var response = JSON.parse(data.responseText);
+
+        if ((response.status == 'processing' || response.status == 'canceled') && response.returnUrl.length > 0) {
+            clearInterval(interval);
+
+            location.href = response.returnUrl;
+        }
+    }
+</script>

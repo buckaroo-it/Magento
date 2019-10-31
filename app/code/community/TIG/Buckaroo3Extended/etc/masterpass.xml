@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<masterpass>
+    <buckaroo3extended>
+        <v06 translate="title" module="buckaroo3extended">
+            <model>buckaroo3extended/masterpass_v06</model>
+            <title>Buckaroo MasterPass v6</title>
+            <options>
+                <supported_countries>NL,BE,DE</supported_countries>
+                <supported_currencies>EUR,USD</supported_currencies>
+            </options>
+        </v06>
+    </buckaroo3extended>
+</masterpass>

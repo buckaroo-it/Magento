@@ -1,0 +1,23 @@
+<![if !lt IE 9]>
+<script type="text/javascript">
+    function saveOscBilling()
+    {
+        <?php // @codingStandardsIgnoreLine ?>
+        var url_save_billing = '<?php echo $this->getUrl(
+            'onestepcheckout/ajax/save_billing',
+            array('_secure'=>true)
+        ); ?>';
+        <?php // @codingStandardsIgnoreLine ?>
+        var url_set_methods = '<?php echo $this->getUrl(
+            'onestepcheckout/ajax/set_methods_separate',
+            array('_secure'=>true)
+        ); ?>';
+
+        get_save_billing_function(url_save_billing, url_set_methods, true, true)();
+    }
+</script>
+<script type="text/javascript"
+    <?php // @codingStandardsIgnoreLine ?>
+        src="<?php echo $this->getSkinUrl('js/TIG/Buckaroo3Extended/oneStepCheckout.js', array('_secure' => true)); ?>">
+</script>
+<![endif]>

@@ -1,0 +1,21 @@
+<?php // @codingStandardsIgnoreFile ?>
+<?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?>
+
+<?php if ($specificInfo = $this->getSpecificInformation()):?>
+<table>
+<?php foreach ($specificInfo as $label => $value):?>
+    <tr>
+        <td><?php echo $this->escapeHtml($label)?>:</td>
+        <td><?php echo nl2br(implode($this->getValueAsArray($value, true), "\n"))?></td>
+    </tr>
+<?php endforeach; ?>
+</table>
+<?php endif;?>
+
+<?php if($this->getInfo()->getAdditionalData()): ?>
+    <?php if($this->getMandateReference()): ?>
+        <br /><?php echo $this->__('Mandate reference: %s', $this->escapeHtml($this->getMandateReference())) ?>
+    <?php endif; ?>
+<?php endif; ?>
+
+<?php echo $this->getChildHtml()?>

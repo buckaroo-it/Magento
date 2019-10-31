@@ -1,0 +1,65 @@
+<?php
+// @codingStandardsIgnoreFile
+    $session  = Mage::getSingleton('checkout/session');
+    $code     = $this->getMethodCode();
+    $gender    = $this->getGender();
+    $firstname = $this->getFirstname();
+    $lastname  = $this->getLastname();
+    $email     = $this->getEmail();
+?>
+<div id="payment-errors" class="validation-advice" style="display:none;"></div>
+
+<ul id="payment_form_<?php echo $code ?>" style="display:none"
+    class="buckaroo3extended_input form-list buckaroo-method">
+    <li>
+        <label for="<?php echo $code;?>_BPE_Customergender" class="required">
+            <?php echo $this->__('Salutation') ?>: <em>*</em>
+        </label>
+        <div class="input-box">
+            <select name="<?php echo $code;?>_BPE_Customergender" class="validate-select validate-number"
+                    id="<?php echo $code;?>_BPE_Customergender" title="<?php echo $this->__('Salutation');?>">
+                <option value=''><?php echo $this->__('Select'); ?></option>
+                <option value="1" <?php echo ($this->getGender()===1)?'selected':'';?>>
+                    <?php echo $this->__('Mr.'); ?>
+                </option>
+                <option value="2" <?php echo ($this->getGender()===2)?'selected':'';?>>
+                    <?php echo $this->__('Mrs.'); ?>
+                </option>
+            </select>
+        </div>
+    </li>
+    <li>
+        <label for="<?php echo $code;?>_BPE_Customerfirstname" class="required">
+            <?php echo $this->__('First name') ?>: <em>*</em>
+        </label>
+        <div class="input-box">
+            <input class="input-text required-entry" type="text" title="<?php echo $this->__('First name') ?>"
+                   name="<?php echo $code;?>_BPE_Customerfirstname" value="<?php $this->escapeHtml($firstname); ?>"
+                   id="<?php echo $code;?>_BPE_Customerfirstname" />
+        </div>
+    </li>
+    <li>
+        <label for="<?php echo $code;?>_BPE_Customerlastname" class="required">
+            <?php echo $this->__('Last name') ?>: <em>*</em>
+        </label>
+        <div class="input-box">
+            <input class="input-text required-entry" type="text" title="<?php echo $this->__('Last name') ?>"
+                   name="<?php echo $code;?>_BPE_Customerlastname" value="<?php $this->escapeHtml($lastname); ?>"
+                   id="<?php echo $code;?>_BPE_Customerlastname" />
+        </div>
+    </li>
+    <li>
+        <label for="<?php echo $code;?>_BPE_Customermail" class="required">
+            <?php echo $this->__('E-mail address') ?>: <em>*</em>
+        </label>
+        <div class="input-box">
+            <input class="input-text required-entry validate-email" type="email"
+                   title="<?php echo $this->__('E-mail address') ?>" name="<?php echo $code;?>_BPE_Customermail"
+                   value="<?php $this->escapeHtml($email); ?>" id="<?php echo $code;?>_BPE_Customermail" />
+        </div>
+    </li>
+    <li>
+        <?php echo $this->
+        __('You will receive an email with further payment instructions when you place your order.') ?>
+    </li>
+</ul>

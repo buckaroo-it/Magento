@@ -1,0 +1,55 @@
+<?php // @codingStandardsIgnoreFile ?>
+<?php $version = Mage::getVersion(); ?>
+<?php if (version_compare($version, '1.7') == -1) { ?>
+    <?php
+    $paymentActive = Mage::getStoreConfig(
+        'buckaroo/buckaroo3extended_paypal/active',
+        Mage::app()->getRequest()->getParam('store')
+    );
+    $sellerProtectionActive = Mage::getStoreConfig(
+        'buckaroo/buckaroo3extended_paypal/sellers_protection',
+        Mage::app()->getRequest()->getParam('store')
+    );
+    $regionIsRequired = $this->getIsRegionRequired();
+    ?>
+    <?php if ($paymentActive == 0 || $sellerProtectionActive == 0 ) {
+        return $this;
+    } ?>
+
+    <?php if($regionIsRequired && $sellerProtectionActive): ?>
+    <div class="error-msg buckaroo">
+        <h4>
+            <?php echo Mage::helper('buckaroo3extended')->__(
+                'You have enabled PayPal Seller Protection. ' .
+                'You have to warn your customer to fill in the region-field, ' .
+                'otherwise the Seller Protection will not be applicable to PayPal.'
+            ) ?>
+        </h4>
+    </div>
+    <?php endif; ?>
+    <?php /* Stylesheet not available */ ?>
+    <style>
+        .error-msg.buckaroo { margin-bottom:25px; padding:8px 8px 8px 32px; }
+        .error-msg.buckaroo h4 { margin:0; }
+    </style>
+    <?php
+    return $this;
+} ?>
+<?php if ($this->getIsRegionRequired()) {
+    return $this;
+} ?>
+<div class="error-msg buckaroo">
+    <h4>
+        <?php echo Mage::helper('buckaroo3extended')->__(
+            'You have enabled PayPal Seller Protection. ' .
+            'This feature requires Region with regard to the shipping address of the customer. ' .
+            'Please select the specific countries to which PayPal is applicable for, ' .
+            'and make the Regions required accordingly.'
+        ) ?>
+    </h4>
+</div>
+<?php /* Stylesheet not available */ ?>
+<style>
+    .error-msg.buckaroo { margin-bottom:25px; padding:8px 8px 8px 32px; }
+    .error-msg.buckaroo h4 { margin:0; }
+</style>

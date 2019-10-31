@@ -1,0 +1,72 @@
+<?php // @codingStandardsIgnoreFile ?>
+<div class="module-message warning">
+    <h4>
+        <?php echo Mage::helper('buckaroo3extended')->__(
+            "Please read first our knowledge base article about this setting: " .
+            "<a href='https://servicedesk.tig.nl/hc/nl/articles/221318687' target='_blank'>" .
+            "More information about custom error messages</a>."
+        )?>
+    </h4>
+</div>
+<script type="text/javascript" charset="utf-8"
+        src="<?php echo $this->getSkinUrl("js/tig_buckaroo3extended/jquery-3.3.1.min.js");?>">
+</script>
+<script type = 'text/javascript'>
+    var jQuery_1123 = jQuery.noConflict(true);
+    jQuery_1123('document').ready(
+        function() {
+            if (jQuery_1123("#buckaroo_buckaroo3extended_active").val() == 0 ) {
+                jQuery_1123("#buckaroo_buckaroo3extended").prev().prev().addClass('disabled');
+            }
+            else if (jQuery_1123("#buckaroo_buckaroo3extended_active").val() == 1
+                && jQuery_1123("#buckaroo_buckaroo3extended_mode").val() == 1)
+            {
+                jQuery_1123("#buckaroo_buckaroo3extended").prev().prev().addClass('test');
+            }
+            else
+            {
+                jQuery_1123("#buckaroo_buckaroo3extended").prev().prev().addClass('live');
+            }
+
+            var skinUrl = "<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN); ?>";
+
+            jQuery_1123('.buckaroo-header').html('&nbsp;').css(
+                'background-image',
+                "url('" + skinUrl + "adminhtml/default/default/images/tig_buckaroo3extended/buckaroo_large.png')"
+            ).css('width','220').css('height','30').css('background-size','80%').css('background-repeat','no-repeat');
+
+            <?php foreach($this->config as $config): ?>
+            jQuery_1123('#buckaroo_buckaroo3extended_<?php echo $config; ?>').prev().prev().addClass('advanced');
+            <?php endforeach;?>
+
+            <?php foreach($this->methods as $method):?>
+            if (jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $method; ?>_active").val() == 0 ) {
+                jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $method; ?>").prev().prev().addClass('disabled');
+            }
+            else if (jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $method; ?>_active").val() == 1
+                && jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $method; ?>_mode").val() == 1)
+            {
+                jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $method; ?>").prev().prev().addClass('test');
+            }
+            else
+            {
+                jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $method; ?>").prev().prev().addClass('live');
+            }
+            <?php endforeach;?>
+            <?php foreach($this->services as $service):?>
+            if (jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $service; ?>_active").val() == 0 ) {
+                jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $service; ?>").prev().prev().addClass('disabled');
+            }
+            else if (jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $service; ?>_active").val() == 1
+                && jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $service; ?>_allow_push").val() == 0)
+            {
+                jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $service; ?>").prev().prev().addClass('advanced');
+            }
+            else
+            {
+                jQuery_1123("#buckaroo_buckaroo3extended_<?php echo $service; ?>").prev().prev().addClass('advanced');
+            }
+            <?php endforeach;?>
+        }
+    );
+</script>

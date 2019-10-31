@@ -1,0 +1,23 @@
+<?php // @codingStandardsIgnoreFile ?>
+<?php if (!$this->getIsKlarnaEnabled()) {
+    return $this;
+} ?>
+<div class="error-msg buckaroo">
+    <h4>
+        <?php echo Mage::helper('buckaroo3extended')->__(
+            "You have the Klarna Paymentmodule installed in your shop. " .
+            "Unfortunately the Buckaroo fee functionality does not work alongside this module. " .
+            "Therefore the Buckaroo fee functionality has been disabled. " .
+            "Please deactivate the Klarna module to use this functionality again. " .
+            "Please take a look at our <a href='%s' target='_blank'>knowledge base</a> for more information.",
+            'http://servicedesk.totalinternetgroup.nl/entries/23378816-Buckaroo-en-Klarna-in-%C3%A9%C3%A9n-Magento-webwinkel'
+        )?>
+    </h4>
+</div>
+<?php /* Stylesheet not available */ ?>
+<style>
+    .error-msg.buckaroo { margin-bottom:25px; padding:8px 8px 8px 32px; }
+    .error-msg.buckaroo h4 { margin:0; }
+</style>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/TIG/Buckaroo3Extended/klarnaCheck.js'); ?>">
+</script>

@@ -1,0 +1,48 @@
+/* General */
+#buckaroo_buckaroo3extended_support p,
+#buckaroo_buckaroo3extended_support ul,
+#buckaroo_buckaroo3extended_support ol { padding:6px 0 10px;  }
+#buckaroo_buckaroo3extended_support ol { list-style:decimal inside; }
+#buckaroo_buckaroo3extended_support ol ol { list-style:lower-alpha inside; padding:0 0 10px 12px; }
+#buckaroo_buckaroo3extended_support ul ul { list-style:none; padding:0 0 10px 12px; }
+#buckaroo_buckaroo3extended_support h2.content-heading { color:#ea7601; border-bottom:4px solid #dfdfdf; }
+#buckaroo_buckaroo3extended_support h4,
+#buckaroo_buckaroo3extended_support p { margin:0;}
+#buckaroo_buckaroo3extended_support a.pdf { display:inline-block; height:16px; line-height:16px; padding:0 0 0 21px; background:url(../../images/tig_buckaroo3extended/glyph_pdf.png) no-repeat; }
+#buckaroo_buckaroo3extended_support .text-box { background:#fff; padding:9px 16px; margin:6px 0 10px; border:1px solid #ccc; }
+#buckaroo_buckaroo3extended_support table.contact { margin:0 0 25px -1px; }
+#buckaroo_buckaroo3extended_support table.contact td { padding-right:20px; }
+#buckaroo_buckaroo3extended_support table.contact td.first { width:200px; padding-right:5px; }
+#buckaroo_buckaroo3extended_support table.contact td.tig_logo { width:50px; padding-right:5px; padding-top:6px; }
+#buckaroo_buckaroo3extended_support table.contact td.buckaroo_logo { padding-top:6px; }
+#buckaroo_buckaroo3extended_support table.contact td.buckaroo_logo a img { width:100px; }
+
+/* Legend */
+#buckaroo_buckaroo3extended_support #legend li { background:url(../../images/tig_buckaroo3extended/legend.gif) 0 0 no-repeat; padding-left:14px;  }
+#buckaroo_buckaroo3extended_support #legend li.disabled { background-position:0 4px; }
+#buckaroo_buckaroo3extended_support #legend li.test { background-position:0 -25px; }
+#buckaroo_buckaroo3extended_support #legend li.live { background-position:0 -54px; }
+#buckaroo_buckaroo3extended_support #legend li.advanced { background-position:0 -83px; }
+
+/* Structure */
+#buckaroo_buckaroo3extended_support .form-list,
+#buckaroo_buckaroo3extended_support #supportWrap { width:100% !important; }
+#buckaroo_buckaroo3extended_support #supportWrap .col-left,
+#buckaroo_buckaroo3extended_support #supportWrap .col-right { width:50%; }
+#buckaroo_buckaroo3extended_support #supportWrap .col-faux { padding:0 5px;  }
+
+/* Labels */
+.entry-edit .entry-edit-head { background-color:#97c600; }
+.entry-edit .entry-edit-head.disabled { background-color:#c6cbc9; }
+.entry-edit .entry-edit-head.test { background-color:#fff000; }
+.entry-edit .entry-edit-head.test a { color:#222; }
+.entry-edit .entry-edit-head.live { background-color:#97c600; }
+.entry-edit .entry-edit-head.advanced { background-color:#f86000; }
+
+/* Messages */
+.module-message { padding:9px 9px 9px 30px; margin-bottom:20px; border:1px solid #ccc; }
+.module-message.success { background:#fff url(../../images/tig_buckaroo3extended/glyph_success.gif) 9px 9px no-repeat; }
+.module-message.info { background:#fff url(../../images/tig_buckaroo3extended/glyph_info.gif) 9px 9px no-repeat;  }
+.module-message.warning { background:#fff url(../../images/tig_buckaroo3extended/glyph_warning.gif) 9px 9px no-repeat;  }
+.module-message.error { background:#fff url(../../images/tig_buckaroo3extended/glyph_error.gif) 9px 9px no-repeat;  }
+.module-message.buckaroo { margin-bottom:20px; }
