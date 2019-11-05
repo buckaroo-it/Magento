@@ -256,6 +256,15 @@
             </sales_convert_order>
         </fieldsets>
         <events>
+            <sales_order_invoice_pay>
+                <observers>
+                    <buckaroo3extended_invoicepay_observer>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/observer_invoicePay</class>
+                        <method>sales_order_invoice_pay</method>
+                    </buckaroo3extended_invoicepay_observer>
+                </observers>
+            </sales_order_invoice_pay>
             <sales_order_payment_refund>
                 <observers>
                     <buckaroo3extended_refund_observer>

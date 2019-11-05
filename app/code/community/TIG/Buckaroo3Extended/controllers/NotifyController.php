@@ -419,6 +419,7 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
         if ($this->_postArray['brq_transaction_type'] == 'C012'
             || $this->_postArray['brq_transaction_type'] == 'C017'
             || $this->_postArray['brq_transaction_type'] == 'C700'
+            || $this->_postArray['brq_transaction_type'] == 'C040'
         ) {
             list($processedPush, $module) = $this->_updateCapture();
             return array($module, $processedPush);
