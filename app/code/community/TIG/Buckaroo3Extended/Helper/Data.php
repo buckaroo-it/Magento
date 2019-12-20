@@ -63,6 +63,17 @@ class TIG_Buckaroo3Extended_Helper_Data extends Mage_Core_Helper_Abstract
     {
         Mage::log($message, Zend_Log::DEBUG, 'TIG_B3E.log', $force);
     }
+
+    public function devLog($method, $message, $parameters = null, $force = false)
+    {
+        return false;
+        Mage::log(
+            $method. ' / ' . $message . (isset($parameters) ? ":\n " . var_export($parameters, true) : ''),
+            Zend_Log::DEBUG,
+            'buckaroo.log',
+            $force
+        );
+    }
     
     public function logException($e)
     {

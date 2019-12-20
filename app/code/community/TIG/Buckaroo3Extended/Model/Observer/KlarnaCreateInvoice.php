@@ -63,7 +63,7 @@ class TIG_Buckaroo3Extended_Model_Observer_KlarnaCreateInvoice extends Mage_Core
             );
         }
 
-        $this->_createInvoice($order, $qtys);
+        $this->createInvoice($order, $qtys);
 
         return $this;
     }
@@ -72,7 +72,7 @@ class TIG_Buckaroo3Extended_Model_Observer_KlarnaCreateInvoice extends Mage_Core
      * @param Mage_Sales_Model_Order $order
      * @param array $qtys
      */
-    protected function _createInvoice(Mage_Sales_Model_Order $order, $qtys)
+    public function createInvoice(Mage_Sales_Model_Order $order, $qtys, $capture = null)
     {
         try {
             /** @var Mage_Sales_Model_Service_Order $service */
@@ -87,7 +87,7 @@ class TIG_Buckaroo3Extended_Model_Observer_KlarnaCreateInvoice extends Mage_Core
             }
 
             /** @noinspection PhpUndefinedMethodInspection */
-            $invoice->setRequestedCaptureCase($this->_getCaptureType($order->getStoreId()));
+            $invoice->setRequestedCaptureCase($capture ? $capture : $this->_getCaptureType($order->getStoreId()));
             $invoice->register();
 
             /** @var Mage_Core_Model_Resource_Transaction $transaction */
@@ -95,6 +95,8 @@ class TIG_Buckaroo3Extended_Model_Observer_KlarnaCreateInvoice extends Mage_Core
             $transaction->addObject($invoice);
             $transaction->addObject($invoice->getOrder());
             $transaction->save();
+
+            return $invoice;
         } catch (Mage_Core_Exception $exception) {
             Mage::throwException($exception->getMessage());
         }

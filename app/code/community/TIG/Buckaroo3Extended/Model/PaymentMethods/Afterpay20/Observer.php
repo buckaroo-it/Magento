@@ -105,7 +105,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
             return $this;
         }
 
-        //file_put_contents('/tmp/vlad', "+++++++++buckaroo3extended_push_custom_processing1", FILE_APPEND);
         $response = $observer->getResponse();
         $push = $observer->getPush();
         $postArray = $push->getPostArray();

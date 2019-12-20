@@ -80,6 +80,8 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
      */
     protected function _sendRequest()
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         if (empty($this->_order)) {
             $this->_debugEmail .= "No order was set! :( \n";
             return Mage::getModel(

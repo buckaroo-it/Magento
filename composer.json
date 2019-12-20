@@ -16,6 +16,6 @@
         "issues": "http://servicedesk.tig.nl/hc/nl/requests/new"
     },
     "homepage": "https://tig.nl/buckaroo",
-    "version" : "v5.1.0",
+    "version" : "v5.2.0",
     "minimum-stability": "stable"
 }

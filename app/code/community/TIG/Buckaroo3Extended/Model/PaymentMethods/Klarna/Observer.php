@@ -23,7 +23,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
     protected $_code = 'buckaroo3extended_klarna';
 
     /** @var string $_method */
-    protected $_method = 'klarna';
+    protected $_method = 'klarnakp';
 
     /** Klarna Article Types */
     const KLARNA_ARTICLE_TYPE_GENERAL           = 'General';
@@ -45,7 +45,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
         $request = $observer->getRequest();
 
         $codeBits = explode('_', $this->_code);
-        $code = end($codeBits);
+        $code = end($codeBits). 'kp';
 
         $request->setMethod($code);
 
@@ -295,6 +295,8 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
      */
     public function buckaroo3extended_response_custom_processing(Varien_Event_Observer $observer)
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         if ($this->_isChosenMethod($observer) === false) {
             return $this;
         }
@@ -302,6 +304,8 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
         /** @var Mage_Sales_Model_Order $order */
         $order = $observer->getOrder();
         $responseObject = $observer->getResponseobject();
+
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, $responseObject);
 
         if (isset($responseObject->Services) && count($responseObject->Services->Service->ResponseParameter) > 0) {
             $reserVationNumber = $this->getReservationNumber($responseObject->Services->Service->ResponseParameter);
@@ -337,11 +341,16 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
      */
     public function buckaroo3extended_push_custom_processing(Varien_Event_Observer $observer)
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         if ($this->_isChosenMethod($observer) === false) {
             return $this;
         }
 
         $response = $observer->getResponse();
+        $responseObject = $observer->getResponseobject();
+
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, [$response,$responseObject]);
 
         if ($response['status'] == TIG_Buckaroo3Extended_Helper_Data::BUCKAROO_REJECTED) {
             /** @var Mage_Sales_Model_Order $order */
@@ -366,12 +375,92 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
         $order = $observer->getOrder();
         $paymentMethod = $order->getPayment()->getMethodInstance();
 
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 3, $paymentMethod->getConfigPaymentAction());
+
         // Authorize is successful
         if ($response['status'] == TIG_Buckaroo3Extended_Helper_Data::BUCKAROO_SUCCESS ||
             $paymentMethod->getConfigPaymentAction() == Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE) {
+
+            if (!empty($responseObject['brq_SERVICE_klarnakp_ReservationNumber'])) {
+                $order->setBuckarooReservationNumber($responseObject['brq_SERVICE_klarnakp_ReservationNumber']);
+                $order->save();
+            }
+
             $newStates = $observer->getPush()->getNewStates($response['status']);
             $order->setState($newStates[0])
                 ->save();
+
+            if (!empty($responseObject['brq_SERVICE_klarnakp_AutoPayTransactionKey']) && ($responseObject['brq_statuscode'] == 190)) {
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 4, $responseObject['brq_SERVICE_klarnakp_AutoPayTransactionKey']);
+
+                $createInvoice = new TIG_Buckaroo3Extended_Model_Observer_KlarnaCreateInvoice();
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 5);
+
+                $qtys = array();
+                foreach ($order->getAllItems() as $orderItem) {
+                    $qtys[$orderItem->getId()] = $orderItem->getData('qty_ordered');
+                }
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 6, $qtys);
+
+                $invoice = $createInvoice->createInvoice($order, $qtys, 'offline');
+                $invoice->setTransactionId($responseObject['brq_SERVICE_klarnakp_AutoPayTransactionKey']);
+                $invoice->save();
+
+                $transaction = Mage::getModel('sales/order_payment_transaction')->setOrderPaymentObject($order->getPayment());
+                $transaction
+                    ->setOrderId($order->getId())
+                    ->setTxnId($responseObject['brq_SERVICE_klarnakp_AutoPayTransactionKey'])
+                    ->setTxnType(Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE)
+                    ->setPaymentId($order->getPayment()->getId())
+                    ->isFailsafe(false)
+                    ->setIsClosed(1);
+                $transaction->save();
+
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 7);
+
+                if (!$invoice->getEmailSent()) {
+                    $comment = $this->getNewestInvoiceComment($invoice);
+                    $invoice->sendEmail(true, $comment);
+                }
+
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 8);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     *
+     * @return $this
+     * @throws Exception
+     */
+    public function buckaroo3extended_push_custom_processing_after(Varien_Event_Observer $observer)
+    {
+        if($this->_isChosenMethod($observer) === false) {
+            return $this;
+        }
+
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
+        $order = $observer->getOrder();
+        $push = $observer->getPush();
+        $responseObject = $push->getPostArray();
+
+        if ($responseObject) {
+            if (!empty($responseObject['brq_SERVICE_klarnakp_AutoPayTransactionKey']) && ($responseObject['brq_statuscode'] == 190)) {
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2);
+
+                $message = Mage::helper('sales')->__('Captured amount of %s online.',
+                    $order->getBaseCurrency()->formatTxt($order->getGrandTotal())
+                );
+                $message .= ' ' . Mage::helper('sales')->__('Transaction ID: "%s".',
+                    $responseObject['brq_SERVICE_klarnakp_AutoPayTransactionKey']
+                );
+                $order->addStatusHistoryComment($message);
+                $order->save();
+            }
         }
 
         return $this;
@@ -420,7 +509,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
         $requestArray = array(
             'Gender'                => $additionalFields['BPE_customer_gender'],
             'OperatingCountry'      => $billingAddress->getCountryId(),
-            'Encoding'              => $listCountries[$billingAddress->getCountryId()],
             'Pno'                   => $additionalFields['BPE_customer_dob'],
             'ShippingSameAsBilling' => $this->shippingSameAsBilling(),
         );
@@ -445,16 +533,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
     {
         $array = array(
             'ReservationNumber' => $this->_order->getBuckarooReservationNumber(),
-            'SendByMail' => 'false',
-            'SendByEmail' => 'false',
         );
-
-        $sendInvoiceBy = Mage::getStoreConfig(
-            'buckaroo/buckaroo3extended_' . $this->_method . '/send_invoice_by',
-            Mage::app()->getStore()->getStoreId()
-        );
-        $sendInvoiceBy = ucfirst($sendInvoiceBy);
-        $array['SendBy' . $sendInvoiceBy] = 'true';
 
         if (array_key_exists('customVars', $vars) && is_array($vars['customVars'][$this->_method])) {
             $vars['customVars'][$this->_method] = array_merge($vars['customVars'][$this->_method], $array);

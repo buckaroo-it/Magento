@@ -2,7 +2,7 @@
 <config>
     <modules>
         <TIG_Buckaroo3Extended>
-            <version>5.1.0</version>
+            <version>5.2.0</version>
         </TIG_Buckaroo3Extended>
     </modules>
     <tig>
@@ -1693,6 +1693,13 @@
                         <method>buckaroo3extended_push_custom_processing_after</method>
                     </buckaroo3extended_paymentmethod_observer_applepay>
                 </observers>
+                <observers>
+                    <buckaroo3extended_paymentmethod_observer_klarna>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_klarna_observer</class>
+                        <method>buckaroo3extended_push_custom_processing_after</method>
+                    </buckaroo3extended_paymentmethod_observer_klarna>
+                </observers>
             </buckaroo3extended_push_custom_processing_after>
             <buckaroo3extended_response_custom_processing>
                 <observers>
@@ -2727,7 +2734,6 @@
                 <allowed_currencies>EUR</allowed_currencies>
                 <payment_fee_label>Fee</payment_fee_label>
                 <order_email>1</order_email>
-                <send_invoice_by>email</send_invoice_by>
             </buckaroo3extended_klarna>
 
             <buckaroo3extended_pospayment>

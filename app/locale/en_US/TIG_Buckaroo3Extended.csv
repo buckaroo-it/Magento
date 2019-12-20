@@ -154,10 +154,6 @@
 "Convert your account number to IBAN %s","Convert your account number to IBAN %s."
 "Please enter these fields as they appear on your bank account.","Please enter these fields as they appear on your bank account."
 "BIC number","BIC number",
-"Send invoice by","Send invoice by"
-"Select how Klarna should send the invoice. Please note that Klarna charges a fee when the invoice is send by mail.","Select how Klarna should send the invoice. Please note that Klarna charges a fee when the invoice is send by mail."
-"By e-mail","By e-mail"
-"By mail (Includes fee from Klarna)","By mail (Includes fee from Klarna)"
 "Klarna is doing an additional check. The status will be known within 24 hours.","Klarna is doing an additional check. The status will be known within 24 hours."
 "Klarna has rejected the payment request. Please check the Buckaroo Payment Plaza for additional information.","Klarna has rejected the payment request. Please check the Buckaroo Payment Plaza for additional information."
 "AfterPay has rejected the payment request. Please check the Buckaroo Payment Plaza for additional information.","AfterPay has rejected the payment request. Please check the Buckaroo Payment Plaza for additional information."

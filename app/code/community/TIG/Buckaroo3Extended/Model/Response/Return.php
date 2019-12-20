@@ -3,6 +3,8 @@ class TIG_Buckaroo3Extended_Model_Response_Return extends TIG_Buckaroo3Extended_
 {
     public function processReturn()
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, $this->_postArray);
+
         //check if the push is valid and if the order can be updated
         list($canProcess, $canUpdate) = $this->_canProcessPush(true);
 

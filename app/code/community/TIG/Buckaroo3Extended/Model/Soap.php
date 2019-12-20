@@ -202,6 +202,8 @@ final class TIG_Buckaroo3Extended_Model_Soap extends TIG_Buckaroo3Extended_Model
      */
     public function transactionRequest()
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         $client = $this->getClient();
 
         if ($client === null) {
@@ -314,7 +316,9 @@ final class TIG_Buckaroo3Extended_Model_Soap extends TIG_Buckaroo3Extended_Model
         }
 
         try {
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, $transactionRequest);
             $response = $client->$requestType($transactionRequest);
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 3, $response);
         } catch (Exception $e) {
             $this->logException($e->getMessage());
             return $this->_error($client);

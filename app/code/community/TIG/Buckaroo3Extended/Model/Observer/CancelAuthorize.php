@@ -29,7 +29,6 @@ class TIG_Buckaroo3Extended_Model_Observer_CancelAuthorize extends Mage_Core_Mod
      */
     public function sales_order_payment_void_authorize(Varien_Event_Observer $observer)
     {
-        //file_put_contents('/tmp/vlad', "+++++++++sales_order_payment_void_authorize", FILE_APPEND);
         return $this->sales_order_payment_cancel_authorize($observer);
     }
 
