@@ -1,1 +1,1 @@
-# Buckaroo Magento 1 Extension
+# Buckaroo Magento 1 Extension.
