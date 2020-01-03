@@ -1,21 +1,21 @@
 {
-    "name": "tig/buckaroo-magento1",
-    "description": "TIG Magento 1 Buckaroo extension",
+    "name": "buckaroo/magento1",
+    "description": "Buckaroo Magento 1 extension",
     "type": "magento-module",
     "license": "CC-BY-NC-ND-3.0",
     "require": {},
     "authors": [
         {
-            "name": "TIG",
-            "email": "servicedesk@tig.nl",
-            "homepage": "http://tig.nl"
+            "name": "Buckaroo",
+            "email": "support@buckaroo.nl",
+            "homepage": "https://www.buckaroo.nl"
         }
     ],
     "support": {
-        "email": "servicedesk@tig.nl",
-        "issues": "http://servicedesk.tig.nl/hc/nl/requests/new"
+        "email": "support@buckaroo.nl",
+        "issues": "https://support.buckaroo.nl/contact"
     },
-    "homepage": "https://tig.nl/buckaroo",
+    "homepage": "https://www.buckaroo.nl",
     "version" : "v5.2.0",
     "minimum-stability": "stable"
 }
