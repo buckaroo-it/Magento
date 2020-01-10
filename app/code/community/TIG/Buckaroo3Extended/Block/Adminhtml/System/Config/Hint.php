@@ -43,9 +43,6 @@ class TIG_Buckaroo3Extended_Block_Adminhtml_System_Config_Hint
         'dankort',
         'nexi',
         'creditcard',
-        'applepay',
-        'alipay',
-        'wechatpay',
     );
 
     public $services = array(

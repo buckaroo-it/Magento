@@ -276,9 +276,28 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
      */
     protected function _processAddress($street)
     {
-        $helper = Mage::helper('buckaroo3extended/streetFormatter');
+        $format = [
+            'house_number'    => '',
+            'number_addition' => '',
+            'street'          => $street
+        ];
 
-        return $helper->format($street);
+        if (preg_match('#^(.*?)([0-9]+)(.*)#s', $street, $matches)) {
+            // Check if the number is at the beginning of streetname
+            if ('' == $matches[1]) {
+                preg_match('#^([0-9]+)(.*?)([0-9]+)(.*)#s', $street, $matches);
+                $format['house_number'] = trim($matches[3]);
+                $format['street'] = trim($matches[1]) . trim($matches[2]);
+            } else {
+                $format['street']          = trim($matches[1]);
+                $format['house_number']    = trim($matches[2]);
+                $format['number_addition'] = trim($matches[3]);
+            }
+        } else {
+            $format['street'] = $street;
+        }
+
+        return $format;
     }
 
     /**
@@ -636,8 +655,6 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
                 'paypal',
                 'paysafecard',
                 'sofortueberweisung',
-                'alipay',
-                'wechatpay',
                 'transfer',
                 'visa',
                 'maestro',

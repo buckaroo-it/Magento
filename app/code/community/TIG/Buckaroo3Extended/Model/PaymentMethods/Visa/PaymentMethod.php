@@ -13,7 +13,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Visa_PaymentMethod extends TIG_
         'EUR',
         'GBP',
         'HRK',
-        'HUF',
         'ISK',
         'JPY',
         'LTL',

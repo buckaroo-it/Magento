@@ -32,9 +32,6 @@ class TIG_Buckaroo3Extended_Block_Adminhtml_System_Config_Responsehint
         'afterpay2',
         'afterpay20',
         'masterpass',
-        'applepay',
-        'alipay',
-        'wechatpay',
     );
 
     public $services = array(

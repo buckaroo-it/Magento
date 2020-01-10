@@ -111,34 +111,27 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends TIG_
 
         $push = $observer->getPush();
         $postData = $push->getPostArray();
-        $order = $observer->getOrder();
-
-
-        // Add transaction to transactionManager for managing (partial) refunds
-        // with different payment methods
-        if (!empty($postData['brq_mutationtype']) &&
-            $postData['brq_mutationtype'] == 'Processing'
-        ) {
-            $payment = $order->getPayment();
-            $transactions = $payment->getAdditionalInformation('transactions');
-
-            /** @var $transactionManager TIG_Buckaroo3Extended_Model_TransactionManager */
-            $transactionManager = Mage::getModel('buckaroo3extended/transactionManager');
-            $transactionManager->setTransactionArray($transactions);
-
-            $transactionKey = $postData['brq_transactions'];
-            $amount = $postData['brq_amount'];
-            $method = $postData['brq_transaction_method'];
-
-            $transactions = $transactionManager->addDebitTransaction($transactionKey, $amount, $method);
-
-            $payment->setAdditionalInformation('transactions', $transactions);
-            $payment->save();
-        }
-
-        //Partial payment
         if (!empty($postData['brq_relatedtransaction_partialpayment'])) {
+            $order = $observer->getOrder();
             if ($postData['brq_amount'] < $order->getGrandTotal()) {
+
+                // Add transaction to transactionManager for managing partial refunds
+                // with different payment methods
+                $payment = $order->getPayment();
+                $transactions = $payment->getAdditionalInformation('transactions');
+
+                /** @var $transactionManager TIG_Buckaroo3Extended_Model_TransactionManager */
+                $transactionManager = Mage::getModel('buckaroo3extended/transactionManager');
+                $transactionManager->setTransactionArray($transactions);
+
+                $transactionKey = $postData['brq_transactions'];
+                $amount = $postData['brq_amount'];
+                $method = $postData['brq_transaction_method'];
+
+                $transactions = $transactionManager->addDebitTransaction($transactionKey, $amount, $method);
+
+                $payment->setAdditionalInformation('transactions', $transactions);
+                $payment->save();
 
                 $order->setTransactionKey($postData['brq_relatedtransaction_partialpayment']);
 

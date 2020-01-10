@@ -1,21 +1,33 @@
 <?php
 /**
+ *
+ *          ..::..
+ *     ..::::::::::::..
+ *   ::'''''':''::'''''::
+ *   ::..  ..:  :  ....::
+ *   ::::  :::  :  :   ::
+ *   ::::  :::  :  ''' ::
+ *   ::::..:::..::.....::
+ *     ''::::::::::::''
+ *          ''::''
+ *
+ *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License
+ * This source file is subject to the Creative Commons License.
  * It is available through the world-wide-web at this URL:
- * https://tldrlegal.com/license/mit-license
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to support@buckaroo.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact support@buckaroo.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright Copyright (c) Buckaroo B.V.
- * @license   https://tldrlegal.com/license/mit-license
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
     extends TIG_Buckaroo3Extended_Model_Observer_Abstract
@@ -40,20 +52,9 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         $request = $observer->getRequest();
         $vars = $request->getVars();
 
-        $paymentAction = Mage::getStoreConfig(
-            'buckaroo/' . $this->_code . '/payment_action',
-            Mage::app()->getStore()->getStoreId()
-        );
-
-        if ($paymentAction == Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE) {
-            $serviceAction = 'Authorize';
-        } else {
-            $serviceAction = 'Pay';
-        }
-
         $array = array(
             $this->_method => array(
-                'action'   => $serviceAction,
+                'action'   => 'Pay',
                 'version'  => '1',
             ),
         );
@@ -90,73 +91,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         $this->addArticlesVariables($vars);
 
         $request->setVars($vars);
-        return $this;
-    }
-
-    /**
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     * @throws Exception
-     */
-    public function buckaroo3extended_push_custom_processing(Varien_Event_Observer $observer)
-    {
-        if ($this->_isChosenMethod($observer) === false) {
-            return $this;
-        }
-
-        $response = $observer->getResponse();
-        $push = $observer->getPush();
-        $postArray = $push->getPostArray();
-        /** @var Mage_Sales_Model_Order $order */
-        $order = $observer->getOrder();
-        $paymentMethod = $order->getPayment()->getMethodInstance();
-
-        //if (!empty($postArray['brq_transactions'])) {
-            //$order->getPayment()->setTransactionId($postArray['brq_transactions']);
-        //}
-
-        if (
-            ($response['status'] == TIG_Buckaroo3Extended_Helper_Data::BUCKAROO_REJECTED)
-            &&
-            ($paymentMethod->getConfigPaymentAction() == Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE)
-        ) {
-            $method = $order->getPayment()->getMethod();
-            $helper = Mage::helper('buckaroo3extended');
-
-            $status = $helper->getNewStates(TIG_Buckaroo3Extended_Helper_Data::BUCKAROO_FAILED, $order, $method);
-            if (
-                $postArray
-                &&
-                isset($postArray['brq_transaction_type'])
-                &&
-                ($postArray['brq_transaction_type'] == 'I038')
-                &&
-                !empty($postArray['brq_SERVICE_afterpay_ErrorResponseMessage'])
-            ) {
-                $message = $postArray['brq_SERVICE_afterpay_ErrorResponseMessage'];
-            } else {
-                $message = $helper->__('AfterPay has rejected the payment request. Please check the Buckaroo Payment Plaza for additional information.');
-            }
-
-            // skipCancelAuthorize is a custom, temporary data.
-            // This allows us to cancel an order without sending a call to Buckaroo.
-            $order->getPayment()->setSkipCancelAuthorize(true);
-            $order->cancel();
-            $order->addStatusHistoryComment($message, $status[1]);
-            $order->save();
-
-            return $this;
-        }
-
-        // Authorize is successful
-        if ($response['status'] == TIG_Buckaroo3Extended_Helper_Data::BUCKAROO_SUCCESS ||
-            $paymentMethod->getConfigPaymentAction() == Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE) {
-            $newStates = $observer->getPush()->getNewStates($response['status']);
-            $order->setState($newStates[0])
-                ->save();
-        }
-
         return $this;
     }
 
@@ -252,93 +186,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         $this->addCreditmemoArticlesVariables($vars, $payment);
 
         $request->setVars($vars);
-
-        return $this;
-    }
-
-    /**
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     */
-    public function buckaroo3extended_capture_request_addservices(Varien_Event_Observer $observer)
-    {
-        if ($this->_isChosenMethod($observer) === false) {
-            return $this;
-        }
-
-        $request = $observer->getRequest();
-
-        $vars = $request->getVars();
-
-        $array = array(
-            'action'    => 'Capture',
-            'version'   => 1,
-
-        );
-
-        if (array_key_exists('services', $vars) && is_array($vars['services'][$this->_method])) {
-            $vars['services'][$this->_method] = array_merge($vars['services'][$this->_method], $array);
-        } else {
-            $vars['services'][$this->_method] = $array;
-        }
-
-        $request->setVars($vars);
-
-        return $this;
-    }
-
-    /**
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     */
-    public function buckaroo3extended_capture_request_addcustomvars(Varien_Event_Observer $observer)
-    {
-        if ($this->_isChosenMethod($observer) === false) {
-            return $this;
-        }
-
-        $request            = $observer->getRequest();
-        $this->_billingInfo = $request->getBillingInfo();
-        $this->_order       = $request->getOrder();
-
-        $vars = $request->getVars();
-
-        $this->addAfterpayVariables($vars);
-        $this->addArticlesVariables($vars, true);
-
-        $request->setVars($vars);
-        return $this;
-    }
-
-    /**
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     */
-    public function buckaroo3extended_cancelauthorize_request_addservices(Varien_Event_Observer $observer)
-    {
-        if ($this->_isChosenMethod($observer) === false) {
-            return $this;
-        }
-
-        $refundRequest = $observer->getRequest();
-        $vars = $refundRequest->getVars();
-
-        $array = array(
-            'action'    => 'CancelAuthorize',
-            'version'   => 1,
-
-        );
-
-        if (array_key_exists('services', $vars) && is_array($vars['services'][$this->_method])) {
-            $vars['services'][$this->_method] = array_merge($vars['services'][$this->_method], $array);
-        } else {
-            $vars['services'][$this->_method] = $array;
-        }
-
-        $refundRequest->setVars($vars);
 
         return $this;
     }
@@ -550,52 +397,36 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
     /**
      * @param array $vars
      */
-    private function addArticlesVariables(&$vars, $isCapture = false)
+    private function addArticlesVariables(&$vars)
     {
         $i        = 1;
         $articles = array();
 
-        $partialCapture = $isCapture
-            &&
-            $this->_order->getPayment()->canCapturePartial()
-            &&
-            ($invoiceCollection = $this->_order->getInvoiceCollection())
-            &&
-            ($lastInvoice = $invoiceCollection->getLastItem())
-            &&
-            ($lastInvoice->getBaseGrandTotal() < $this->_order->getBaseGrandTotal());
-
-        if ($partialCapture) {
-            $productArticles = $this->getPartialProductArticles($i);
-        } else {
-            $productArticles = $this->getProductArticles($i);
-        }
+        $productArticles = $this->getProductArticles($i);
         $i += count($productArticles);
         $articles = array_merge($articles, $productArticles);
 
-        if (!$partialCapture || ($partialCapture && $invoiceCollection && (sizeof($invoiceCollection)==1)))  {
-            $enterpriseArticles = $this->getEnterpriseArticles($i);
-            $i += count($enterpriseArticles);
-            $articles = array_merge($articles, $enterpriseArticles);
+        $enterpriseArticles = $this->getEnterpriseArticles($i);
+        $i += count($enterpriseArticles);
+        $articles = array_merge($articles, $enterpriseArticles);
 
-            $fee = (double)$this->_order->getBuckarooFee();
-            $feeTax = (double)$this->_order->getBuckarooFeeTax();
-            $paymentFeeArticles = $this->getPaymentFeeLine($fee, $feeTax, $i);
-            if (!empty($paymentFeeArticles)) {
-                $articles[] = $paymentFeeArticles;
-                $i++;
-            }
+        $fee    = (double) $this->_order->getBuckarooFee();
+        $feeTax = (double) $this->_order->getBuckarooFeeTax();
+        $paymentFeeArticles = $this->getPaymentFeeLine($fee, $feeTax, $i);
+        if (!empty($paymentFeeArticles)) {
+            $articles[] = $paymentFeeArticles;
+            $i++;
+        }
 
-            $discountArticle = $this->getDiscountArticle($i);
-            if (!empty($discountArticle)) {
-                $articles[] = $discountArticle;
-                $i++;
-            }
-            $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
-            $shippingArticle = $this->getShippingArticle($shippingCosts, $i);
-            if (!empty($shippingArticle)) {
-                $articles[] = $shippingArticle;
-            }
+        $discountArticle = $this->getDiscountArticle($i);
+        if (!empty($discountArticle)) {
+            $articles[] = $discountArticle;
+            $i++;
+        }
+        $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
+        $shippingArticle = $this->getShippingArticle($shippingCosts, $i);
+        if (!empty($shippingArticle)) {
+            $articles[] = $shippingArticle;
         }
 
         $requestArray = array('Articles' => $articles);
@@ -635,37 +466,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
     }
 
     /**
-     * @param $i
-     *
-     * @return array
-     */
-    private function getPartialProductArticles($i)
-    {
-        /** @var Mage_Sales_Model_Resource_Order_Invoice_Collection $invoiceCollection */
-        $invoiceCollection = $this->_order->getInvoiceCollection();
-
-        $products = $invoiceCollection->getLastItem()->getAllItems();
-        $max      = 99;
-        $productArticles = array();
-
-        /** @var $item Mage_Sales_Model_Order_Item */
-        foreach ($products as $item) {
-            if (empty($item) || ($item->getOrderItem() && $item->getOrderItem()->getParentItem())) {
-                continue;
-            }
-
-            $productArticles[] = $this->getPartialSingleProductArticle($item, $i++);
-
-            if ($i > $max) {
-                break;
-            }
-        }
-
-        return $productArticles;
-    }
-
-
-    /**
      * @param Mage_Sales_Model_Order_Item $item
      * @param int                         $groupId
      *
@@ -691,39 +491,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         $article[] = $this->getParameterLine('Identifier', $item->getId(), 'Article', $groupId);
         $article[] = $this->getParameterLine('ImageUrl', $item->getProduct()->getImageUrl(), 'Article', $groupId);
         $article[] = $this->getParameterLine('Url', $item->getProduct()->getProductUrl(), 'Article', $groupId);
-
-        return $article;
-    }
-
-    /**
-     * @param Mage_Sales_Model_Order_Item $item
-     * @param int                         $groupId
-     *
-     * @return array
-     */
-    private function getPartialSingleProductArticle($item, $groupId = 1)
-    {
-        // Changed calculation from unitPrice to orderLinePrice due to impossible to recalculate unitprice,
-        // because of differences in outcome between TAX settings: Unit, OrderLine and Total.
-        // Quantity will always be 1 and quantity ordered will be in the article description.
-        $productPrice = ($item->getBasePrice() * $item->getQty())
-            + $item->getBaseTaxAmount()
-            + $item->getBaseHiddenTaxAmount();
-        $productPrice = round($productPrice, 2);
-
-        $description = (int) $item->getQty() . 'x ' . $item->getName();
-
-        $article = array();
-        $article[] = $this->getParameterLine('Description', $description, 'Article', $groupId);
-        $article[] = $this->getParameterLine('GrossUnitPrice', $productPrice, 'Article', $groupId);
-        $article[] = $this->getParameterLine('VatPercentage', round($item->getOrderItem()->getTaxPercent(), 2), 'Article', $groupId);
-        $article[] = $this->getParameterLine('Quantity', 1, 'Article', $groupId);
-        $article[] = $this->getParameterLine('Identifier', $item->getOrderItemId(), 'Article', $groupId);
-        if ($item->getOrderItem() && $item->getOrderItem()->getProduct()) {
-            //ZAK
-            //$article[] = $this->getParameterLine('ImageUrl', $item->getProduct()->getImageUrl(), 'Article', $groupId);
-            $article[] = $this->getParameterLine('Url', $item->getOrderItem()->getProduct()->getProductUrl(), 'Article', $groupId);
-        }
 
         return $article;
     }
@@ -1027,5 +794,4 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
 
         return false;
     }
-
 }
