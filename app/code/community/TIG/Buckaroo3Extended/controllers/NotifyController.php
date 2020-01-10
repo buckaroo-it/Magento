@@ -1,21 +1,40 @@
 <?php
 /**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License
+ * This source file is subject to the Creative Commons License.
  * It is available through the world-wide-web at this URL:
- * https://tldrlegal.com/license/mit-license
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to support@buckaroo.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact support@buckaroo.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright Copyright (c) Buckaroo B.V.
- * @license   https://tldrlegal.com/license/mit-license
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_Action
 {
@@ -135,10 +154,7 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
                 ->load($this->_postArray['brq_relatedtransaction_refund'], 'transaction_id');
         }
 
-        if (null !== $invoice &&
-            count($invoice->getData()) > 0 &&
-            $invoice->getOrderIncrementId() != $this->_postArray['brq_invoicenumber']
-        ) {
+        if (null !== $invoice && $invoice->getOrderIncrementId() != $this->_postArray['brq_invoicenumber']) {
             $orderId = $invoice->getOrderIncrementId();
         }
 
@@ -348,8 +364,6 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
 
     protected function _processPushAccordingToType()
     {
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
-
         if ($this->_order->getTransactionKey() == $this->_postArray['brq_transactions']
             || (isset($this->_postArray['brq_datarequest'])
                 && $this->_order->getTransactionKey() == $this->_postArray['brq_datarequest']
@@ -370,8 +384,8 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
                     && $this->_postArray['brq_transaction_method'] != 'payperemail'
                 )
                 || ($this->_paymentCode == 'buckaroo3extended_klarna'
-                    && ($this->_postArray['brq_primary_service'] == 'klarnakp'
-                        || $this->_postArray['brq_transaction_method'] == 'klarnakp'
+                    && ($this->_postArray['brq_primary_service'] == 'klarna'
+                        || $this->_postArray['brq_transaction_method'] == 'klarna'
                     )
                 )
             )
@@ -379,7 +393,7 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
             && (
                 isset($this->_postArray['brq_websitekey'])
                 && $merchantKey == $this->_postArray['brq_websitekey']
-            )
+               )
         ) {
             list($processedPush, $module) = $this->_updateOrderWithKey();
             return array($module, $processedPush);
@@ -417,16 +431,11 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
             return array($module, $processedPush);
         }
 
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, $this->_postArray);
-
         // C012, C017 and C700 are Afterpay and Klarna Capture transactions which don't need an update
         if ($this->_postArray['brq_transaction_type'] == 'C012'
             || $this->_postArray['brq_transaction_type'] == 'C017'
             || $this->_postArray['brq_transaction_type'] == 'C700'
-            || $this->_postArray['brq_transaction_type'] == 'C040'
-            || $this->_postArray['brq_transaction_type'] == 'V610'
         ) {
-            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 3);
             list($processedPush, $module) = $this->_updateCapture();
             return array($module, $processedPush);
         }
@@ -479,7 +488,7 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
         $this->_debugEmail .= "Order does not yet have a transaction key and the PUSH does not constitute a refund. \n";
 
         $this->_order->setTransactionKey($this->_postArray['brq_transactions'])
-            ->save();
+              ->save();
 
         $this->_debugEmail .= "Transaction key saved: {$this->_postArray['brq_transactions']}";
 
@@ -524,9 +533,6 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
         return array(true, $module);
     }
 
-    /**
-     * @return array
-     */
     protected function _newRefund()
     {
         $this->_debugEmail .= "The PUSH constitutes a new refund. \n";
@@ -551,46 +557,12 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
 
         try {
             $processedPush = $module->processBuckarooRefundPush();
-
-            if (!empty($this->_postArray['brq_relatedtransaction_refund'])) {
-                $this->_addCreditTransaction();
-            }
         } catch (Exception $e) {
             Mage::logException($e);
             return array(false, $module);
         }
 
         return array($processedPush, $module);
-    }
-
-    /**
-     * Add credit transaction
-     * Add refund transaction to transactionManager for managing partial refunds
-     * with different payment methods
-     */
-    protected function _addCreditTransaction()
-    {
-        if ($this->_postArray['brq_amount_credit'] > 0 &&
-            $this->_postArray['brq_statuscode'] == 190
-        ) {
-
-            $payment =  $this->_order->getPayment();
-            $transactions = $payment->getAdditionalInformation('transactions');
-
-            /** @var $transactionManager TIG_Buckaroo3Extended_Model_TransactionManager */
-            $transactionManager = Mage::getModel('buckaroo3extended/transactionManager');
-            $transactionManager->setTransactionArray($transactions);
-
-            $transactionKey = $this->_postArray['brq_relatedtransaction_refund'];
-            $transactionAmount = $this->_postArray['brq_amount_credit'];
-            $method = $this->_postArray['brq_transaction_method'];
-
-            $transactionManager->addCreditTransaction($transactionKey, $transactionAmount);
-            $transactionManager->addHistory($transactionKey, $transactionAmount, $method, 'OK');
-
-            $payment->setAdditionalInformation('transactions', $transactionManager->getTransactionArray());
-            $payment->save();
-        }
     }
 
     protected function _updateOrderWithoutMatchingKey()

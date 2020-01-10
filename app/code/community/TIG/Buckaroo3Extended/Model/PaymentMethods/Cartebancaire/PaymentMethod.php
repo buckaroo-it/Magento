@@ -3,7 +3,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Cartebancaire_PaymentMethod ext
 {
     public $allowedCurrencies = array(
         'EUR',
-        'HUF',
     );
 
     protected $_code = 'buckaroo3extended_cartebancaire';

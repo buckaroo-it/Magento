@@ -56,18 +56,6 @@
 		</reference>
 		<reference name="before_body_end">
 			<block type="core/template" name="buckaroo_save_sata_js" template="buckaroo3extended/saveData.phtml"/>
-            <block type="core/text" name="buckaroo">
-                <action method="setText">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://checkout.buckaroo.nl/api/buckaroosdk/script/en-US"></script>]]>
-                    </text>
-                </action>
-            </block>
-            <block type="core/template" name="applepay_before_save">
-                <action method="setTemplate" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                    <template>buckaroo3extended/applepay/checkout/beforeSave.phtml</template>
-                </action>
-            </block>
 		</reference>
 	</checkout_onepage_index>
 
@@ -101,18 +89,6 @@
 		<reference name="before_body_end">
 			<block type="core/template" name="buckaroo_save_sata_js" template="buckaroo3extended/saveData.phtml"/>
 			<block type="core/template" name="buckaroo_onestepcheckout" template="buckaroo3extended/oneStepCheckout.phtml"/>
-            <block type="core/template" name="applepay_before_save">
-                <action method="setTemplate" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                    <template>buckaroo3extended/applepay/checkout/beforeSaveOSC.phtml</template>
-                </action>
-            </block>
-            <block type="core/text" name="buckaroo">
-                <action method="setText">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://checkout.buckaroo.nl/api/buckaroosdk/script/en-US"></script>]]>
-                    </text>
-                </action>
-            </block>
 		</reference>
 	</onestepcheckout_index_index>
 
@@ -140,52 +116,6 @@
             <block type="buckaroo3extended/paymentMethods_payconiq_checkout_pay" name="buckaroo_payconiq_pay" template="buckaroo3extended/payconiq/checkout/pay.phtml" />
         </reference>
     </buckaroo3extended_payconiq_pay>
-
-    <checkout_cart_index>
-        <reference name="head">
-            <block type="core/text" name="buckaroo">
-                <action method="setText" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://checkout.buckaroo.nl/api/buckaroosdk/script/en-US"></script>]]>
-                    </text>
-                </action>
-            </block>
-            <action method="addItem" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                <type>skin_css</type>
-                <name>css/TIG/Buckaroo3Extended/apple_pay.css</name>
-            </action>
-        </reference>
-            <reference name="checkout.cart.methods">
-                <block type="buckaroo3extended/paymentMethods_applepay_cart_button" name="checkout.cart.methods.applepay" as="checkout.applepay.cart.button">
-                    <action method="setTemplate" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                        <template helper="buckaroo3extended/data/isApplePayInCartEnabled"/>
-                    </action>
-                </block>
-            </reference>
-    </checkout_cart_index>
-
-    <catalog_product_view>
-        <reference name="head">
-            <block type="core/text" name="buckaroo">
-                <action method="setText" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://checkout.buckaroo.nl/api/buckaroosdk/script/en-US"></script>]]>
-                    </text>
-                </action>
-            </block>
-            <action method="addItem" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                <type>skin_css</type>
-                <name>css/TIG/Buckaroo3Extended/apple_pay.css</name>
-            </action>
-        </reference>
-        <reference name="product.info.addtocart">
-            <block type="buckaroo3extended/paymentMethods_applepay_product_button" name="product.info.applepay" as="applepay.product">
-                <action method="setTemplate" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                    <template helper="buckaroo3extended/data/isApplePayInProductEnabled"/>
-                </action>
-            </block>
-        </reference>
-    </catalog_product_view>
 
     <sales_order_print>
         <reference name="order_totals">

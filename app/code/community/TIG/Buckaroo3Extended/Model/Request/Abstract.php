@@ -50,11 +50,7 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
         $responseModelClass = Mage::helper('buckaroo3extended')->isAdmin() ? 'buckaroo3extended/response_backendOrder' : 'buckaroo3extended/response_abstract';
         $this->setResponseModelClass($responseModelClass);
     }
-    
-    /**
-     * @return mixed
-     * @throws Exception
-     */
+
     public function sendRequest()
     {
         try {
@@ -68,20 +64,13 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
                 'debugEmail' => $this->_debugEmail,
                 )
             );
-            $responseModel->setOrder($this->_order)
+            return $responseModel->setOrder($this->_order)
                           ->processResponse();
-            throw new Exception($e->getMessage());
         }
     }
-    
-    /**
-     * @return mixed
-     * @throws Exception
-     */
+
     protected function _sendRequest()
     {
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
-
         if (empty($this->_order)) {
             $this->_debugEmail .= "No order was set! :( \n";
             return Mage::getModel(
@@ -188,11 +177,7 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
             $responseModel->setOrder($this->_order);
         }
 
-        try {
-            return $responseModel->processResponse();
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
+        return $responseModel->processResponse();
     }
 
     protected function _addServices()

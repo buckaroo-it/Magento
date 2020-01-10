@@ -1,0 +1,54 @@
+language: php
+
+php:
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+  - hhvm
+
+env:
+  global:
+    - CODE_COVERAGE=false
+
+  matrix:
+      - MAGENTO_VERSION=magento-mirror-1.9.3.10
+
+matrix:
+  include:
+    - php: 7.0
+      env: MAGENTO_VERSION=magento-mirror-1.9.3.10 CODE_COVERAGE=true
+    - php: 7.0
+      env: MAGENTO_VERSION=magento-mirror-1.9.2.4
+    - php: 7.0
+      env: MAGENTO_VERSION=magento-mirror-1.8.1.0
+    - php: 7.0
+      env: MAGENTO_VERSION=magento-mirror-1.8.0.0
+    - php: 7.2
+      env: MAGENTO_VERSION=magento-mirror-1.9.4.0
+
+  fast_finish: true
+
+  allow_failures:
+  - php: 7.1
+  - php: 7.2
+  - php: hhvm
+  - php: nightly
+
+before_script:
+  - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ] && [ "${TRAVIS_PHP_VERSION}" != "nightly" ] && [ "${CODE_COVERAGE}" = "false" ]; then phpenv config-rm xdebug.ini; fi
+  - if find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n 1 -P 8 php -l | grep -v "No syntax errors detected"; then exit 1; fi
+  - export PATH=$PATH:$HOME/.composer/vendor/bin
+  - npm install -g travis-notify-geckoboard
+  - bash app/code/community/TIG/Buckaroo3Extended/Test/Scripts/InstallDependencies.sh
+
+script: bash app/code/community/TIG/Buckaroo3Extended/Test/Scripts/Setup.sh
+
+after_success: bash app/code/community/TIG/Buckaroo3Extended/Test/Scripts/AfterSuccess.sh
+
+cache:
+  directories:
+  - $HOME/.composer
+
+after_script: travis-notify-geckoboard -a $GECKOBOARD_API_KEY -w $GECKOBOARD_WIDGET_KEY

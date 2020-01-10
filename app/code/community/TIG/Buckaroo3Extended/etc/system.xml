@@ -180,23 +180,13 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </key>
-                        <guid translate="label comment tooltip">
-                            <label>Guid</label>
-                            <comment>Enter your Buckaroo guid key.</comment>
-                            <tooltip>The guid key can be retrieved in Payment Plaza under the profile tab. For support contact Buckaroo.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </guid>
                         <certificate_selection translate="label comment tooltip">
                             <label>Certificate file</label>
                             <comment>Upload certificates at the certificate management tab.</comment>
                             <tooltip>The certificate can be retrieved in Payment Plaza under the profile tab. For support contact Buckaroo.</tooltip>
                             <frontend_type>select</frontend_type>
                             <source_model>buckaroo3extended/sources_certificates</source_model>
-                            <sort_order>60</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -206,7 +196,7 @@
                             <comment>The thumbprint and certificate should form a pair.</comment>
                             <tooltip>The certificate thumbprint can be retrieved in Payment Plaza under the profile tab. For support contact Buckaroo.</tooltip>
                             <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
+                            <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -215,7 +205,7 @@
                             <label>Transaction label</label>
                             <comment>The transaction description in Payment Plaza.</comment>
                             <frontend_type>text</frontend_type>
-                            <sort_order>80</sort_order>
+                            <sort_order>70</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -1611,19 +1601,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </show_advanced>
-                        <payment_action translate="label comment" module="buckaroo3extended">
-                            <label>Payment flow</label>
-                            <comment>Whether to use separate authorize and capture calls or to use a combined 'pay' call.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_paymentFlow</source_model>
-                            <sort_order>110</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </payment_action>
                         <payment_fee translate="label comment" module="buckaroo3extended">
                             <label>Fee</label>
                             <comment>The above amount is calculated based on de Tax settings in System > Configuration > Sales > Tax.</comment>
@@ -7177,6 +7154,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </sort_order>
+                        <send_invoice_by translate="label comment">
+                            <label>Send invoice by</label>
+                            <comment>Select how Klarna should send the invoice. Please note that Klarna charges a fee when the invoice is send by mail.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>buckaroo3extended/sources_klarna_sendInvoiceBy</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </send_invoice_by>
                         <order_email translate="label comment">
                             <label>Send order confirmation email</label>
                             <comment>Activate to send an order confirmation e-mail when the order has been successfully placed. Specific for this payment method. This does not automatically mean that the payment has been made (yet).</comment>
@@ -8759,642 +8746,6 @@
                     </fields>
                 </buckaroo3extended_dankort>
 
-                <buckaroo3extended_applepay translate="label">
-                    <label>Apple Pay</label>
-                    <sort_order>20900</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <active translate="label comment">
-                            <label>Enabled</label>
-                            <comment>Enable or disable this payment method.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>0</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </active>
-                        <buttons translate="label comment">
-                            <label>Enable or disable applepay buttons</label>
-                            <comment>Select which buttons you want to be active.</comment>
-                            <frontend_type>multiselect</frontend_type>
-                            <can_be_empty>1</can_be_empty>
-                            <source_model>buckaroo3extended/sources_applepay_availableButtons</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </buttons>
-                        <mode translate="label comment">
-                            <label>Payment modus</label>
-                            <comment>! Test transactions are registered in Payment plaza !</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_testLive</source_model>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </mode>
-                        <title translate="label comment">
-                            <label>Frontend label</label>
-                            <comment>Determines the frontend label shown.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </title>
-                        <sort_order translate="label comment">
-                            <label>Frontend sort order</label>
-                            <comment>Determines the sorting of payment methods.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </sort_order>
-                        <unsecure_status_processing translate="label comment tooltip">
-                            <label>No SecureCode order status</label>
-                            <comment>Leave empty to use default 'success' status.</comment>
-                            <tooltip>To make a new status available it needs to be assigned to the correct state. See Magento documentation about state and status.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_statusesSuccess</source_model>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </unsecure_status_processing>
-                        <unsecure_hold translate="label comment tooltip">
-                            <label>Set no SecureCode orders onhold</label>
-                            <comment>Hold orders which have no Apple Pay SecureCode.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </unsecure_hold>
-                        <order_email translate="label comment">
-                            <label>Send order confirmation email</label>
-                            <comment>Activate to send an order confirmation e-mail when the order has been successfully placed. Specific for this payment method. This does not automatically mean that the payment has been made (yet).</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </order_email>
-                        <show_advanced translate="label comment">
-                            <comment>Enable or disable advanced options.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </show_advanced>
-                        <active_status translate="label comment">
-                            <label>Method specific status enabled</label>
-                            <comment>Enable or disable specific status.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>130</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </active_status>
-                        <secure_status_processing translate="label comment tooltip">
-                            <label>Method specific SecureCode success status</label>
-                            <comment>Leave empty to use default 'success' status.</comment>
-                            <tooltip>To make a new status available it needs to be assigned to the correct state. See Magento documentation about state and status.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_statusesSuccess</source_model>
-                            <sort_order>140</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <active_status>1</active_status>
-                            </depends>
-                        </secure_status_processing>
-                        <order_status_failed translate="label comment tooltip">
-                            <label>Method specific failed status</label>
-                            <comment>Leave empty to use default 'failed' status.</comment>
-                            <tooltip>To make a new status available it needs to be assigned to the correct state. See Magento documentation about state and status.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_statusesFailed</source_model>
-                            <sort_order>150</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_applepay_advanced</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <active_status>1</active_status>
-                            </depends>
-                        </order_status_failed>
-                        <allowed_currencies translate="label comment tooltip">
-                            <label>Allowed currencies</label>
-                            <comment>Select payment method specific currencies.</comment>
-                            <tooltip>Your contract with Buckaroo must allow for the selected currencies to be used with this payment method.</tooltip>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>buckaroo3extended/sources_applepay_availableCurrencies</source_model>
-                            <sort_order>160</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_applepay_advanced</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </allowed_currencies>
-                        <allowspecific translate="label">
-                            <label>Payment from applicable countries</label>
-                            <frontend_type>allowspecific</frontend_type>
-                            <source_model>buckaroo3extended/sources_allspecificcountries</source_model>
-                            <sort_order>180</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </allowspecific>
-                        <specificcountry translate="label comment">
-                            <label>Payment from Specific Country</label>
-                            <comment>Only available when set to 'specific countries'.</comment>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>adminhtml/system_config_source_country</source_model>
-                            <sort_order>190</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <allowspecific>1</allowspecific>
-                            </depends>
-                        </specificcountry>
-                        <limit_by_ip translate="label comment tooltip">
-                            <label>Display only for selected IP's</label>
-                            <comment>Show method only to Magento set IP's.</comment>
-                            <tooltip>Magento developer client restrictions.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>200</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </limit_by_ip>
-                    </fields>
-                </buckaroo3extended_applepay>
-
-                <buckaroo3extended_alipay translate="label">
-                    <label>Alipay</label>
-                    <sort_order>20950</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <active translate="label comment">
-                            <label>Enabled</label>
-                            <comment>Enable or disable this payment method.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </active>
-                        <mode translate="label comment">
-                            <label>Payment modus</label>
-                            <comment>! Test transactions are registered in Payment plaza !</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_testLive</source_model>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </mode>
-                        <title translate="label comment">
-                            <label>Frontend label</label>
-                            <comment>Determines the frontend label shown.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </title>
-                        <sort_order translate="label comment">
-                            <label>Frontend sort order</label>
-                            <comment>Determines the sorting of payment methods.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </sort_order>
-                        <order_email translate="label comment">
-                            <label>Send order confirmation email</label>
-                            <comment>Activate to send an order confirmation e-mail when the order has been successfully placed. Specific for this payment method. This does not automatically mean that the payment has been made (yet).</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>44</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </order_email>
-                        <show_advanced translate="label comment">
-                            <comment>Enable or disable advanced options.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>45</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </show_advanced>
-                        <payment_fee translate="label comment" module="buckaroo3extended">
-                            <label>Fee</label>
-                            <comment>The above amount is calculated based on de Tax settings in System > Configuration > Sales > Tax.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>46</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-not-negative-number</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </payment_fee>
-                        <payment_fee_label translate="label comment" module="buckaroo3extended">
-                            <label>Fee label</label>
-                            <comment>This label will be displayed next to the fee on the checkout, order, invoice and creditmemo pages and pdfs.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>47</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>required-entry</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </payment_fee_label>
-                        <max_amount translate="label comment tooltip">
-                            <label>Max order amount (in Base Currency)</label>
-                            <comment>Maximum order amount allowed.</comment>
-                            <tooltip>The payment method show only for orders with an order amount smaller then the maximum amount.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>53</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </max_amount>
-                        <min_amount translate="label comment tooltip">
-                            <label>Min order amount (in Base Currency)</label>
-                            <comment>Minimum order amount allowed.</comment>
-                            <tooltip>The payment method show only for orders with an order amount greater than the minimum amount.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>54</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </min_amount>
-                        <active_status translate="label comment">
-                            <label>Method specific status enabled</label>
-                            <comment>Enable or disable specific status.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </active_status>
-                        <order_status_success translate="label comment tooltip">
-                            <label>Method specific success status</label>
-                            <comment>Leave empty to use default 'success' status.</comment>
-                            <tooltip>To make a new status available it needs to be assigned to the correct state. See Magento documentation about state and status.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_statusesSuccess</source_model>
-                            <sort_order>61</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_alipay_advanced</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <active_status>1</active_status>
-                            </depends>
-                        </order_status_success>
-                        <order_status_failed translate="label comment tooltip">
-                            <label>Method specific failed status</label>
-                            <comment>Leave empty to use default 'failed' status.</comment>
-                            <tooltip>To make a new status available it needs to be assigned to the correct state. See Magento documentation about state and status.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_statusesFailed</source_model>
-                            <sort_order>62</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_alipay_advanced</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <active_status>1</active_status>
-                            </depends>
-                        </order_status_failed>
-                        <allowed_currencies translate="label comment tooltip">
-                            <label>Allowed currencies</label>
-                            <comment>Select payment method specific currencies.</comment>
-                            <tooltip>Your contract with Buckaroo must allow for the selected currencies to be used with this payment method.</tooltip>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>buckaroo3extended/sources_alipay_availableCurrencies</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_alipay_advanced</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </allowed_currencies>
-                        <allowspecific translate="label">
-                            <label>Payment from applicable countries</label>
-                            <frontend_type>allowspecific</frontend_type>
-                            <source_model>buckaroo3extended/sources_allspecificcountries</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </allowspecific>
-                        <specificcountry translate="label comment">
-                            <label>Payment from Specific Country</label>
-                            <comment>Only available when set to 'specific countries'.</comment>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>adminhtml/system_config_source_country</source_model>
-                            <sort_order>100</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <allowspecific>1</allowspecific>
-                            </depends>
-                        </specificcountry>
-                        <limit_by_ip translate="label comment tooltip">
-                            <label>Display only for selected IP's</label>
-                            <comment>Show method only to Magento set IP's.</comment>
-                            <tooltip>Magento developer client restrictions.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>110</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </limit_by_ip>
-                    </fields>
-                </buckaroo3extended_alipay>
-
-                <buckaroo3extended_wechatpay translate="label">
-                    <label>WeChatPay</label>
-                    <sort_order>20950</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <active translate="label comment">
-                            <label>Enabled</label>
-                            <comment>Enable or disable this payment method.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </active>
-                        <mode translate="label comment">
-                            <label>Payment modus</label>
-                            <comment>! Test transactions are registered in Payment plaza !</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_testLive</source_model>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </mode>
-                        <title translate="label comment">
-                            <label>Frontend label</label>
-                            <comment>Determines the frontend label shown.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </title>
-                        <sort_order translate="label comment">
-                            <label>Frontend sort order</label>
-                            <comment>Determines the sorting of payment methods.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </sort_order>
-                        <order_email translate="label comment">
-                            <label>Send order confirmation email</label>
-                            <comment>Activate to send an order confirmation e-mail when the order has been successfully placed. Specific for this payment method. This does not automatically mean that the payment has been made (yet).</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>44</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </order_email>
-                        <show_advanced translate="label comment">
-                            <comment>Enable or disable advanced options.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>45</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </show_advanced>
-                        <payment_fee translate="label comment" module="buckaroo3extended">
-                            <label>Fee</label>
-                            <comment>The above amount is calculated based on de Tax settings in System > Configuration > Sales > Tax.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>46</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>validate-not-negative-number</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </payment_fee>
-                        <payment_fee_label translate="label comment" module="buckaroo3extended">
-                            <label>Fee label</label>
-                            <comment>This label will be displayed next to the fee on the checkout, order, invoice and creditmemo pages and pdfs.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>47</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>required-entry</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </payment_fee_label>
-                        <max_amount translate="label comment tooltip">
-                            <label>Max order amount (in Base Currency)</label>
-                            <comment>Maximum order amount allowed.</comment>
-                            <tooltip>The payment method show only for orders with an order amount smaller then the maximum amount.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>53</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </max_amount>
-                        <min_amount translate="label comment tooltip">
-                            <label>Min order amount (in Base Currency)</label>
-                            <comment>Minimum order amount allowed.</comment>
-                            <tooltip>The payment method show only for orders with an order amount greater than the minimum amount.</tooltip>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>54</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </min_amount>
-                        <active_status translate="label comment">
-                            <label>Method specific status enabled</label>
-                            <comment>Enable or disable specific status.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </active_status>
-                        <order_status_success translate="label comment tooltip">
-                            <label>Method specific success status</label>
-                            <comment>Leave empty to use default 'success' status.</comment>
-                            <tooltip>To make a new status available it needs to be assigned to the correct state. See Magento documentation about state and status.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_statusesSuccess</source_model>
-                            <sort_order>61</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_wechatpay_advanced</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <active_status>1</active_status>
-                            </depends>
-                        </order_status_success>
-                        <order_status_failed translate="label comment tooltip">
-                            <label>Method specific failed status</label>
-                            <comment>Leave empty to use default 'failed' status.</comment>
-                            <tooltip>To make a new status available it needs to be assigned to the correct state. See Magento documentation about state and status.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_statusesFailed</source_model>
-                            <sort_order>62</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_wechatpay_advanced</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <active_status>1</active_status>
-                            </depends>
-                        </order_status_failed>
-                        <allowed_currencies translate="label comment tooltip">
-                            <label>Allowed currencies</label>
-                            <comment>Select payment method specific currencies.</comment>
-                            <tooltip>Your contract with Buckaroo must allow for the selected currencies to be used with this payment method.</tooltip>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>buckaroo3extended/sources_wechatpay_availableCurrencies</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_wechatpay_advanced</validate>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </allowed_currencies>
-                        <allowspecific translate="label">
-                            <label>Payment from applicable countries</label>
-                            <frontend_type>allowspecific</frontend_type>
-                            <source_model>buckaroo3extended/sources_allspecificcountries</source_model>
-                            <sort_order>90</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </allowspecific>
-                        <specificcountry translate="label comment">
-                            <label>Payment from Specific Country</label>
-                            <comment>Only available when set to 'specific countries'.</comment>
-                            <frontend_type>multiselect</frontend_type>
-                            <source_model>adminhtml/system_config_source_country</source_model>
-                            <sort_order>100</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                                <allowspecific>1</allowspecific>
-                            </depends>
-                        </specificcountry>
-                        <limit_by_ip translate="label comment tooltip">
-                            <label>Display only for selected IP's</label>
-                            <comment>Show method only to Magento set IP's.</comment>
-                            <tooltip>Magento developer client restrictions.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>110</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <show_advanced>1</show_advanced>
-                            </depends>
-                        </limit_by_ip>
-                    </fields>
-                </buckaroo3extended_wechatpay>
-
                 <buckaroo3extended_nexi translate="label">
                     <label>Nexi</label>
                     <sort_order>20700</sort_order>
@@ -9633,6 +8984,8 @@
                         </limit_by_ip>
                     </fields>
                 </buckaroo3extended_nexi>
+
+
 
 
                 <buckaroo3extended_creditcard translate="label">
@@ -9896,7 +9249,7 @@
 
                 <buckaroo3extended_refund translate="label">
                     <label>Refunding</label>
-                    <sort_order>21100</sort_order>
+                    <sort_order>20900</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
@@ -9933,7 +9286,7 @@
 
                 <buckaroo3extended_certificate translate="label">
                     <label>Certificate Management</label>
-                    <sort_order>21200</sort_order>
+                    <sort_order>21000</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
