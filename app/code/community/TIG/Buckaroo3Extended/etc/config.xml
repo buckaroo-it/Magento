@@ -2,7 +2,7 @@
 <config>
     <modules>
         <TIG_Buckaroo3Extended>
-            <version>5.2.1</version>
+            <version>5.0.1</version>
         </TIG_Buckaroo3Extended>
     </modules>
     <tig>
@@ -256,15 +256,6 @@
             </sales_convert_order>
         </fieldsets>
         <events>
-            <sales_order_invoice_pay>
-                <observers>
-                    <buckaroo3extended_invoicepay_observer>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/observer_invoicePay</class>
-                        <method>sales_order_invoice_pay</method>
-                    </buckaroo3extended_invoicepay_observer>
-                </observers>
-            </sales_order_invoice_pay>
             <sales_order_payment_refund>
                 <observers>
                     <buckaroo3extended_refund_observer>
@@ -283,15 +274,6 @@
                     </buckaroo3extended_cancelauthorize_observer>
                 </observers>
             </sales_order_payment_cancel>
-            <sales_order_payment_void>
-                <observers>
-                    <buckaroo3extended_cancelauthorize_observer>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/observer_cancelAuthorize</class>
-                        <method>sales_order_payment_void_authorize</method>
-                    </buckaroo3extended_cancelauthorize_observer>
-                </observers>
-            </sales_order_payment_void>
             <sales_order_payment_place_end>
                 <observers>
                     <buckaroo3extended_payment_place_end_observer>
@@ -473,16 +455,6 @@
                         <class>buckaroo3extended/paymentMethods_applepay_observer</class>
                         <method>buckaroo3extended_request_setmethod</method>
                     </buckaroo3extended_paymentmethod_observer_applepay>
-                    <buckaroo3extended_paymentmethod_observer_alipay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_alipay_observer</class>
-                        <method>buckaroo3extended_refund_request_setmethod</method>
-                    </buckaroo3extended_paymentmethod_observer_alipay>
-                    <buckaroo3extended_paymentmethod_observer_wechatpay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
-                        <method>buckaroo3extended_refund_request_setmethod</method>
-                    </buckaroo3extended_paymentmethod_observer_wechatpay>
                 </observers>
             </buckaroo3extended_refund_request_setmethod>
             <buckaroo3extended_refund_request_addservices>
@@ -657,16 +629,6 @@
                         <class>buckaroo3extended/paymentMethods_applepay_observer</class>
                         <method>buckaroo3extended_refund_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_applepay>
-                    <buckaroo3extended_paymentmethod_observer_alipay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_alipay_observer</class>
-                        <method>buckaroo3extended_refund_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_alipay>
-                    <buckaroo3extended_paymentmethod_observer_wechatpay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
-                        <method>buckaroo3extended_refund_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_wechatpay>
                 </observers>
             </buckaroo3extended_refund_request_addservices>
             <buckaroo3extended_refund_request_addcustomvars>
@@ -841,16 +803,6 @@
                         <class>buckaroo3extended/paymentMethods_applepay_observer</class>
                         <method>buckaroo3extended_refund_request_addcustomvars</method>
                     </buckaroo3extended_paymentmethod_observer_applepay>
-                    <buckaroo3extended_paymentmethod_observer_alipay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_alipay_observer</class>
-                        <method>buckaroo3extended_refund_request_addcustomvars</method>
-                    </buckaroo3extended_paymentmethod_observer_alipay>
-                    <buckaroo3extended_paymentmethod_observer_wechatpay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
-                        <method>buckaroo3extended_refund_request_addcustomvars</method>
-                    </buckaroo3extended_paymentmethod_observer_wechatpay>
                 </observers>
             </buckaroo3extended_refund_request_addcustomvars>
             <buckaroo3extended_refund_response_custom_processing>
@@ -983,11 +935,6 @@
                         <class>buckaroo3extended/paymentMethods_afterpay2_observer</class>
                         <method>buckaroo3extended_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_afterpay2>
-                    <buckaroo3extended_paymentmethod_observer_afterpay20>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_afterpay20_observer</class>
-                        <method>buckaroo3extended_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_afterpay20>
                     <buckaroo3extended_paymentmethod_observer_payperemail>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_payperemail_observer</class>
@@ -1088,16 +1035,6 @@
                         <class>buckaroo3extended/paymentMethods_applepay_observer</class>
                         <method>buckaroo3extended_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_applepay>
-                    <buckaroo3extended_paymentmethod_observer_alipay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_alipay_observer</class>
-                        <method>buckaroo3extended_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_alipay>
-                    <buckaroo3extended_paymentmethod_observer_wechatpay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
-                        <method>buckaroo3extended_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_wechatpay>
                 </observers>
             </buckaroo3extended_request_addservices>
             <buckaroo3extended_request_addcustomvars>
@@ -1297,16 +1234,6 @@
                         <class>buckaroo3extended/paymentMethods_applepay_observer</class>
                         <method>buckaroo3extended_request_addcustomvars</method>
                     </buckaroo3extended_paymentmethod_observer_applepay>
-                    <buckaroo3extended_paymentmethod_observer_alipay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_alipay_observer</class>
-                        <method>buckaroo3extended_request_addcustomvars</method>
-                    </buckaroo3extended_paymentmethod_observer_alipay>
-                    <buckaroo3extended_paymentmethod_observer_wechatpay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
-                        <method>buckaroo3extended_request_addcustomvars</method>
-                    </buckaroo3extended_paymentmethod_observer_wechatpay>
                 </observers>
             </buckaroo3extended_request_addcustomvars>
             <buckaroo3extended_request_setmethod>
@@ -1506,16 +1433,6 @@
                         <class>buckaroo3extended/paymentMethods_applepay_observer</class>
                         <method>buckaroo3extended_request_setmethod</method>
                     </buckaroo3extended_paymentmethod_observer_applepay>
-                    <buckaroo3extended_paymentmethod_observer_alipay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_alipay_observer</class>
-                        <method>buckaroo3extended_request_setmethod</method>
-                    </buckaroo3extended_paymentmethod_observer_alipay>
-                    <buckaroo3extended_paymentmethod_observer_wechatpay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
-                        <method>buckaroo3extended_request_setmethod</method>
-                    </buckaroo3extended_paymentmethod_observer_wechatpay>
                 </observers>
             </buckaroo3extended_request_setmethod>
             <buckaroo3extended_push_custom_processing>
@@ -1537,11 +1454,6 @@
                         <class>buckaroo3extended/paymentMethods_afterpay2_observer</class>
                         <method>buckaroo3extended_push_custom_processing</method>
                     </buckaroo3extended_paymentmethod_observer_afterpay2>
-                    <buckaroo3extended_paymentmethod_observer_afterpay20>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_afterpay20_observer</class>
-                        <method>buckaroo3extended_push_custom_processing</method>
-                    </buckaroo3extended_paymentmethod_observer_afterpay20>
                 </observers>
                 <observers>
                     <buckaroo3extended_paymentmethod_observer_payperemail>
@@ -1693,13 +1605,6 @@
                         <method>buckaroo3extended_push_custom_processing_after</method>
                     </buckaroo3extended_paymentmethod_observer_applepay>
                 </observers>
-                <observers>
-                    <buckaroo3extended_paymentmethod_observer_klarna>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_klarna_observer</class>
-                        <method>buckaroo3extended_push_custom_processing_after</method>
-                    </buckaroo3extended_paymentmethod_observer_klarna>
-                </observers>
             </buckaroo3extended_push_custom_processing_after>
             <buckaroo3extended_response_custom_processing>
                 <observers>
@@ -1741,11 +1646,6 @@
                         <class>buckaroo3extended/paymentMethods_afterpay2_observer</class>
                         <method>buckaroo3extended_capture_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_afterpay2>
-                    <buckaroo3extended_paymentmethod_observer_afterpay20>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_afterpay20_observer</class>
-                        <method>buckaroo3extended_capture_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_afterpay20>
                     <buckaroo3extended_paymentmethod_observer_klarna>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_klarna_observer</class>
@@ -1765,11 +1665,6 @@
                         <class>buckaroo3extended/paymentMethods_afterpay2_observer</class>
                         <method>buckaroo3extended_capture_request_addcustomvars</method>
                     </buckaroo3extended_paymentmethod_observer_afterpay2>
-                    <buckaroo3extended_paymentmethod_observer_afterpay20>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_afterpay20_observer</class>
-                        <method>buckaroo3extended_capture_request_addcustomvars</method>
-                    </buckaroo3extended_paymentmethod_observer_afterpay20>
                     <buckaroo3extended_paymentmethod_observer_klarna>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_klarna_observer</class>
@@ -1789,11 +1684,6 @@
                         <class>buckaroo3extended/paymentMethods_afterpay2_observer</class>
                         <method>buckaroo3extended_cancelauthorize_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_afterpay2>
-                    <buckaroo3extended_paymentmethod_observer_afterpay20>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_afterpay20_observer</class>
-                        <method>buckaroo3extended_cancelauthorize_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_afterpay20>
                     <buckaroo3extended_paymentmethod_observer_klarna>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_klarna_observer</class>
@@ -2092,20 +1982,6 @@
                 <sort_order>280</sort_order>
                 <group>buckaroo3extended</group>
             </buckaroo3extended_applepay>
-            <buckaroo3extended_alipay>
-                <active>1</active>
-                <model>buckaroo3extended/paymentMethods_alipay_paymentMethod</model>
-                <title>Alipay</title>
-                <sort_order>290</sort_order>
-                <group>buckaroo3extended</group>
-            </buckaroo3extended_alipay>
-            <buckaroo3extended_wechatpay>
-                <active>1</active>
-                <model>buckaroo3extended/paymentMethods_wechatpay_paymentMethod</model>
-                <title>WeChatPay</title>
-                <sort_order>300</sort_order>
-                <group>buckaroo3extended</group>
-            </buckaroo3extended_wechatpay>
             <buckaroo2012ideal>
                 <active>0</active>
                 <model>buckaroo3extended/oldPaymentMethods_oldPaymentMethod</model>
@@ -2734,6 +2610,7 @@
                 <allowed_currencies>EUR</allowed_currencies>
                 <payment_fee_label>Fee</payment_fee_label>
                 <order_email>1</order_email>
+                <send_invoice_by>email</send_invoice_by>
             </buckaroo3extended_klarna>
 
             <buckaroo3extended_pospayment>
@@ -2869,36 +2746,6 @@
                 <allowed_currencies>EUR</allowed_currencies>
                 <limit_by_ip>0</limit_by_ip>
             </buckaroo3extended_applepay>
-
-            <buckaroo3extended_alipay>
-                <active>0</active>
-                <mode>0</mode>
-                <title>Alipay</title>
-                <allowspecific>0</allowspecific>
-                <specificcountry></specificcountry>
-                <order_status_success></order_status_success>
-                <order_status_failed></order_status_failed>
-                <sort_order>300</sort_order>
-                <limit_by_ip>0</limit_by_ip>
-                <allowed_currencies>EUR</allowed_currencies>
-                <payment_fee_label>Fee</payment_fee_label>
-                <order_email>1</order_email>
-            </buckaroo3extended_alipay>
-
-            <buckaroo3extended_wechatpay>
-                <active>0</active>
-                <mode>0</mode>
-                <title>WeChatPay</title>
-                <allowspecific>0</allowspecific>
-                <specificcountry></specificcountry>
-                <order_status_success></order_status_success>
-                <order_status_failed></order_status_failed>
-                <sort_order>300</sort_order>
-                <limit_by_ip>0</limit_by_ip>
-                <allowed_currencies>EUR</allowed_currencies>
-                <payment_fee_label>Fee</payment_fee_label>
-                <order_email>1</order_email>
-            </buckaroo3extended_wechatpay>
         </buckaroo>
         <tax>
             <calculation>

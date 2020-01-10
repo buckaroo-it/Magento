@@ -636,8 +636,6 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
                 'paypal',
                 'paysafecard',
                 'sofortueberweisung',
-                'alipay',
-                'wechatpay',
                 'transfer',
                 'visa',
                 'maestro',

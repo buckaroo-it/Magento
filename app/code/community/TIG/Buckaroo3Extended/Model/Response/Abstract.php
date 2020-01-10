@@ -79,7 +79,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
     public function processResponse()
     {
         if ($this->_response === false) {
-            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, [$this->_responseXML, $this->_error()]);
             $this->_debugEmail .= "An error occurred in building or sending the SOAP request.. \n";
             return $this->_error();
         }
@@ -93,8 +92,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         }
 
         $this->_debugEmail .= "Verified as authentic! \n\n";
-
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, $this->_response);
 
         if (!$this->_order->getTransactionKey()
             && is_object($this->_response)
@@ -143,7 +140,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
                 'responseobject' => $this->_response,
             )
         );
-
+    
         try {
             return $this->_requiredAction($parsedResponse);
         } catch (Exception $e) {
@@ -158,7 +155,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
      */
     protected function _requiredAction($response)
     {
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, $response);
         try {
             switch ($response['status']) {
                 case self::BUCKAROO_SUCCESS:
@@ -229,8 +225,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
      */
     protected function _success($status = self::BUCKAROO_SUCCESS)
     {
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, [$status]);
-
         $this->_debugEmail .= "The response indicates a successful request. \n";
 
         $this->_order->addStatusHistoryComment(
@@ -244,48 +238,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
          * @var Mage_Sales_Model_Order_Payment $payment
          */
         $payment = $this->_order->getPayment();
-
-        if (
-            is_object($this->_response)
-            &&
-            isset($this->_response->ServiceCode)
-            &&
-            ($this->_response->ServiceCode == 'afterpay')
-            &&
-            isset($this->_response->Status->Code->Code)
-            &&
-            ($this->_response->Status->Code->Code == '190')
-            &&
-            isset($this->_response->Key)
-        ) {
-            $payment->setTransactionId($this->_response->Key);
-
-            $transaction = $payment->addTransaction(Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH);
-            $transaction->setIsClosed(0);
-            $transaction->save();
-
-            $this->_debugEmail .= 'Transaction key saved: ' . $this->_response->Key . "\n";
-        }
-
-        if (
-            ($status == TIG_Buckaroo3Extended_Helper_Data::BUCKAROO_PENDING_PAYMENT)
-            &&
-            !empty($this->_postArray['brq_primary_service'])
-            &&
-            ($this->_postArray['brq_primary_service'] == 'KlarnaKp')
-            &&
-            !empty($this->_postArray['brq_statuscode'])
-            &&
-            ($this->_postArray['brq_statuscode'] == '791')
-
-        ) {
-            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 5);
-
-            $message = Mage::helper('buckaroo3extended')->__('Klarna is doing an additional check. The status will be known within 24 hours.');
-            $this->_order->addStatusHistoryComment($message);
-            $this->_order->save();
-        }
-
         $payment->registerAuthorizationNotification($this->_order->getBaseGrandTotal());
         $paymentMethodInstance = $payment->getMethodInstance();
         $paymentMethodInstance->saveAdditionalData($this->_response);
@@ -302,7 +254,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         if(!$this->_order->getEmailSent() && false != $shouldSend)
         {
             $this->_debugEmail .= "New Order email has been send \n";
-            $this->sendNewOrderEmail(false);
+            $this->sendNewOrderEmail();
         }
 
         $this->emptyCart();
@@ -331,8 +283,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
      */
     protected function _failed($message = '')
     {
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
-
         $this->_debugEmail .= 'The transaction was unsuccessful. \n';
 
         $this->_order->addStatusHistoryComment(
@@ -349,7 +299,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         $errorMessage = $this->_getCorrectFailureMessage($message);
 
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, [$billingCountry, $parsedResponse]);
         if ($billingCountry == 'NL' && isset($parsedResponse['code']) && $parsedResponse['code'] == 490) {
             $responseErrorMessage = $this->getResponseFailureMessage();
             $errorMessage = strlen($responseErrorMessage) > 0 ? $responseErrorMessage : $errorMessage;
@@ -586,7 +535,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         //Klarna
         if (isset($this->_response->requestType) && $this->_response->requestType == 'DataRequest' &&
-            isset($this->_response->ServiceCode) && $this->_response->ServiceCode == 'klarnakp' &&
+            isset($this->_response->ServiceCode) && $this->_response->ServiceCode == 'klarna' &&
             isset($this->_response->Status->Code->Code) && $this->_response->Status->Code->Code == '490' ) {
             $setFailedAuthorize = true;
         }
@@ -603,8 +552,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
      */
     private function getResponseFailureMessage()
     {
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, $this->_response);
-
         $serviceCode = $this->_response->ServiceCode;
 
         switch ($serviceCode) {
@@ -625,7 +572,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
                     $failureMessage = trim(implode(':', $subcodeMessage));
                 }
                 break;
-            case 'klarnakp':
+            case 'klarna':
                 $failureMessage = $this->_response->ConsumerMessage->HtmlText;
                 break;
             default:
@@ -816,14 +763,14 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         return $verified;
     }
 
-    public function sendNewOrderEmail($forceMode = true)
+    public function sendNewOrderEmail()
     {
         $currentStore = Mage::app()->getStore()->getId();
         $orderStore = $this->_order->getStoreId();
 
         Mage::app()->setCurrentStore($orderStore);
 
-        $this->_order->queueNewOrderEmail($forceMode);
+        $this->_order->sendNewOrderEmail();
 
         Mage::app()->setCurrentStore($currentStore);
 
