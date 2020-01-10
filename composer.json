@@ -16,6 +16,6 @@
         "issues": "https://support.buckaroo.nl/contact"
     },
     "homepage": "https://www.buckaroo.nl",
-    "version" : "v5.2.0",
+    "version" : "v5.2.1",
     "minimum-stability": "stable"
 }
