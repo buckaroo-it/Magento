@@ -13,7 +13,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Cartebleue_PaymentMethod extend
         'EUR',
         'GBP',
         'HRK',
-        'HUF',
         'ISK',
         'JPY',
         'LTL',

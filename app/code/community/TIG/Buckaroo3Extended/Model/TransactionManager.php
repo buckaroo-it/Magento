@@ -1,21 +1,40 @@
 <?php
 /**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License
+ * This source file is subject to the Creative Commons License.
  * It is available through the world-wide-web at this URL:
- * https://tldrlegal.com/license/mit-license
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to support@buckaroo.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact support@buckaroo.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright Copyright (c) Buckaroo B.V.
- * @license   https://tldrlegal.com/license/mit-license
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 
 class TIG_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Model_Abstract
@@ -39,7 +58,7 @@ class TIG_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Model_Abs
     {
         $this->_init('buckaroo3extended/transactionManager');
 
-        if (isset($array) && is_array($array) && count($array) > 0) {
+        if (isset($array) && is_array($array)) {
             $this->setTransactionArray($array);
         }
     }
@@ -49,9 +68,7 @@ class TIG_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Model_Abs
      */
     public function setTransactionArray($array)
     {
-        if (isset($array) && is_array($array) && count($array) > 0) {
-            $this->transactionArray = $array;
-        }
+        $this->transactionArray = $array;
     }
 
     /**
@@ -67,9 +84,7 @@ class TIG_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Model_Abs
      */
     public function getPossibleRefundAmount()
     {
-        if (isset($this->transactionArray['total_debit']) &&
-            $this->transactionArray['total_debit'] > 0
-        ) {
+        if (isset($this->transactionArray['total_debit'])) {
             return $this->transactionArray['total_debit'] - $this->transactionArray['total_credit'];
         }
 
@@ -86,7 +101,7 @@ class TIG_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Model_Abs
         $possibleRefundAmount = $this->getPossibleRefundAmount();
 
         if ($possibleRefundAmount == false ||
-            round($amount,4) > round($possibleRefundAmount, 4)
+            $amount > $possibleRefundAmount
         ) {
             return false;
         }
@@ -214,8 +229,7 @@ class TIG_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Model_Abs
 
             //already fully refundend
             if (isset($transactionValue['refunded']) &&
-                round($transactionValue['refunded'], 4) >= round($transactionValue['amount'], 4)
-               ) {
+                $transactionValue['refunded'] >= $transactionValue['amount']) {
                 continue;
             }
 

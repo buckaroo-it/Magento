@@ -139,36 +139,4 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Applepay_Cart_Button
 
         return $this->getUrl('buckaroo3extended/checkout/loadShippingMethods');
     }
-
-    /**
-     * @return string
-     */
-    public function getUpdateShippingMethodsUrl()
-    {
-        return $this->getUrl('buckaroo3extended/checkout/updateShippingMethods');
-    }
-
-    /**
-     * @return string
-     */
-    public function getSetShippingMethodUrl()
-    {
-        return $this->getUrl('buckaroo3extended/checkout/setShippingMethod');
-    }
-
-    /**
-     * @return string
-     */
-    public function getSaveOrderUrl()
-    {
-        return $this->getUrl('buckaroo3extended/checkout/saveOrder');
-    }
-
-    /**
-     * @return string
-     */
-    public function getApplepaySuccessUrl()
-    {
-        return $this->getUrl('buckaroo3extended/checkout/applepaySuccess');
-    }
 }

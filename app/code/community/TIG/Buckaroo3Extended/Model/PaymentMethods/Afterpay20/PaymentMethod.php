@@ -1,21 +1,33 @@
 <?php
 /**
+ *
+ *          ..::..
+ *     ..::::::::::::..
+ *   ::'''''':''::'''''::
+ *   ::..  ..:  :  ....::
+ *   ::::  :::  :  :   ::
+ *   ::::  :::  :  ''' ::
+ *   ::::..:::..::.....::
+ *     ''::::::::::::''
+ *          ''::''
+ *
+ *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License
+ * This source file is subject to the Creative Commons License.
  * It is available through the world-wide-web at this URL:
- * https://tldrlegal.com/license/mit-license
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to support@buckaroo.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact support@buckaroo.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright Copyright (c) Buckaroo B.V.
- * @license   https://tldrlegal.com/license/mit-license
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_PaymentMethod
     extends TIG_Buckaroo3Extended_Model_PaymentMethods_PaymentMethod
@@ -32,45 +44,9 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_PaymentMethod
     protected $_canRefund               = true;
     protected $_canRefundInvoicePartial = true;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function canCapture()
-    {
-        if ($this->getConfigPaymentAction() == Mage_Payment_Model_Method_Abstract::ACTION_ORDER) {
-            return false;
-        }
-
-        return $this->_canCapture;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    // @codingStandardsIgnoreLine
-    public function capture(Varien_Object $payment, $amount)
-    {
-        if (!$this->canCapture()) {
-            Mage::throwException(Mage::helper('payment')->__('Capture action is not available.'));
-        }
-
-        /** @var TIG_Buckaroo3Extended_Model_Request_Capture $captureRequest */
-        $captureRequest = Mage::getModel(
-            'buckaroo3extended/request_capture',
-            array(
-                'payment' => $payment
-            )
-        );
-
-        try {
-            $captureRequest->sendRequest();
-        } catch (Exception $e) {
-            Mage::helper('buckaroo3extended')->logException($e);
-            Mage::throwException($e->getMessage());
-        }
-
-        return $this;
-    }
+    /** @var bool TODO: Set to true and implement Authorize flow when it is available in the API */
+    protected $_canCapture        = false;
+    protected $_canCapturePartial = false;
 
     /**
      * @param array $post
@@ -93,7 +69,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_PaymentMethod
             'BPE_Customergender'    => $post[$this->_code . '_BPE_Customergender'],
             'BPE_PhoneNumber'       => $post[$this->_code . '_bpe_customer_phone_number'],
             'BPE_customerbirthdate' => $customerBirthDate,
-            'identification_number' => isset($post[$this->_code . '_bpe_customer_idnumber']) ? $post[$this->_code . '_bpe_customer_idnumber'] : null,
+            'identification_number' => $post[$this->_code . '_bpe_customer_idnumber'],
             'BPE_Accept'            => 'true',
         );
 
@@ -174,19 +150,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_PaymentMethod
      */
     public function getRejectedMessage($responseData)
     {
-        if ($responseData) {
-            if ($responseData->TransactionType == 'I038') {
-                if (
-                    isset($responseData->Services->Service->ResponseParameter->Name)
-                    &&
-                    ($responseData->Services->Service->ResponseParameter->Name === 'ErrorResponseMessage')
-                    &&
-                    isset($responseData->Services->Service->ResponseParameter->_)
-                )
-                return $responseData->Services->Service->ResponseParameter->_;
-            }
-        }
-
         // @codingStandardsIgnoreLine
         if (!isset($responseData->Status->SubCode->_)) {
             return false;

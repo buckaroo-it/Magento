@@ -1,8 +1,6 @@
 <?php
 /**
  * Empty div's to be used for the ApplePay pop-up.
- *
- * @var TIG_Buckaroo3Extended_Block_PaymentMethods_Applepay_Product_Button $this
  */
 
 $isConfigurable = $this->isConfigurable();
@@ -21,47 +19,47 @@ $isConfigurable = $this->isConfigurable();
      * Only display real Apple Pay button if all attributes are configured.
      */
     var elementsToValidate = jQuery('#apple-pay-disabled');
-
+    
     elementsToValidate.on('click, mousedown, mouseup', function() {
         /**
          * Custom validation for Amac.
          */
         var cartButton = jQuery('button.button.btn-cart');
-
+        
         if(cartButton.hasClass('disabled')) {
             jQuery('.pdp-configurable-error').each(function () {
                 jQuery(this).removeClass('no-display');
             });
-
+            
             return;
         } else {
             jQuery('.pdp-configurable-error').each(function () {
                 jQuery(this).addClass('no-display');
             });
         }
-
+    
         /**
          * Validate Magento Configurable Product form.
          */
         var applePay = jQuery('.method-checkout-cart-methods-applepay, #set-up-apple-pay-button, #apple-pay-button, #apple-pay-wrapper');
-
+        
         var attributes = jQuery('[name^="super_attribute"]');
         var validated  = 0;
-
+        
         attributes.each(function() {
             var valid = Validation.validate(this);
-
+            
             if (valid === true) {
                 validated++;
             }
-
+            
             if (attributes.length === validated) {
                 applePay.click();
             }
         })
     })
     <?php endif; ?>
-
+    
     var Buckaroo;
     (function(Buckaroo) {
         var Magento;
@@ -78,19 +76,19 @@ $isConfigurable = $this->isConfigurable();
                     var optionsArray = this.createOptionsArray();
                     var requiredShippingFields = ["email", "name", "phone", "postalAddress"]
                     var requiredBillingFields = ["email", "name", "postalAddress"]
-
+                    
                     <?php if ($this->isLoggedIn()): ?>
                     requiredShippingFields = ["name", "phone", "postalAddress"]
                     requiredBillingFields = ["name", "postalAddress"]
                     <?php endif; ?>
-
+                    
                     var options = new BuckarooSdk.ApplePay.ApplePayOptions(
                         optionsArray.storeName, optionsArray.countryCode, optionsArray.currencyCode, optionsArray.cultureCode,
                         optionsArray.merchantIdentifier, optionsArray.lineItems, optionsArray.totalLineItems, optionsArray.shippingType,
                         optionsArray.shippingMethods, this.captureFunds, this.updateShippingMethod, this.updateShippingContact,
-                        requiredBillingFields, requiredShippingFields, this.restoreCart,
+                        requiredBillingFields, requiredShippingFields
                     );
-
+                    
                     /**
                      * Hooking into this event allows overriding the options with custom values.
                      */
@@ -98,16 +96,9 @@ $isConfigurable = $this->isConfigurable();
 
                     BuckarooSdk.ApplePay.checkApplePaySupport(optionsArray.merchantIdentifier).then(function (applePaySupported) {
                         if (applePaySupported) {
-                            <?php
-                                /**
-                                 * Set apple_pay_init to true, so new quote is created and restored on pop-up load, and not on
-                                 * change of shipping contact.
-                                 */
-                                Mage::getSingleton('checkout/session')->setApplePayInit(true);
-                            ?>
                             var payment = new BuckarooSdk.ApplePay.ApplePayPayment('#apple-pay-wrapper', options)
                             <?php if (!$isConfigurable): ?>
-                                jQuery('.method-checkout-cart-methods-applepay, #set-up-apple-pay-button, #apple-pay-button, #apple-pay-wrapper').show();
+                            jQuery('.method-checkout-cart-methods-applepay, #set-up-apple-pay-button, #apple-pay-button, #apple-pay-wrapper').show();
                             <?php endif; ?>
                             payment.showPayButton('black', 'buy')
                         } else {
@@ -115,14 +106,14 @@ $isConfigurable = $this->isConfigurable();
                         }
                     })
                 }
-
+                
                 /**
                  * Triggered when Shipping Method is changed within the pop-up.
                  */
                 ApplePay.prototype.updateShippingMethod = function(method) {
                     var update = jQuery.ajax(
                         {
-                            url: '<?php echo $this->getUpdateShippingMethodsUrl() ?>',
+                            url: '/buckaroo3extended/checkout/updateShippingMethods',
                             method: 'post',
                             context: this,
                             data: {
@@ -149,7 +140,7 @@ $isConfigurable = $this->isConfigurable();
                 ApplePay.prototype.setShippingMethod = function (method) {
                     jQuery.ajax(
                         {
-                            url: '<?php echo $this->getSetShippingMethodUrl() ?>',
+                            url: '/buckaroo3extended/checkout/setShippingMethod',
                             method: 'post',
                             context: this,
                             data: {
@@ -164,26 +155,26 @@ $isConfigurable = $this->isConfigurable();
                  *
                  * Method = GET, since we need to send a serialized form if the product is configurable.
                  */
-                ApplePay.prototype.updateShippingContact = function(contact) {
+                ApplePay.prototype.updateShippingContact = function(context) {
                     var jQver = '';
-
+    
                     if (typeof jQuery !== undefined) {
                         var jQver = jQuery.fn.jquery.split('.');
                     }
-
+    
                     if (jQver[0] === 3) {
-                        return this.updateShippingContactjQ3(contact);
+                        return this.updateShippingContactjQ3(context);
                     }
-
+                    
                     var options = jQuery('#product_addtocart_form').serializeArray()
-
+                    
                     var update = jQuery.ajax(
                         {
                             url: '<?php echo $this->getControllerUrl(); ?>',
                             method: 'get',
                             context: this,
                             data: {
-                                wallet: contact,
+                                wallet: context,
                                 product: {
                                     id: '<?php echo $this->getProductId(); ?>',
                                     qty: jQuery('.add-to-cart #qty').val(),
@@ -196,10 +187,10 @@ $isConfigurable = $this->isConfigurable();
                                 var dataArray = JSON.parse(data);
 
                                 return JSON.stringify({
-                                    errors: [],
-                                    newShippingMethods: new ApplePay.prototype.createShippingMethodInformation(dataArray, false),
-                                    newTotal: new ApplePay.prototype.processTotalLineItems(dataArray),
-                                    newLineItems: new ApplePay.prototype.processLineItems(dataArray)
+                                        errors: [],
+                                        newShippingMethods: new ApplePay.prototype.createShippingMethodInformation(dataArray, false),
+                                        newTotal: new ApplePay.prototype.processTotalLineItems(dataArray),
+                                        newLineItems: new ApplePay.prototype.processLineItems(dataArray)
                                 })
                             },
                             error: function(error) {
@@ -215,7 +206,7 @@ $isConfigurable = $this->isConfigurable();
 
                     return update;
                 }
-
+    
                 /**
                  * Handles the changes within the pop-up when a different shipping address is selected.
                  *
@@ -223,16 +214,16 @@ $isConfigurable = $this->isConfigurable();
                  *
                  * Duplicate method, compatible with jQuery 3.
                  */
-                ApplePay.prototype.updateShippingContactjQ3 = function(contact) {
+                ApplePay.prototype.updateShippingContactjQ3 = function(context) {
                     var options = jQuery('#product_addtocart_form').serializeArray()
-
+        
                     var update = jQuery.ajax(
                         {
                             url: '<?php echo $this->getControllerUrl(); ?>',
                             method: 'get',
                             context: this,
                             data: {
-                                wallet: contact,
+                                wallet: context,
                                 product: {
                                     id: '<?php echo $this->getProductId(); ?>',
                                     qty: jQuery('.add-to-cart #qty').val(),
@@ -243,7 +234,7 @@ $isConfigurable = $this->isConfigurable();
                             async: false,
                             dataFilter: function(data, type) {
                                 var dataArray = JSON.parse(data);
-
+                    
                                 return JSON.stringify({
                                     errors: [],
                                     newShippingMethods: new ApplePay.prototype.createShippingMethodInformation(dataArray, false),
@@ -261,7 +252,7 @@ $isConfigurable = $this->isConfigurable();
                             }
                         }
                     );
-
+        
                     return update;
                 }
 
@@ -302,13 +293,14 @@ $isConfigurable = $this->isConfigurable();
                     if (typeof data['shipping'] !== 'undefined') {
                         var price = parseFloat(data['shipping'])
                     }
-
+                    
                     if(data['discount'] == null) {
                         return [
                             {label: '<?php echo $this->getSubtotalText(); ?>', amount: parseFloat(data['subTotal']).toFixed(2), type: 'final'},
                             {label: '<?php echo $this->__('Delivery costs'); ?>', amount: price.toFixed(2), type: 'final'}
                         ]
                     }
+
                     return [
                         {label: '<?php echo $this->getSubtotalText(); ?>', amount: parseFloat(data['subTotal']).toFixed(2), type: 'final'},
                         {label: '<?php echo $this->__('Delivery costs'); ?>', amount: price.toFixed(2), type: 'final'},
@@ -347,14 +339,14 @@ $isConfigurable = $this->isConfigurable();
                  */
                 ApplePay.prototype.createShippingMethodInformation = function(shippingMethods, onPageLoad = true) {
                     var methods = [];
-
+                    
                     if (onPageLoad === false && shippingMethods[0] === undefined) {
                         /** If no shipment methods are found, reload the page and display an error. */
                         window.location.reload();
-
+                        
                         return methods;
                     }
-
+                    
                     if (shippingMethods === undefined) {
                         return methods;
                     }
@@ -364,16 +356,16 @@ $isConfigurable = $this->isConfigurable();
                             continue;
                         }
                         methods[i] = {
-                            label: shippingMethods[i].carrier_title,
-                            amount: shippingMethods[i].price.toString(),
-                            identifier: shippingMethods[i].code,
-                            detail: shippingMethods[i].method_title
+                                label: shippingMethods[i].carrier_title,
+                                amount: shippingMethods[i].price.toString(),
+                                identifier: shippingMethods[i].code,
+                                detail: shippingMethods[i].method_title
                         }
                     }
 
                     return methods;
                 }
-
+    
                 /**
                  * Saves order to Magento and sends it to Buckaroo. Checks for jQuery compatibility.
                  *
@@ -381,18 +373,18 @@ $isConfigurable = $this->isConfigurable();
                  */
                 ApplePay.prototype.placeOrder = function(payment) {
                     var jQver = '';
-
+                    
                     if (typeof jQuery !== undefined) {
                         var jQver = jQuery.fn.jquery.split('.');
                     }
-
+                    
                     if (jQver[0] === 3) {
                         return this.placeOrderjQ3(payment);
                     }
-
+                    
                     return jQuery.ajax(
                         {
-                            url: '<?php echo $this->getSaveOrderUrl() ?>',
+                            url: '/buckaroo3extended/checkout/saveOrder',
                             method: 'post',
                             context: this,
                             data: {
@@ -402,7 +394,7 @@ $isConfigurable = $this->isConfigurable();
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
                                 setTimeout(
                                     function() {
-                                        window.location.href = '<?php echo $this->getApplepaySuccessUrl() ?>';
+                                        window.location.href = '/buckaroo3extended/checkout/applepaySuccess';
                                     }, 1500
                                 )
                             },
@@ -417,14 +409,14 @@ $isConfigurable = $this->isConfigurable();
                         }
                     );
                 }
-
+    
                 /**
                  * Place Order method, compatible with jQuery 3.
                  */
                 ApplePay.prototype.placeOrderjQ3 = function(payment) {
                     return jQuery.ajax(
                         {
-                            url: '<?php echo $this->getUrl('/buckaroo3extended/checkout/saveOrder') ?>',
+                            url: '/buckaroo3extended/checkout/saveOrder',
                             method: 'post',
                             context: this,
                             data: {
@@ -434,7 +426,7 @@ $isConfigurable = $this->isConfigurable();
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
                                 setTimeout(
                                     function() {
-                                        window.location.href = '<?php echo $this->getUrl('/buckaroo3extended/checkout/applepaySuccess') ?>';
+                                        window.location.href = '/buckaroo3extended/checkout/applepaySuccess';
                                     }, 1500
                                 )
                             },
@@ -449,22 +441,7 @@ $isConfigurable = $this->isConfigurable();
                         }
                     );
                 }
-
-                /**
-                 * Restore the old cart.
-                 */
-                ApplePay.prototype.restoreCart = function() {
-                    jQuery.ajax(
-                        {
-                            url: '<?php echo $this->getUrl('/buckaroo3extended/checkout/restoreCart') ?>',
-                            method: 'post',
-                            data: {
-                                page: '<?php echo Mage::app()->getFrontController()->getRequest()->getControllerName();?>'
-                            }
-                        }
-                    )
-                }
-
+                
                 /**
                  * Callback function used for processing the payment and sending it to Buckaroo.
                  *
@@ -477,20 +454,19 @@ $isConfigurable = $this->isConfigurable();
                             status: ApplePaySession.STATUS_SUCCESS,
                             errors: []
                         };
-
+                        
                         var authorizationFailedResult = {
                             status: ApplePaySession.STATUS_FAILURE,
                             errors: []
                         };
-
+                        
                         var placeOrderRequest = new ApplePay.prototype.placeOrder(payment);
-
+                        
                         placeOrderRequest.done(function() {
                             resolve(authorizationSuccessResult);
                         });
-
+                        
                         placeOrderRequest.fail(function() {
-                            ApplePay.prototype.restoreCart();
                             resolve(authorizationFailedResult);
                         });
                     })

@@ -1,36 +1,45 @@
 <?php
 /**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License
+ * This source file is subject to the Creative Commons License.
  * It is available through the world-wide-web at this URL:
- * https://tldrlegal.com/license/mit-license
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to support@buckaroo.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact support@buckaroo.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright Copyright (c) Buckaroo B.V.
- * @license   https://tldrlegal.com/license/mit-license
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_Buckaroo3Extended_Model_Observer_CancelAuthorize extends Mage_Core_Model_Abstract
 {
     /** @var array */
-    protected $_allowedMethods = array('afterpay', 'afterpay2', 'afterpay20', 'klarna');
-
-    /**
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     */
-    public function sales_order_payment_void_authorize(Varien_Event_Observer $observer)
-    {
-        return $this->sales_order_payment_cancel_authorize($observer);
-    }
+    protected $_allowedMethods = array('afterpay', 'afterpay2', 'klarna');
 
     /**
      * @param Varien_Event_Observer $observer
@@ -48,14 +57,8 @@ class TIG_Buckaroo3Extended_Model_Observer_CancelAuthorize extends Mage_Core_Mod
             return $this;
         }
 
-        // Only allow when pushed in the backend on the cancel or void buttons
-        if (
-            isset($_SERVER['PATH_INFO'])
-            &&
-            (strpos($_SERVER['PATH_INFO'], 'sales_order/cancel') === false)
-            &&
-            (strpos($_SERVER['PATH_INFO'], 'sales_order/voidPayment') === false)
-        ) {
+        // Only allow when pushed in the backend on the cancel button
+        if (isset($_SERVER['PATH_INFO']) && strpos($_SERVER['PATH_INFO'], 'sales_order/cancel') === false) {
             return $this;
         }
 
@@ -69,16 +72,6 @@ class TIG_Buckaroo3Extended_Model_Observer_CancelAuthorize extends Mage_Core_Mod
             && $paymentMethodAction == Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE
             && !$payment->getSkipCancelAuthorize()
         ) {
-            if (($paymentMethodCode == 'afterpay20') && $paymentMethodAction == 'authorize') {
-                $voidTransactions = Mage::getModel('sales/order_payment_transaction')->getCollection()
-                    ->addAttributeToFilter('order_id', array('eq' => $payment->getOrder()->getEntityId()))
-                    ->addAttributeToFilter('txn_type', array('eq' => 'void'));
-
-                if (!empty($voidTransactions) && sizeof($voidTransactions)>0) {
-                    return false;
-                }
-            }
-
             /** @var TIG_Buckaroo3Extended_Model_Request_CancelAuthorize $cancelAuthorizeRequest */
             $cancelAuthorizeRequest = Mage::getModel(
                 'buckaroo3extended/request_cancelAuthorize',

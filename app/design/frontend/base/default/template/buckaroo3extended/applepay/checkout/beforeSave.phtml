@@ -28,18 +28,6 @@
         jQuery('.buckaroo-apple-pay-shadow, .close-apple-pay, .apple-pay').click(function(){
             jQuery('#buckaroo-apple-pay-popup, .buckaroo-apple-pay-shadow').hide();
         });
-
-        jQuery.fn.preBind = function (type, data, fn) {
-            this.each(function () {
-                jQuery(this).bind(type, data, fn);
-
-                var currentBindings = jQuery._data(this, 'events')[type];
-                if (jQuery.isArray(currentBindings)) {
-                    currentBindings.unshift(currentBindings.pop());
-                }
-            });
-            return this;
-        };
     });
 
     /**
@@ -95,12 +83,9 @@
         (function(Magento) {
             var ApplePay = (function() {
                 function ApplePay() {
-
-                }
-    
-                this.applePayPayment = [];
-                this.applePayOptions = [];
                 
+                }
+
                 /**
                  * Used to retrieve all data from the Quote and create ApplePay Payment Session.
                  */
@@ -108,47 +93,35 @@
                     var self = this
 
                     new Ajax.Request(
-                        '<?php echo $this->getUrl('buckaroo3extended/checkout/applepay') ?>',
+                        '/buckaroo3extended/checkout/applepay',
                         {
                             method: 'post',
                             onSuccess: function(response) {
                                 var results = self.processResponse(response.responseJSON)
-                                this.applePayOptions = new BuckarooSdk.ApplePay.ApplePayOptions(
+                                var options = new BuckarooSdk.ApplePay.ApplePayOptions(
                                     results.storeName, results.countryCode, results.currencyCode, results.cultureCode,
                                     results.merchantIdentifier, results.lineItems, results.totalLineItems, results.shippingType,
                                     results.shippingMethods, self.captureFunds, [], [], [], []
                                 )
-                                
+    
                                 /**
                                  * Hooking into this event allows overriding the options with custom values.
                                  */
-                                jQuery(document).trigger('buckaroo3extended_applepay_options', [this, this.applePayOptions]);
+                                jQuery(document).trigger('buckaroo3extended_applepay_options', [this, options]);
                                 
-                                if (this.applePayPayment.length === 0) {
-                                    self.createApplePayPayment(results.merchantIdentifier);
-                                }
-                                
-                                /**
-                                 * The options within the payment object need to be updated on every run.
-                                 */
-                                this.applePayPayment.options = this.applePayOptions;
-    
-                                jQuery('.buckaroo-apple-pay-shadow, #buckaroo-apple-pay-popup').fadeIn('fast');
+                                BuckarooSdk.ApplePay.checkApplePaySupport(results.merchantIdentifier).then(function(applePaySupported) {
+                                    if(applePaySupported) {
+                                        var payment = new BuckarooSdk.ApplePay.ApplePayPayment('#apple-pay-wrapper', options)
+                                        payment.showPayButton('black', 'buy');
+                                        jQuery('.buckaroo-apple-pay-shadow, #buckaroo-apple-pay-popup').fadeIn('fast');
+                                    } else {
+                                        alert('ApplePay not available!')
+                                    }
+                                })
                             },
                             onFailure: checkout.ajaxFailure.bind(checkout)
                         }
                     )
-                }
-                
-                ApplePay.prototype.createApplePayPayment = function(merchantId) {
-                    BuckarooSdk.ApplePay.checkApplePaySupport(merchantId).then(function(applePaySupported) {
-                        if(applePaySupported) {
-                            this.applePayPayment = new BuckarooSdk.ApplePay.ApplePayPayment('#apple-pay-wrapper', this.applePayOptions)
-                            this.applePayPayment.showPayButton('black', 'buy');
-                        } else {
-                            alert('ApplePay not available!')
-                        }
-                    })
                 }
 
                 /**
@@ -180,16 +153,16 @@
                 ApplePay.prototype.processLineItems = function(response) {
                     var subTotal = parseFloat(response.calculated_subtotal).toFixed(2)
                     var shippingInclTax = parseFloat(response.shipping_incl_tax).toFixed(2)
-
+                    
                     if(response.discount === '0.0000') {
                         return [
                             {label: '<?php echo $this->__('Subtotal'); ?>', amount: subTotal, type: 'final'},
                             {label: '<?php echo $this->__('Delivery costs'); ?>', amount: shippingInclTax, type: 'final'}
                         ]
                     }
-
+    
                     var discount = parseFloat(response.discount).toFixed(2)
-
+                    
                     return [
                         {label: '<?php echo $this->__('Subtotal'); ?>', amount: subTotal, type: 'final'},
                         {label: '<?php echo $this->__('Delivery costs'); ?>', amount: shippingInclTax, type: 'final'},
@@ -229,7 +202,7 @@
                         }
                     ]
                 }
-
+    
                 /**
                  * Callback function used for processing the payment and sending it to Buckaroo.
                  *
@@ -242,25 +215,25 @@
                             status: ApplePaySession.STATUS_SUCCESS,
                             errors: []
                         };
-
+            
                         var authorizationFailedResult = {
                             status: ApplePaySession.STATUS_FAILURE,
                             errors: []
                         };
-
+            
                         var placeOrderRequest = ApplePay.prototype.placeOrder(payment);
-
+            
                         placeOrderRequest.done(function() {
                             resolve(authorizationSuccessResult);
                         });
-
+            
                         placeOrderRequest.fail(function() {
                             resolve(authorizationFailedResult)
                         });
                     })
                 }
-
-
+    
+    
                 /**
                  * Saves order to Magento and sends it to Buckaroo.
                  *
@@ -268,18 +241,18 @@
                  */
                 ApplePay.prototype.placeOrder = function(payment) {
                     var jQver = '';
-
+    
                     if (typeof jQuery !== undefined) {
                         var jQver = jQuery.fn.jquery.split('.');
                     }
-
+    
                     if (jQver[0] === 3) {
                         return this.placeOrderjQ3(payment);
                     }
-
+                    
                     return jQuery.ajax(
                         {
-                            url: '<?php echo $this->getUrl('/buckaroo3extended/checkout/saveOrder') ?>',
+                            url: '/buckaroo3extended/checkout/saveOrder',
                             method: 'post',
                             context: this,
                             data: {
@@ -290,7 +263,7 @@
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
                                 setTimeout(
                                     function() {
-                                        window.location.href = '<?php echo $this->getUrl('/buckaroo3extended/checkout/applepaySuccess') ?>';
+                                        window.location.href = '/buckaroo3extended/checkout/applepaySuccess';
                                     }, 1500
                                 )
                             },
@@ -305,7 +278,7 @@
                         }
                     );
                 }
-
+    
                 /**
                  * Saves order to Magento and sends it to Buckaroo.
                  *
@@ -314,7 +287,7 @@
                 ApplePay.prototype.placeOrderjQ3 = function(payment) {
                     return jQuery.ajax(
                         {
-                            url: '<?php echo $this->getUrl('/buckaroo3extended/checkout/saveOrder') ?>',
+                            url: '/buckaroo3extended/checkout/saveOrder',
                             method: 'post',
                             context: this,
                             data: {
@@ -325,7 +298,7 @@
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
                                 setTimeout(
                                     function() {
-                                        window.location.href = '<?php echo $this->getUrl('/buckaroo3extended/checkout/applepaySuccess') ?>';
+                                        window.location.href = '/buckaroo3extended/checkout/applepaySuccess';
                                     }, 1500
                                 )
                             },
@@ -340,7 +313,7 @@
                         }
                     );
                 }
-
+                
                 return ApplePay
             }())
             Magento.ApplePay = ApplePay

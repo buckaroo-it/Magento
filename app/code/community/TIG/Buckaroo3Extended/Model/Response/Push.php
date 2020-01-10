@@ -86,8 +86,6 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
     {
         $response = $this->_parsePostResponse($this->_postArray['brq_statuscode']);
 
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, $this->_postArray);
-
         //check if the push is valid and if the order can be updated
         list($canProcess, $canUpdate) = $this->_canProcessPush(false, $response);
 
@@ -139,12 +137,7 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
         $this->_debugEmail .= "Current state: " . $this->_order->getState() . "\nCurrent status: " . $this->_order->getStatus() . "\n";
         $this->_debugEmail .= "New state: " . $newStates[0] . "\nNew status: " . $newStates[1] . "\n\n";
 
-        Mage::dispatchEvent('buckaroo3extended_push_custom_processing', array(
-            'push' => $this,
-            'order' => $this->getCurrentOrder(),
-            'response' => $response,
-            'responseobject' => $this->_postArray,
-        ));
+        Mage::dispatchEvent('buckaroo3extended_push_custom_processing', array('push' => $this, 'order' => $this->getCurrentOrder(), 'response' => $response));
 
         if ($this->getCustomResponseProcessing()) {
             return true;

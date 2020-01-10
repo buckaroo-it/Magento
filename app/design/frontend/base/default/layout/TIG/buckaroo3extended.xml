@@ -101,18 +101,6 @@
 		<reference name="before_body_end">
 			<block type="core/template" name="buckaroo_save_sata_js" template="buckaroo3extended/saveData.phtml"/>
 			<block type="core/template" name="buckaroo_onestepcheckout" template="buckaroo3extended/oneStepCheckout.phtml"/>
-            <block type="core/template" name="applepay_before_save">
-                <action method="setTemplate" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                    <template>buckaroo3extended/applepay/checkout/beforeSaveOSC.phtml</template>
-                </action>
-            </block>
-            <block type="core/text" name="buckaroo">
-                <action method="setText">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://checkout.buckaroo.nl/api/buckaroosdk/script/en-US"></script>]]>
-                    </text>
-                </action>
-            </block>
 		</reference>
 	</onestepcheckout_index_index>
 
@@ -158,7 +146,7 @@
             <reference name="checkout.cart.methods">
                 <block type="buckaroo3extended/paymentMethods_applepay_cart_button" name="checkout.cart.methods.applepay" as="checkout.applepay.cart.button">
                     <action method="setTemplate" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                        <template helper="buckaroo3extended/data/isApplePayInCartEnabled"/>
+                        <template>buckaroo3extended/applepay/cart/button.phtml</template>
                     </action>
                 </block>
             </reference>
@@ -181,7 +169,7 @@
         <reference name="product.info.addtocart">
             <block type="buckaroo3extended/paymentMethods_applepay_product_button" name="product.info.applepay" as="applepay.product">
                 <action method="setTemplate" ifconfig="buckaroo/buckaroo3extended_applepay/active">
-                    <template helper="buckaroo3extended/data/isApplePayInProductEnabled"/>
+                    <template>buckaroo3extended/applepay/cart/button.phtml</template>
                 </action>
             </block>
         </reference>

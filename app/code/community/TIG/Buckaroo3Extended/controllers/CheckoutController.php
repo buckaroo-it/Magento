@@ -1,22 +1,41 @@
 <?php
 
 /**
+ *                  ___________       __            __
+ *                  \__    ___/____ _/  |_ _____   |  |
+ *                    |    |  /  _ \\   __\\__  \  |  |
+ *                    |    | |  |_| ||  |   / __ \_|  |__
+ *                    |____|  \____/ |__|  (____  /|____/
+ *                                              \/
+ *          ___          __                                   __
+ *         |   |  ____ _/  |_   ____ _______   ____    ____ _/  |_
+ *         |   | /    \\   __\_/ __ \\_  __ \ /    \ _/ __ \\   __\
+ *         |   ||   |  \|  |  \  ___/ |  | \/|   |  \\  ___/ |  |
+ *         |___||___|  /|__|   \_____>|__|   |___|  / \_____>|__|
+ *                  \/                           \/
+ *                  ________
+ *                 /  _____/_______   ____   __ __ ______
+ *                /   \  ___\_  __ \ /  _ \ |  |  \\____ \
+ *                \    \_\  \|  | \/|  |_| ||  |  /|  |_| |
+ *                 \______  /|__|    \____/ |____/ |   __/
+ *                        \/                       |__|
+ *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License
+ * This source file is subject to the Creative Commons License.
  * It is available through the world-wide-web at this URL:
- * https://tldrlegal.com/license/mit-license
+ * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to support@buckaroo.nl so we can send you a copy immediately.
+ * to servicedesk@tig.nl so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact support@buckaroo.nl for more information.
+ * needs please contact servicedesk@tig.nl for more information.
  *
- * @copyright Copyright (c) Buckaroo B.V.
- * @license   https://tldrlegal.com/license/mit-license
+ * @copyright   Copyright (c) Total Internet Group B.V. https://tig.nl/copyright
+ * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
 class TIG_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller_Front_Action
 {
@@ -70,9 +89,6 @@ class TIG_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller_Fron
      * Creates a quote within product view for further processing.
      * Used by Apple Pay.
      *
-     * This method is loaded on pop-up load and shipping contact change, that's
-     * why we add an apple_pay_init attribute to the session.
-     *
      * @throws \Mage_Core_Exception
      * @throws \Mage_Core_Model_Store_Exception
      */
@@ -84,31 +100,9 @@ class TIG_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller_Fron
         if (!$postData['product']) {
             return;
         }
-    
+        
         $product = $postData['product'];
-        $applePayInit = Mage::getSingleton('checkout/session')->getApplePayInit();
-    
-        if ($applePayInit) {
-            /**
-             * Set apple_pay_init to null, so the cart will not be restored on
-             * shipping contact change
-             */
-            Mage::getSingleton('checkout/session')->setApplePayInit(null);
-    
-            /** Get the old QuoteId and set it */
-            $oldQuoteId = Mage::getModel('checkout/session')->getQuote()->getId();
-            Mage::getSingleton('checkout/session')->setOldQuoteId($oldQuoteId);
-    
-            /** Build new quote */
-            $newQuote = Mage::getModel('sales/quote');
-            $newQuote->setData('is_active', 1);
-            $newQuote->save();
-            $newQuoteId = $newQuote->getId();
-    
-            Mage::getSingleton('checkout/session')->setQuoteId($newQuoteId);
-        }
-    
-    
+        
         /** @var Mage_Checkout_Model_Cart $cart */
         $cart = Mage::getModel('checkout/cart');
         $cart->truncate();
@@ -452,21 +446,6 @@ class TIG_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller_Fron
         
         $this->getResponse()->clearHeaders()->setHeader('Content-type', 'application/json');;
         $this->getResponse()->setBody($jsonResponse);
-    }
-    
-    public function restoreCartAction()
-    {
-        /** Check if we are on the product page */
-        $type = $this->getRequest()->getParam('page');
-        
-        if ($type !== 'product')
-        {
-            return;
-        }
-        
-        /** @var TIG_Buckaroo3Extended_Model_PaymentMethods_Applepay_Process $process */
-        $process = Mage::getModel(' buckaroo3extended/paymentMethods_applepay_process');
-        $process->restoreCart();
     }
     
     /**
