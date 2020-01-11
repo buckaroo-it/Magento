@@ -1,4 +1,3 @@
-Op onze Knowledge base kunt u de installatiehandleiding van deze extensie vinden. Deze handleiding is het meest actueel: https://confluence.tig.nl/x/XYaC.
+Op onze support website kunt u de installatiehandleiding van deze extensie vinden. Deze handleiding is het meest actueel: https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1
 
-You can find our installation guide of all our releases on our Knowledge base. We will keep this guide updated. You can find this guide here: https://confluence.tig.nl/x/XYaC.
-
+You can find our installation guide of all our releases on our support website. We will keep this guide updated. You can find this guide here: https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1 (dutch only)
