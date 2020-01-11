@@ -2,7 +2,7 @@
 <config>
     <modules>
         <TIG_Buckaroo3Extended>
-            <version>5.2.1</version>
+            <version>5.2.2</version>
         </TIG_Buckaroo3Extended>
     </modules>
     <tig>
