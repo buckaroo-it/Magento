@@ -1,0 +1,41 @@
+Installation
+1.1 Back-up
+We strongly advise to install and update the extension on a staging environment first and make a back-up of your webshop prior to the installation.
+
+1.2 Composer installation
+Login via SSH and execute the following commands via the command line:
+
+composer require buckaroo/magento1
+1.3 Extension activation and updates
+Execute the following commands via the command line:
+
+cp -ra vendor/buckaroo/magento1/app/* YOUR_MAGENTO_INSTALLATION_ROOT/app
+cp -ra vendor/buckaroo/magento1/skin/* YOUR_MAGENTO_INSTALLATION_ROOT/skin
+1.4 File access rights
+Depending on the operating system, make sure the just added files have the correct access rights so that the web server can access and execute the files correctly.
+
+The composer command can be executed by the logged in user on the server which is sometimes not the same as the user of the web server. The files created by composer can not be read by the web server which can lead to unexpected behaviour.
+
+Composer will install the files in:
+
+vendor/buckaroo/magento1
+1.5 Flush cache and sessions
+Flush your Magento cache using the following command:
+
+rm -rf YOUR_MAGENTO_INSTALLATION_ROOT/var/cache/*
+rm -rf YOUR_MAGENTO_INSTALLATION_ROOT/var/session/*
+The installation is now completed.
+
+Update
+2.1 Update the extension
+To be able to make use of the latest features and bugfixes you should update the extension frequently. To do this you have to execute the following commands and flush your Magento cache.
+
+composer update buckaroo/magento1
+
+IMPORTANT NOTE: if you update from v5.0.1 or lower to v5.2.2 or higher then you need also execute :
+
+composer remove tig/buckaroo-magento1
+
+Need support with the Buckaroo extension? Please send an email to support@buckaroo.nl or call Buckaroo on phone number 030-711 5000.
+
+Do you have feedback? We would like to hear from 030-711 5000 or by e-mail at support@buckaroo.nl.
