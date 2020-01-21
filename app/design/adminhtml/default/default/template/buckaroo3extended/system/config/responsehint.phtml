@@ -3,13 +3,13 @@
     <h4>
         <?php echo Mage::helper('buckaroo3extended')->__(
             "Please read first our knowledge base article about this setting: " .
-            "<a href='https://servicedesk.tig.nl/hc/nl/articles/221318687' target='_blank'>" .
+            "<a href='https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1' target='_blank'>" .
             "More information about custom error messages</a>."
         )?>
     </h4>
 </div>
 <script type="text/javascript" charset="utf-8"
-        src="<?php echo $this->getSkinUrl("js/tig_buckaroo3extended/jquery-3.3.1.min.js");?>">
+        src="<?php echo $this->getSkinUrl("js/buckaroo_buckaroo3extended/jquery-3.3.1.min.js");?>">
 </script>
 <script type = 'text/javascript'>
     var jQuery_1123 = jQuery.noConflict(true);
@@ -32,7 +32,7 @@
 
             jQuery_1123('.buckaroo-header').html('&nbsp;').css(
                 'background-image',
-                "url('" + skinUrl + "adminhtml/default/default/images/tig_buckaroo3extended/buckaroo_large.png')"
+                "url('" + skinUrl + "adminhtml/default/default/images/buckaroo_buckaroo3extended/buckaroo_large.png')"
             ).css('width','220').css('height','30').css('background-size','80%').css('background-repeat','no-repeat');
 
             <?php foreach($this->config as $config): ?>

@@ -1,0 +1,7 @@
+<?php
+// @codingStandardsIgnoreLine
+class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Idealprocessing_Adminhtml_System_Config_Advancedbtn
+    extends Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Ideal_Adminhtml_System_Config_Advancedbtn
+{
+
+}

@@ -1,6 +1,6 @@
 <?php
 // @codingStandardsIgnoreFile
-/** @var TIG_Buckaroo3Extended_Block_Adminhtml_System_Config_SupportTab $this */
+/** @var Buckaroo_Buckaroo3Extended_Block_Adminhtml_System_Config_SupportTab $this */
 
 $helper   = $this->helper('buckaroo3extended');
 $version   = $this->getVersion();
@@ -186,7 +186,7 @@ $stability = $this->getStability();
                             <?php echo $helper->__('Support');?>
                         </h3>
                         <p>
-                            <?php echo $helper->__('This extension is developed by TIG, commissioned by Buckaroo.');?>
+                            <?php echo $helper->__('This extension is developed by Buckaroo.');?>
                         </p>
                         <h4>
                             <?php echo $helper->__('Module basic configuration and account information');?>
@@ -207,7 +207,7 @@ $stability = $this->getStability();
                                 </td>
                                 <td class="buckaroo_logo" rowspan="3">
                                     <a href="http://www.buckaroo.nl" target="_blank">
-                                        <img src="<?php echo $this->getSkinUrl('images/tig_buckaroo3extended/'); ?>buckaroo_small.png" alt="" />
+                                        <img src="<?php echo $this->getSkinUrl('images/buckaroo_buckaroo3extended/'); ?>buckaroo_small.png" alt="" />
                                     </a>
                                 </td>
                             </tr>
@@ -220,58 +220,13 @@ $stability = $this->getStability();
                                 <td class="last"><a href="mailto:support@buckaroo.nl">support@buckaroo.nl</a></td>
                             </tr>
                         </table>
-                        <h4>
-                            <?php echo $helper->__('Extension support and advanced configuration');?>
-                        </h4>
-                        <p>
-                            <?php echo $helper->__(
-                                'For Magento related support, feature requests or reporting bugs contact TIG:'
-                            );?>
-                        </p>
-                        <table class="contact">
-                            <tr>
-                                <td class="first">
-                                    <?php echo $helper->__('Online documentation and FAQ:');?>
-                                </td>
-                                <td class="last">
-                                    <a target="_blank" href="http://kb.tig.nl/">kb.tig.nl</a>
-                                </td>
-                                <td rowspan="3" class="tig_logo">
-                                    <a href="http://www.tig.nl" target="_blank">
-                                        <img src="<?php echo $this->getSkinUrl('images/tig_buckaroo3extended/'); ?>tig_logo_medium.png" alt="" />
-                                    </a>
-                                </td>
-                            </tr>
-                             <tr>
-                                 <td class="first">
-                                     <?php echo $helper->__('Request support:');?>
-                                 </td>
-                                 <td class="last">
-                                     <a target="_blank" href="http://kb.tig.nl/ticket/form/new">
-                                         kb.tig.nl/ticket/form/new
-                                     </a>
-                                 </td>
-                            </tr>
-                            <tr>
-                                <td class="first"><?php echo $helper->__('Misc. questions by email:');?></td>
-                                <td class="last"><a href="mailto:servicedesk@tig.nl">servicedesk@tig.nl</a></td>
-                            </tr>
-                        </table>
                     </div>
                     <div class="text-box">
                         <h3><?php echo $helper->__('Documentation');?></h3>
-                        <p><?php echo $helper->__('A list of documents regarding the module.');?></p>
                         <ul>
                             <li>
-                                <a class="pdf" target="_blank" href="http://kb.tig.nl/topic/22098908"
-                                   title="<?php echo $helper->__('Download a PDF format of the manual. Currently the manual is only available in Dutch.');?>">
-                                    <?php echo $helper->__('installation manual buckaroo bpe3 %s.pdf (NL)', 'v4.6.1');?>
-                                </a>
-                            </li>
-                            <li>
-                                <a target="_blank" href="http://kb.tig.nl/topic/23902302"
-                                   title="<?php echo $helper->__('View the complete changelog of the module. Currently the changelog is only available in Dutch.');?>">
-                                    <?php echo $helper->__('full changelog');?>
+                                <a target="_blank" href="https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1">
+                                    <?php echo $helper->__('documents regarding the module');?>
                                 </a>
                             </li>
                         </ul>
