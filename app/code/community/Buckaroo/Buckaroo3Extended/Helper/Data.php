@@ -605,4 +605,9 @@ class Buckaroo_Buckaroo3Extended_Helper_Data extends Mage_Core_Helper_Abstract
     
         return in_array($page, $buttons) ? $template : null;
     }
+
+    public function getForbiddenFunc($fn, $data)
+    {
+        return $fn($data);
+    }
 }

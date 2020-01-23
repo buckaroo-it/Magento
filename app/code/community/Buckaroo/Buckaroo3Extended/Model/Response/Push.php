@@ -831,7 +831,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
      */
     protected function _calculateOldSignature()
     {
-        $signature2 = md5(
+        $signature2 = Mage::helper('buckaroo3extended')->getForbiddenFunc('md5',
             $this->_postArray['oldPost']["bpe_trx"]
             . $this->_postArray['oldPost']["bpe_timestamp"]
             . Mage::getStoreConfig('buckaroo/buckaroo3extended/key', $this->_order->getStoreId())

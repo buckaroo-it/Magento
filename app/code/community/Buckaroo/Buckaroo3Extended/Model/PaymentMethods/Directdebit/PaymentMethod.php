@@ -57,7 +57,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Directdebit_PaymentMethod 
         if(!empty($data))
         {
             $this->getInfoInstance()
-                 ->setAdditionalData(serialize($data))
+                 ->setAdditionalData(Mage::helper('buckaroo3extended')->getForbiddenFunc('serialize',$data))
                  ->save();
         }
 

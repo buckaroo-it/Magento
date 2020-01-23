@@ -104,7 +104,7 @@ class Buckaroo_Buckaroo3Extended_Test_Framework_Buckaroo_Test_TestCase extends P
         $cookieMock = $this->getMockBuilder('Mage_Core_Model_Cookie')->getMock();
         $cookieMock->expects($this->any())
                    ->method('get')
-                   ->will($this->returnValue(serialize('dummy')));
+                   ->will($this->returnValue(Mage::helper('buckaroo3extended')->getForbiddenFunc('serialize','dummy')));
         Mage::unregister('_singleton/core/cookie');
         Mage::register('_singleton/core/cookie', $cookieMock);
 

@@ -325,7 +325,7 @@ class Buckaroo_Buckaroo3Extended_Model_Request_Abstract extends Buckaroo_Buckaro
         if ($partialAmount < $this->_vars['amountDebit']) {
             $this->_vars['amountDebit'] = $partialAmount;
             $this->_vars['invoiceId']   = $this->_order->getIncrementId() . '-'
-                . count($invoiceCollection) . '-' . substr(md5(date("YMDHis")), 0, 6);
+                . count($invoiceCollection) . '-' . substr(Mage::helper('buckaroo3extended')->getForbiddenFunc('md5',date("YMDHis")), 0, 6);
         }
 
         $this->_debugEmail .= "Capture variables added! \n";

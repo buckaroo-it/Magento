@@ -22,12 +22,12 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_CreditmemoTest extends Buckaroo_Bu
                 $name = $class . $name;
             }
 
-            $serealized .= serialize($name);
+            $serealized .= Mage::helper('buckaroo3extended')->getForbiddenFunc('serialize',$name);
 
             if (array_key_exists($property->getName(), $defaults)) {
-                $serealized .= serialize($defaults[$property->getName()]);
+                $serealized .= Mage::helper('buckaroo3extended')->getForbiddenFunc('serialize',$defaults[$property->getName()]);
             } else {
-                $serealized .= serialize(null);
+                $serealized .= Mage::helper('buckaroo3extended')->getForbiddenFunc('serialize',null);
             }
         }
 

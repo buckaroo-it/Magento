@@ -20,7 +20,7 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Directdebit_Info extends M
 
     protected function _convertAdditionalData()
     {
-        $details = unserialize($this->getInfo()->getAdditionalData());
+        $details = Mage::helper('core/unserializeArray')->unserialize($this->getInfo()->getAdditionalData());
         if (is_array($details)) {
             $this->_mandateReference = isset($details['mandate_reference']) ? (string)$details['mandate_reference']
                 : '';
