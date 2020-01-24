@@ -82,6 +82,11 @@
                         <class>buckaroo3extended/observer_klarnaCreateInvoice</class>
                         <method>salesOrderShipmentSaveAfter</method>
                     </buckaroo3extended_klarnaCreateInvoice>
+                    <buckaroo3extended_afterpay20CreateInvoice>
+                        <type>model</type>
+                        <class>buckaroo3extended/observer_afterpay20CreateInvoice</class>
+                        <method>salesOrderShipmentSaveAfter</method>
+                    </buckaroo3extended_afterpay20CreateInvoice>
                 </observers>
             </sales_order_shipment_save_after>
         </events>
