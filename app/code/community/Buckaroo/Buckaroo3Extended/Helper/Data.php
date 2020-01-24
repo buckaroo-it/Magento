@@ -66,7 +66,7 @@ class Buckaroo_Buckaroo3Extended_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function devLog($method, $message, $parameters = null, $force = false)
     {
-        // return false;
+        return false;
         Mage::log(
             $method. ' / ' . $message . (isset($parameters) ? ":\n " . var_export($parameters, true) : ''),
             Zend_Log::DEBUG,
