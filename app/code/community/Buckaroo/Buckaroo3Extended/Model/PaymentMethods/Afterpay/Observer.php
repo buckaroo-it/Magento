@@ -393,6 +393,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             'BillingTitle'             => $billingAddress->getFirstname(),
             'BillingGender'            => $additionalFields['BPE_Customergender'],
             'BillingInitials'          => strtoupper(substr($billingAddress->getFirstname(), 0, 1)),
+            'BillingFirstName'         => $billingAddress->getFirstname(),
             'BillingLastName'          => $billingAddress->getLastname(),
             'BillingBirthDate'         => $additionalFields['BPE_customerbirthdate'],
             'BillingStreet'            => $streetFull['street'],
