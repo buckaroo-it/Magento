@@ -61,15 +61,14 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentFee_Service
             /**
              * Try to find a tax record that does not have a corresponding tax item record.
              */
-            $taxItemCollection = Mage::getResourceModel('tax/sales_order_tax_item_collection');
-            $taxItemCollection->addFieldToSelect('tax_id');
-            $taxItemCollection->getSelect()->distinct();
-
-            $taxItemIds = $taxItemCollection->getColumnValues('tax_id');
-
-            $taxCollection = Mage::getResourceModel('sales/order_tax_collection')
-                                 ->addFieldToFilter('order_id', array('eq'  => $order->getId()))
-                                 ->addFieldToFilter('tax_id', array('nin' => $taxItemIds));
+            $taxCollection = Mage::getResourceModel('sales/order_tax_collection');
+            $taxCollection->addFieldToFilter('order_id', array('eq'  => $order->getId()));
+            $taxCollection->getSelect()
+                ->joinLeft(
+                    array('item' => Mage::getSingleton('core/resource')->getTableName('tax/sales_order_tax_item')),
+                    'main_table.tax_id = item.tax_id',
+                    array()
+                )->where("item.tax_id is NULL");
 
             /**
              * If we have found a missing record, we need to add it with the COD fee tax info. Otherwise we need to
