@@ -2051,7 +2051,7 @@
             <buckaroo3extended_capayableinstallments>
                 <active>1</active>
                 <model>buckaroo3extended/paymentMethods_capayable_installments_paymentMethod</model>
-                <title>Capayable In Installments</title>
+                <title>In3</title>
                 <sort_order>250</sort_order>
                 <group>buckaroo3extended</group>
             </buckaroo3extended_capayableinstallments>
@@ -2756,20 +2756,9 @@
                 <order_email>1</order_email>
             </buckaroo3extended_pospayment>
 
-            <buckaroo3extended_capayablepostpay>
-                <active>0</active>
-                <mode>0</mode>
-                <title>Capayable: Achteraf Betalen</title>
-                <sort_order>230</sort_order>
-                <order_email>1</order_email>
-                <payment_fee_label>Fee</payment_fee_label>
-                <order_status_success></order_status_success>
-                <order_status_failed></order_status_failed>
-                <allowspecific>0</allowspecific>
-                <specificcountry>NL</specificcountry>
-                <allowed_currencies>EUR</allowed_currencies>
-                <limit_by_ip>0</limit_by_ip>
-            </buckaroo3extended_capayablepostpay>
+            <buckaroo3extended_capayableinstallments>
+                <title>In3 - betaal in 3 keer, 0% rente</title>
+            </buckaroo3extended_capayableinstallments>
 
             <buckaroo3extended_capayableinstallments>
                 <active>0</active>
