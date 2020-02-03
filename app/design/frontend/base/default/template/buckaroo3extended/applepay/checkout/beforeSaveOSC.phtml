@@ -282,7 +282,7 @@
 
                     return jQuery.ajax(
                         {
-                            url: '<?php echo $this->getUrl('/buckaroo3extended/checkout/saveOrder') ?>',
+                            url: '<?php echo $this->getUrl('buckaroo3extended/checkout/saveOrder') ?>',
                             method: 'post',
                             context: this,
                             data: {
@@ -293,7 +293,7 @@
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
                                 setTimeout(
                                     function() {
-                                        window.location.href = '<?php echo $this->getUrl('/buckaroo3extended/checkout/applepaySuccess') ?>';
+                                        window.location.href = '<?php echo $this->getUrl('buckaroo3extended/checkout/applepaySuccess') ?>';
                                     }, 1500
                                 )
                             },
@@ -317,7 +317,7 @@
                 ApplePay.prototype.placeOrderjQ3 = function(payment) {
                     return jQuery.ajax(
                         {
-                            url: '<?php echo $this->getUrl('/buckaroo3extended/checkout/saveOrder') ?>',
+                            url: '<?php echo $this->getUrl('buckaroo3extended/checkout/saveOrder') ?>',
                             method: 'post',
                             context: this,
                             data: {
@@ -328,7 +328,7 @@
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
                                 setTimeout(
                                     function() {
-                                        window.location.href = '<?php echo $this->getUrl('/buckaroo3extended/checkout/applepaySuccess') ?>';
+                                        window.location.href = '<?php echo $this->getUrl('buckaroo3extended/checkout/applepaySuccess') ?>';
                                     }, 1500
                                 )
                             },

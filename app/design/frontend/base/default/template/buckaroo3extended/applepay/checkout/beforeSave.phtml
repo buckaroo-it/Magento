@@ -116,7 +116,8 @@
                                 this.applePayOptions = new BuckarooSdk.ApplePay.ApplePayOptions(
                                     results.storeName, results.countryCode, results.currencyCode, results.cultureCode,
                                     results.merchantIdentifier, results.lineItems, results.totalLineItems, results.shippingType,
-                                    results.shippingMethods, self.captureFunds, [], [], [], []
+                                    results.shippingMethods, self.captureFunds, null, null,
+                                    ["postalAddress"], ["postalAddress"]
                                 )
                                 
                                 /**
@@ -279,7 +280,7 @@
 
                     return jQuery.ajax(
                         {
-                            url: '<?php echo $this->getUrl('/buckaroo3extended/checkout/saveOrder') ?>',
+                            url: '<?php echo $this->getUrl('buckaroo3extended/checkout/saveOrder') ?>',
                             method: 'post',
                             context: this,
                             data: {
@@ -287,12 +288,20 @@
                                 isCheckout: true
                             },
                             success: function(response) {
-                                /** Set Timeout before redirecting to prevent Safari from crashing. */
-                                setTimeout(
-                                    function() {
-                                        window.location.href = '<?php echo $this->getUrl('/buckaroo3extended/checkout/applepaySuccess') ?>';
-                                    }, 1500
-                                )
+                                if (response && response.RequiredAction !== undefined && response.RequiredAction.RedirectURL !== undefined) {
+                                    setTimeout(
+                                        function() {
+                                            window.location.replace(response.RequiredAction.RedirectURL);
+                                        }, 1500
+                                    )
+                                } else {
+                                    /** Set Timeout before redirecting to prevent Safari from crashing. */
+                                    setTimeout(
+                                        function () {
+                                            window.location.href = '<?php echo $this->getUrl('buckaroo3extended/checkout/applepaySuccess') ?>'; //ZAK
+                                        }, 1500
+                                    )
+                                }
                             },
                             error: function(error) {
                                 /** Set Timeout to prevent Safari from crashing and reload window to show error in Magento. */
@@ -314,7 +323,7 @@
                 ApplePay.prototype.placeOrderjQ3 = function(payment) {
                     return jQuery.ajax(
                         {
-                            url: '<?php echo $this->getUrl('/buckaroo3extended/checkout/saveOrder') ?>',
+                            url: '<?php echo $this->getUrl('buckaroo3extended/checkout/saveOrder') ?>',
                             method: 'post',
                             context: this,
                             data: {
@@ -325,7 +334,7 @@
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
                                 setTimeout(
                                     function() {
-                                        window.location.href = '<?php echo $this->getUrl('/buckaroo3extended/checkout/applepaySuccess') ?>';
+                                        window.location.href = '<?php echo $this->getUrl('buckaroo3extended/checkout/applepaySuccess') ?>';
                                     }, 1500
                                 )
                             },

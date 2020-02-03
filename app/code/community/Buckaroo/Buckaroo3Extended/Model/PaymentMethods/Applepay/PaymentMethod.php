@@ -63,10 +63,16 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Applepay_PaymentMethod ext
             $paymentData = json_encode(array('paymentData' => $postData['payment']['token']['paymentData']));
         }
 
+        $billingContact = null;
+        if (isset($postData['payment']['billingContact'])) {
+            $billingContact = json_encode($postData['payment']['billingContact']);
+        }
+
         if ($paymentData) {
             $this->getInfoInstance()->setAdditionalInformation(
                 array(
-                    $this->_code . '_response' => $paymentData
+                    $this->_code . '_response' => $paymentData,
+                    $this->_code . '_billingContact' => $billingContact
                 )
             );
         }

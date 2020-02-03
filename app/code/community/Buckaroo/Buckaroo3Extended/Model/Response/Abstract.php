@@ -217,9 +217,38 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         $this->_debugEmail .= "Redirecting user to…" . $redirectUrl . "\n";
 
         $this->sendDebugEmail();
-
         Mage::app()->getResponse()->clearHeaders();
-        Mage::app()->getResponse()->setRedirect($redirectUrl)->sendResponse();
+
+        if (
+            !empty($this->_response->TransactionType)
+            &&
+            ($this->_response->TransactionType == 'C848')
+            &&
+            !empty($this->_response->ServiceCode)
+            &&
+            ($this->_response->ServiceCode == 'applepay')
+        ) {
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 3, $this->_response);
+
+            $response = [
+                'RequiredAction' => [
+                    'RedirectURL' => $redirectUrl
+                ]
+            ];
+            $jsonResponse = Mage::helper('core')->jsonEncode($response);
+            header_remove('Location');
+            Mage::app()->getResponse()
+                ->setHttpResponseCode(200)
+                ->clearHeaders()
+                ->setHeader('Content-type', 'application/json')
+                ->setBody($jsonResponse);
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 4);
+            return;
+        } else {
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 5);
+            Mage::app()->getResponse()->setRedirect($redirectUrl)->sendResponse();
+        }
+
 
         return;
     }
@@ -313,6 +342,21 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
 
         $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $this->_order->getStoreId());
         $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
+
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 6, $this->_postArray);
+        if (
+            !empty($this->_postArray['brq_payment_method'])
+            &&
+            ($this->_postArray['brq_payment_method'] == 'applepay')
+            &&
+            !empty($this->_postArray['brq_statuscode'])
+            &&
+            ($this->_postArray['brq_statuscode'] == '190')
+        ) {
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 7, $returnUrl);
+            $returnUrl = Mage::getUrl('buckaroo3extended/checkout/applepaySuccess', array('_secure' => true));
+        }
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 8, $returnUrl);
 
         $this->_debugEmail .= 'Redirecting user to...' . $returnUrl . "\n";
 
