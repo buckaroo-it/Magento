@@ -219,6 +219,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         $this->sendDebugEmail();
         Mage::app()->getResponse()->clearHeaders();
 
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, [$this->_response]);
         if (
             !empty($this->_response->TransactionType)
             &&
@@ -227,8 +228,10 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
             !empty($this->_response->ServiceCode)
             &&
             ($this->_response->ServiceCode == 'applepay')
+            &&
+            !empty($this->_response->IsTest)
         ) {
-            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 3, $this->_response);
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 3);
 
             $response = [
                 'RequiredAction' => [
@@ -242,7 +245,6 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
                 ->clearHeaders()
                 ->setHeader('Content-type', 'application/json')
                 ->setBody($jsonResponse);
-            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 4);
             return;
         } else {
             Mage::helper('buckaroo3extended')->devLog(__METHOD__, 5);
@@ -258,7 +260,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
      */
     protected function _success($status = self::BUCKAROO_SUCCESS)
     {
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, [$status]);
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, [$status, $this->_postArray]);
 
         $this->_debugEmail .= "The response indicates a successful request. \n";
 
@@ -343,7 +345,6 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $this->_order->getStoreId());
         $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
 
-        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 6, $this->_postArray);
         if (
             !empty($this->_postArray['brq_payment_method'])
             &&
@@ -352,6 +353,10 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
             !empty($this->_postArray['brq_statuscode'])
             &&
             ($this->_postArray['brq_statuscode'] == '190')
+            &&
+            !empty($this->_postArray['brq_test'])
+            &&
+            ($this->_postArray['brq_test'] == 'true')
         ) {
             Mage::helper('buckaroo3extended')->devLog(__METHOD__, 7, $returnUrl);
             $returnUrl = Mage::getUrl('buckaroo3extended/checkout/applepaySuccess', array('_secure' => true));
