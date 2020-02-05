@@ -872,7 +872,12 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
 
         Mage::app()->setCurrentStore($orderStore);
 
-        $this->_order->queueNewOrderEmail($forceMode);
+        $magentoVersion = Mage::getVersion();
+        if (version_compare($magentoVersion, '1.9.1', '>=')) {
+            $this->_order->queueNewOrderEmail($forceMode);
+        } else {
+            $this->_order->sendNewOrderEmail();
+        };
 
         Mage::app()->setCurrentStore($currentStore);
 
