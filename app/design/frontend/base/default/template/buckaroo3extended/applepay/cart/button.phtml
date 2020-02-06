@@ -400,11 +400,19 @@ $isConfigurable = $this->isConfigurable();
                             },
                             success: function(response) {
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
-                                setTimeout(
-                                    function() {
-                                        window.location.href = '<?php echo $this->getApplepaySuccessUrl() ?>';
-                                    }, 1500
-                                )
+                                if (response && response.RequiredAction !== undefined && response.RequiredAction.RedirectURL !== undefined) {
+                                    setTimeout(
+                                        function() {
+                                            window.location.href = response.RequiredAction.RedirectURL;
+                                        }, 1500
+                                    )
+                                } else {
+                                    setTimeout(
+                                        function() {
+                                            window.location.href = '<?php echo $this->getApplepaySuccessUrl() ?>';
+                                        }, 1500
+                                    )
+                                }
                             },
                             error: function(error) {
                                 /** Set Timeout to prevent Safari from crashing and reload window to show error in Magento. */
@@ -432,11 +440,19 @@ $isConfigurable = $this->isConfigurable();
                             },
                             done: function(response) {
                                 /** Set Timeout before redirecting to prevent Safari from crashing. */
-                                setTimeout(
-                                    function() {
-                                        window.location.href = '<?php echo $this->getUrl('buckaroo3extended/checkout/applepaySuccess') ?>';
-                                    }, 1500
-                                )
+                                if (response && response.RequiredAction !== undefined && response.RequiredAction.RedirectURL !== undefined) {
+                                    setTimeout(
+                                        function() {
+                                            window.location.href = response.RequiredAction.RedirectURL;
+                                        }, 1500
+                                    )
+                                } else {
+                                    setTimeout(
+                                        function() {
+                                            window.location.href = '<?php echo $this->getApplepaySuccessUrl() ?>';
+                                        }, 1500
+                                    )
+                                }
                             },
                             fail: function(error) {
                                 /** Set Timeout to prevent Safari from crashing and reload window to show error in Magento. */
