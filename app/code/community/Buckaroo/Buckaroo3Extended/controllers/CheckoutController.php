@@ -80,13 +80,7 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
     {
         /** @var Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Applepay_Process $process */
         $process  = Mage::getModel(' buckaroo3extended/paymentMethods_applepay_process');
-        if($this->getRequest()->getPost()){
-            $postData = $this->getRequest()->getPost();
-        }else{
-            $session = Mage::getSingleton("core/session");
-            $postData['product'] = $process->sanitizeParams($session->getData("product"));
-        }
-
+        $postData = $this->getRequest()->getPost() ?: $process->sanitizeParams(${'_GET'});
         if (!$postData['product']) {
             return;
         }
@@ -173,14 +167,7 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
     {
         /** @var Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Applepay_Process $process */
         $process  = Mage::getModel(' buckaroo3extended/paymentMethods_applepay_process');
-
-        if(Mage::app()->getRequest()->getPost()){
-            $postData = Mage::app()->getRequest()->getPost();
-        }else{
-            $session = Mage::getSingleton("core/session");
-            $postData['wallet'] = $process->sanitizeParams($session->getData("wallet"));
-        }
-
+        $postData = Mage::app()->getRequest()->getPost() ?: $process->sanitizeParams(${'_GET'});
         $wallet   = array();
         if ($postData['wallet']) {
             $wallet = $postData['wallet'];
@@ -262,15 +249,7 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
     {
         /** @var Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Applepay_Process $process */
         $process  = Mage::getModel(' buckaroo3extended/paymentMethods_applepay_process');
-
-        if(Mage::app()->getRequest()->getPost()){
-            $postData = Mage::app()->getRequest()->getPost();
-        }else{
-            $session = Mage::getSingleton("core/session");
-            $postData['wallet'] = $process->sanitizeParams($session->getData("wallet"));
-            $postData['method'] = $process->sanitizeParams($session->getData("method"));
-        }
-
+        $postData = Mage::app()->getRequest()->getPost() ?: $process->sanitizeParams(${'_GET'});
         /** @var Mage_Checkout_Model_Session $session */
         $session = Mage::getModel('checkout/session');
         $quote   = $session->getQuote();
@@ -296,14 +275,7 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
     {
         /** @var Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Applepay_Process $process */
         $process  = Mage::getModel(' buckaroo3extended/paymentMethods_applepay_process');
-
-        if(Mage::app()->getRequest()->getPost()){
-            $postData = Mage::app()->getRequest()->getPost();
-        }else{
-            $session = Mage::getSingleton("core/session");
-            $postData['wallet'] = $process->sanitizeParams($session->getData("wallet"));
-        }
-
+        $postData = Mage::app()->getRequest()->getPost() ?: $process->sanitizeParams(${'_GET'});
         $wallet   = array();
         if ($postData['wallet']) {
             $wallet = $postData['wallet'];
