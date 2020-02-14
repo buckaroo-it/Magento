@@ -1,1 +1,24 @@
-<?php //Giftcards doesn't have a form, but the phtml file is required
+<?php // @codingStandardsIgnoreFile ?>
+<?php $code = $this->getMethodCode() ?>
+<?php
+$group_giftcards = Mage::getStoreConfig('buckaroo/buckaroo3extended_giftcards/group_giftcards', Mage::app()->getStore()->getId());
+if($group_giftcards == 0){ ?>
+    <input type="hidden" name="payment[currentgiftcard]" value="" id="currentgiftcard"/><style>#dt_method_buckaroo3extended_giftcards{display:none}</style>
+<?php
+    $allGiftcards = [];
+    $allGiftcard = Mage::getModel('buckaroo3extended/giftcard')->getCollection();
+    foreach ($allGiftcard as $giftcard) {
+        $allGiftcards[$giftcard->servicecode] = [
+            'label' => $giftcard->label,
+        ];
+    }
+
+    $availableCards = Mage::getStoreConfig('buckaroo/buckaroo3extended_giftcards/cards_allowed', Mage::app()->getStore()->getId());
+    foreach (explode(',',$availableCards.= ',ideal') as $key => $value) {
+       if($value == 'ideal'){$allGiftcards[$value]['label'] = 'Ideal Giftcard';} ?>
+        <dt id="dt_method_buckaroo3extended_giftcard_<?php echo $value; ?>">
+                <input id="p_method_buckaroo3extended_giftcard_<?php echo $value; ?>" value="buckaroo3extended_giftcards" type="radio" name="payment[method]" title="<?php echo $allGiftcards[$value]['label']; ?>" onclick="getElementById('currentgiftcard').value = '<?php echo $value; ?>'; getElementById('currentgiftcard').disabled = false;; payment.switchMethod('buckaroo3extended_giftcards')" class="radio" autocomplete="off">
+                <label for="p_method_buckaroo3extended_giftcard_<?php echo $value; ?>"><?php echo $allGiftcards[$value]['label']; ?> </label>
+        </dt>
+    <?php } ?>
+<?php }

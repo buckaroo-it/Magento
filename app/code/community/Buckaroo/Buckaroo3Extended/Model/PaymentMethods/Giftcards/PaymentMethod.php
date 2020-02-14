@@ -37,4 +37,34 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_PaymentMethod ex
     {
         return $this->canRefund();
     }
+
+    /**
+     * @param array $post
+     *
+     * @return array
+     */
+    protected function _getPostData($post)
+    {
+        $array = [
+            'currentgiftcard' => $post['payment']['currentgiftcard']
+        ];
+        return $array;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws Mage_Core_Exception
+     */
+    public function validate()
+    {
+        $postData = Mage::app()->getRequest()->getPost();
+
+        $postArray = $this->_getPostData($postData);
+        foreach ($postArray as $key => $value) {
+            $this->getInfoInstance()->setAdditionalInformation($key, $value);
+        }
+
+        return parent::validate();
+    }
 }

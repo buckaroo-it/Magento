@@ -55,6 +55,12 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
 
         $availableCards .= ',ideal';
 
+        $order = $observer->getOrder();
+        $payment = $order->getPayment();
+        if($currentgiftcard = $payment->getAdditionalInformation('currentgiftcard')){
+            $availableCards = $currentgiftcard;
+        }
+
         $array = array(
                 'servicesSelectableByClient' => $availableCards,
                 'continueOnImcomplete'       => 'RedirectToHTML',
