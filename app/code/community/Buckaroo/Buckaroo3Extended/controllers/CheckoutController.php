@@ -304,6 +304,8 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
      */
     public function saveOrderAction()
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         /** @var Mage_Checkout_Model_Session $session */
         $session  = Mage::getModel('checkout/session');
         $quote    = $session->getQuote();
@@ -348,7 +350,16 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
             $service = Mage::getModel('sales/service_quote', $quote);
             $order   = $service->submitOrder();
             $order->save();
-            
+
+            $orderId     = $order->getEntityId();
+            $incrementId = $order->getIncrementId();
+
+            $session->clearHelperData();
+            $session->setLastOrderId($orderId);
+            $session->setLastRealOrderId($incrementId);
+
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, [$orderId, $incrementId]);
+
             /** @var Buckaroo_Buckaroo3Extended_Model_Request_Abstract $request */
             $request = Mage::getModel('buckaroo3extended/request_abstract');
             $request->setOrder($order)->setOrderBillingInfo();
