@@ -46,7 +46,9 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_PaymentMethod ex
     protected function _getPostData($post)
     {
         $array = [
-            'currentgiftcard' => $post['payment']['currentgiftcard']
+            'currentgiftcard' => $post['payment']['currentgiftcard'],
+            'IntersolveCardnumber' => $post['payment']['cardNumber'],
+            'IntersolvePin' => $post['payment']['pin'],
         ];
         return $array;
     }

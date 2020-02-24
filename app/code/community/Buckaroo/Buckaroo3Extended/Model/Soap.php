@@ -169,6 +169,34 @@ final class Buckaroo_Buckaroo3Extended_Model_Soap extends Buckaroo_Buckaroo3Exte
             $transactionRequest->ContinueOnIncomplete       = $this->_vars['customVars']['continueOnImcomplete'];
         }
 
+        if (isset($this->_vars['customVars']['IntersolveCardnumber'])
+            && isset($this->_vars['customVars']['IntersolvePin'])) {
+            if($transactionRequest->ServicesSelectableByClient == 'fashioncheque'){
+                $transactionRequest->Parameters = [
+                   [
+                      "Name"=> "FashionChequeCardNumber",
+                      "Value"=> $this->_vars['customVars']['IntersolveCardnumber']
+                   ],
+                   [
+                      "Name"=> "FashionChequePin",
+                      "Value"=>$this->_vars['customVars']['IntersolvePin']
+                   ]
+                ];   
+            }else{
+                $transactionRequest->Parameters = [
+                   [
+                      "Name"=> "IntersolveCardnumber",
+                      "Value"=> $this->_vars['customVars']['IntersolveCardnumber']
+                   ],
+                   [
+                      "Name"=> "IntersolvePin",
+                      "Value"=>$this->_vars['customVars']['IntersolvePin']
+                   ]
+                ];     
+            }
+
+        }
+
         if (array_key_exists('OriginalTransactionKey', $this->_vars)) {
             $transactionRequest->OriginalTransactionKey = $this->_vars['OriginalTransactionKey'];
         }
@@ -539,7 +567,6 @@ final class Buckaroo_Buckaroo3Extended_Model_Soap extends Buckaroo_Buckaroo3Exte
         } else {
             $transactionRequest->AdditionalParameters = $requestParameters;
         }
-
         return $transactionRequest;
     }
 }

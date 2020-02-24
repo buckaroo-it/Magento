@@ -98,3 +98,27 @@
         </td>
     </tr>
 <?php endif; ?>
+
+<?php if ($alreadyPaidValue = $this->getAlreadyPaidValue()): ?>
+<tr>
+    <td colspan="<?php echo $this->escapeHtml($this->getColspan()); ?>"
+        style="<?php echo $this->getTotal()->getStyle() ?>" class="a-right">
+        <?php if ($this->getRenderingArea() == $this->getTotal()->getArea()): ?>
+            <strong>
+        <?php endif; ?>
+        <?php echo $this->escapeHtml('Already paid'); ?>
+        <?php if ($this->getRenderingArea() == $this->getTotal()->getArea()): ?>
+            </strong>
+        <?php endif; ?>
+    </td>
+    <td style="<?php echo $this->getTotal()->getStyle() ?>" class="a-right">
+        <?php if ($this->getRenderingArea() == $this->getTotal()->getArea()): ?>
+            <strong>
+        <?php endif; ?>
+        <?php echo $this->helper('checkout')->formatPrice($alreadyPaidValue) ?>
+        <?php if ($this->getRenderingArea() == $this->getTotal()->getArea()): ?>
+            </strong>
+        <?php endif; ?>
+    </td>
+</tr>
+<?php endif; ?>

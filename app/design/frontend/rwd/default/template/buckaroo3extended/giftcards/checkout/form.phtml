@@ -3,7 +3,9 @@
 <?php
 $group_giftcards = Mage::getStoreConfig('buckaroo/buckaroo3extended_giftcards/group_giftcards', Mage::app()->getStore()->getId());
 if($group_giftcards == 0){ ?>
-    <input type="hidden" name="payment[currentgiftcard]" value="" id="currentgiftcard"/><style>#dt_method_buckaroo3extended_giftcards{display:none}</style>
+    <input type="hidden" name="payment[currentgiftcard]" value="" id="currentgiftcard"/>
+    <script>jQuery_1123('.giftcard_label').append(jQuery_1123('#dt_method_buckaroo3extended_giftcards > label > span').html()); </script>
+    <style>#dt_method_buckaroo3extended_giftcards{display:none}</style>
 <?php
     $allGiftcards = [];
     $allGiftcard = Mage::getModel('buckaroo3extended/giftcard')->getCollection();
@@ -14,11 +16,29 @@ if($group_giftcards == 0){ ?>
     }
 
     $availableCards = Mage::getStoreConfig('buckaroo/buckaroo3extended_giftcards/cards_allowed', Mage::app()->getStore()->getId());
-    foreach (explode(',',$availableCards.= ',ideal') as $key => $value) {
-       if($value == 'ideal'){$allGiftcards[$value]['label'] = 'Ideal Giftcard';} ?>
-        <dt id="dt_method_buckaroo3extended_giftcard_<?php echo $value; ?>">
+    foreach (explode(',',$availableCards) as $key => $value) { ?>
+        <dt id="dt_method_buckaroo3extended_giftcard_<?php echo $value; ?>"  onclick="payment.switchMethod('giftcard_<?php echo $value; ?>');">
                 <input id="p_method_buckaroo3extended_giftcard_<?php echo $value; ?>" value="buckaroo3extended_giftcards" type="radio" name="payment[method]" title="<?php echo $allGiftcards[$value]['label']; ?>" onclick="getElementById('currentgiftcard').value = '<?php echo $value; ?>'; getElementById('currentgiftcard').disabled = false;; payment.switchMethod('buckaroo3extended_giftcards')" class="radio" autocomplete="off">
-                <label for="p_method_buckaroo3extended_giftcard_<?php echo $value; ?>"><?php echo $allGiftcards[$value]['label']; ?> </label>
+                <label class="giftcard_label" for="p_method_buckaroo3extended_giftcard_<?php echo $value; ?>"><?php echo $allGiftcards[$value]['label']; ?> </label>
         </dt>
+
+        <dd id="dd_method_buckaroo3extended_giftcard_<?php echo $value; ?>">
+            <div id="payment-errors-giftcard-<?php echo $value ?>" class="validation-advice" style="display:none;"></div>
+            <div id="payment_form_giftcard_<?php echo $value ?>" style="display:none"
+            class="form-list buckaroo-method buckaroo3extended_input">
+                
+                <div class="cardNumber_container">
+                    <label for="payment[cardNumber_<?php echo $value; ?>"><?php echo $this->__('Card number'); ?></label>
+                    <input id="cardNumber_<?php echo $value; ?>" class="required-entry validate-giftcard" type="tel" name="payment[cardNumber]" onblur="getEncryptedData()" onkeydown="removeSpaces(this)"/>
+                </div>
+
+                <div class="pin_container">
+                    <label for="pin_<?php echo $value; ?>"><?php echo $this->__('PIN / Security code'); ?></label>
+                    <input id="pin_<?php echo $value; ?>" class="required-entry validate-pin" type="tel" name="payment[pin]" onblur="getEncryptedData()" onkeydown="removeSpaces(this)"/>
+                </div>
+
+            </div>
+        </dd>
+
     <?php } ?>
 <?php }

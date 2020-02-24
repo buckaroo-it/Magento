@@ -55,16 +55,24 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
 
         $availableCards .= ',ideal';
 
+        $parameters_array = [];
         $order = $observer->getOrder();
         $payment = $order->getPayment();
+      
         if($currentgiftcard = $payment->getAdditionalInformation('currentgiftcard')){
             $availableCards = $currentgiftcard;
+            $parameters_array = [
+                'IntersolveCardnumber' => $payment->getAdditionalInformation('IntersolveCardnumber'),
+                'IntersolvePin' => $payment->getAdditionalInformation('IntersolvePin'),
+            ];
         }
 
         $array = array(
-                'servicesSelectableByClient' => $availableCards,
-                'continueOnImcomplete'       => 'RedirectToHTML',
+            'servicesSelectableByClient' => $availableCards,
+            'continueOnImcomplete'       => 'RedirectToHTML'
         );
+
+        $array = array_merge($array, $parameters_array);
 
         if (array_key_exists('customVars', $vars)) {
             $vars['customVars'] = array_merge($vars['customVars'], $array);
@@ -73,6 +81,11 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
         }
 
         $request->setVars($vars);
+
+        if($currentgiftcard = $payment->getAdditionalInformation('currentgiftcard')){
+            $process = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process');
+            $process->sendRequest($observer);
+        }
 
         return $this;
     }
@@ -118,7 +131,6 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
         $push = $observer->getPush();
         $postData = $push->getPostArray();
         $order = $observer->getOrder();
-
 
         // Add transaction to transactionManager for managing (partial) refunds
         // with different payment methods
@@ -238,5 +250,4 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
     {
         return $this;
     }
-
 }

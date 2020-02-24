@@ -82,4 +82,9 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentFee_Checkout_Total_Fee extends Mag
         $inclTax = $exclTax + $address->getBuckarooFeeTax();
         return $inclTax;
     }
+
+    public function getAlreadyPaidValue()
+    {
+        return Mage::getSingleton('core/session')->getAlreadyPaid();
+    }
 }
