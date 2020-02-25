@@ -539,6 +539,15 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
             ($this->_response->TransactionType == 'I039')
         ) {
             $this->_order->getPayment()->setSkipCancelAuthorize(true);
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, $this->_response);
+            if (!empty($this->_response->Services->Service->ResponseParameter->_)) {
+                Mage::getSingleton('core/session')->getMessages(true);
+                Mage::getSingleton('core/session')->addError(
+                    Mage::helper('buckaroo3extended')->__(
+                        $this->_response->Services->Service->ResponseParameter->_
+                    )
+                );
+            }
         }
 
         $this->_order->cancel()->save();
