@@ -488,6 +488,11 @@
                         <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
                         <method>buckaroo3extended_refund_request_setmethod</method>
                     </buckaroo3extended_paymentmethod_observer_wechatpay>
+                    <buckaroo3extended_paymentmethod_observer_trustly>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_trustly_observer</class>
+                        <method>buckaroo3extended_refund_request_setmethod</method>
+                    </buckaroo3extended_paymentmethod_observer_trustly>
                 </observers>
             </buckaroo3extended_refund_request_setmethod>
             <buckaroo3extended_refund_request_addservices>
@@ -672,6 +677,11 @@
                         <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
                         <method>buckaroo3extended_refund_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_wechatpay>
+                    <buckaroo3extended_paymentmethod_observer_trustly>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_trustly_observer</class>
+                        <method>buckaroo3extended_refund_request_addservices</method>
+                    </buckaroo3extended_paymentmethod_observer_trustly>
                 </observers>
             </buckaroo3extended_refund_request_addservices>
             <buckaroo3extended_refund_request_addcustomvars>
@@ -856,6 +866,11 @@
                         <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
                         <method>buckaroo3extended_refund_request_addcustomvars</method>
                     </buckaroo3extended_paymentmethod_observer_wechatpay>
+                    <buckaroo3extended_paymentmethod_observer_trustly>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_trustly_observer</class>
+                        <method>buckaroo3extended_refund_request_addcustomvars</method>
+                    </buckaroo3extended_paymentmethod_observer_trustly>
                 </observers>
             </buckaroo3extended_refund_request_addcustomvars>
             <buckaroo3extended_refund_response_custom_processing>
@@ -1103,6 +1118,11 @@
                         <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
                         <method>buckaroo3extended_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_wechatpay>
+                    <buckaroo3extended_paymentmethod_observer_trustly>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_trustly_observer</class>
+                        <method>buckaroo3extended_request_addservices</method>
+                    </buckaroo3extended_paymentmethod_observer_trustly>
                 </observers>
             </buckaroo3extended_request_addservices>
             <buckaroo3extended_request_addcustomvars>
@@ -1312,6 +1332,11 @@
                         <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
                         <method>buckaroo3extended_request_addcustomvars</method>
                     </buckaroo3extended_paymentmethod_observer_wechatpay>
+                    <buckaroo3extended_paymentmethod_observer_trustly>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_trustly_observer</class>
+                        <method>buckaroo3extended_request_addcustomvars</method>
+                    </buckaroo3extended_paymentmethod_observer_trustly>
                 </observers>
             </buckaroo3extended_request_addcustomvars>
             <buckaroo3extended_request_setmethod>
@@ -1521,6 +1546,11 @@
                         <class>buckaroo3extended/paymentMethods_wechatpay_observer</class>
                         <method>buckaroo3extended_request_setmethod</method>
                     </buckaroo3extended_paymentmethod_observer_wechatpay>
+                    <buckaroo3extended_paymentmethod_observer_trustly>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_trustly_observer</class>
+                        <method>buckaroo3extended_request_setmethod</method>
+                    </buckaroo3extended_paymentmethod_observer_trustly>
                 </observers>
             </buckaroo3extended_request_setmethod>
             <buckaroo3extended_push_custom_processing>
@@ -2111,6 +2141,13 @@
                 <sort_order>300</sort_order>
                 <group>buckaroo3extended</group>
             </buckaroo3extended_wechatpay>
+            <buckaroo3extended_trustly>
+                <active>1</active>
+                <model>buckaroo3extended/paymentMethods_trustly_paymentMethod</model>
+                <title>Trustly</title>
+                <sort_order>310</sort_order>
+                <group>buckaroo3extended</group>
+            </buckaroo3extended_trustly>
             <buckaroo2012ideal>
                 <active>0</active>
                 <model>buckaroo3extended/oldPaymentMethods_oldPaymentMethod</model>
@@ -2887,12 +2924,28 @@
                 <specificcountry></specificcountry>
                 <order_status_success></order_status_success>
                 <order_status_failed></order_status_failed>
-                <sort_order>300</sort_order>
+                <sort_order>310</sort_order>
                 <limit_by_ip>0</limit_by_ip>
                 <allowed_currencies>EUR</allowed_currencies>
                 <payment_fee_label>Fee</payment_fee_label>
                 <order_email>1</order_email>
             </buckaroo3extended_wechatpay>
+
+            <buckaroo3extended_trustly>
+                <active>0</active>
+                <mode>0</mode>
+                <title>Trustly</title>
+                <allowspecific>0</allowspecific>
+                <specificcountry></specificcountry>
+                <order_status_success></order_status_success>
+                <order_status_failed></order_status_failed>
+                <sort_order>320</sort_order>
+                <limit_by_ip>0</limit_by_ip>
+                <allowed_currencies>EUR</allowed_currencies>
+                <payment_fee_label>Fee</payment_fee_label>
+                <order_email>1</order_email>
+            </buckaroo3extended_trustly>
+
         </buckaroo>
         <tax>
             <calculation>

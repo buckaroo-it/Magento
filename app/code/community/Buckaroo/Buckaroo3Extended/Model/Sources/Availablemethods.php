@@ -19,6 +19,7 @@ class Buckaroo_Buckaroo3Extended_Model_Sources_Availablemethods
              array('value' => 'sofortueberweisung', 'label' => $helper->__('Sofort Banking')),
              array('value' => 'alipay', 'label' => $helper->__('Alipay')),
              array('value' => 'wechatpay', 'label' => $helper->__('WeChatPay')),
+             array('value' => 'trustly', 'label' => $helper->__('Trustly')),
              array('value' => 'transfer', 'label' => $helper->__('Overboeking')),
              array('value' => 'visa', 'label' => $helper->__('Visa')),
              array('value' => 'maestro', 'label' => $helper->__('eMaestro')),

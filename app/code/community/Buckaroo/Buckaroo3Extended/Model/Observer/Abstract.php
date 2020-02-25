@@ -638,6 +638,7 @@ class Buckaroo_Buckaroo3Extended_Model_Observer_Abstract extends Buckaroo_Buckar
                 'sofortueberweisung',
                 'alipay',
                 'wechatpay',
+                'trustly',
                 'transfer',
                 'visa',
                 'maestro',

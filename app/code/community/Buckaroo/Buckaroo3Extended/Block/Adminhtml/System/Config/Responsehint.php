@@ -35,6 +35,7 @@ class Buckaroo_Buckaroo3Extended_Block_Adminhtml_System_Config_Responsehint
         'applepay',
         'alipay',
         'wechatpay',
+        'trustly',
     );
 
     public $services = array(

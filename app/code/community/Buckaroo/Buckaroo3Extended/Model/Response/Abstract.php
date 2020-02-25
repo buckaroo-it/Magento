@@ -399,10 +399,35 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         $errorMessage = $this->_getCorrectFailureMessage($message);
 
         Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2, [$billingCountry, $parsedResponse]);
+
+        $payment = $this->_order->getPayment();
+
+        $responseErrorMessage = '';
+
+        if ($payment->getMethod() == 'buckaroo3extended_trustly') {
+            $responseCode = $this->_response->Status->Code->Code;
+            if ($responseCode == 491) {
+                if (
+                    !empty($this->_response->RequestErrors->ParameterError->Name)
+                    &&
+                    ($this->_response->RequestErrors->ParameterError->Name == 'CustomerCountryCode')
+                    &&
+                    !empty($this->_response->RequestErrors->ParameterError->Error)
+                    &&
+                    ($this->_response->RequestErrors->ParameterError->Error == 'ParameterInvalid')
+                    &&
+                    !empty($this->_response->RequestErrors->ParameterError->_)
+                ) {
+                    $responseErrorMessage = $this->_response->RequestErrors->ParameterError->_;
+                }
+            }
+        }
+
         if ($billingCountry == 'NL' && isset($parsedResponse['code']) && $parsedResponse['code'] == 490) {
             $responseErrorMessage = $this->getResponseFailureMessage();
-            $errorMessage = strlen($responseErrorMessage) > 0 ? $responseErrorMessage : $errorMessage;
         }
+
+        $errorMessage = strlen($responseErrorMessage) > 0 ? $responseErrorMessage : $errorMessage;
 
         Mage::getSingleton('core/session')->addError($errorMessage);
 
@@ -419,7 +444,6 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
 
         $this->sendDebugEmail();
         
-        $payment = $this->_order->getPayment();
         if($payment->getMethod() == 'buckaroo3extended_applepay') {
             throw new Exception('The payment request has been denied by Buckaroo.');
         }
@@ -483,6 +507,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
      */
     protected function _rejected($message = '')
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
 
         $this->_debugEmail .= "The transaction generated an error. \n";
 
