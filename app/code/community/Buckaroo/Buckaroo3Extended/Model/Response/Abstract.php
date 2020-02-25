@@ -524,6 +524,23 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
 
         $this->_returnGiftcards($this->_order);
         $this->setBuckarooFailedAuthorize();
+
+        if (
+            isset($this->_response->ServiceCode)
+            &&
+            ($this->_response->ServiceCode == 'afterpay')
+            &&
+            isset($this->_response->Status->Code->Code)
+            &&
+            ($this->_response->Status->Code->Code == '690')
+            &&
+            isset($this->_response->TransactionType)
+            &&
+            ($this->_response->TransactionType == 'I039')
+        ) {
+            $this->_order->getPayment()->setSkipCancelAuthorize(true);
+        }
+
         $this->_order->cancel()->save();
         
         $this->_debugEmail .= "The order has been cancelled. \n";
