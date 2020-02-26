@@ -82,10 +82,27 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
 
         $request->setVars($vars);
 
-        if($currentgiftcard = $payment->getAdditionalInformation('currentgiftcard')){
+        $process = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process');
+        if($alreadyPaid = $process->getAlreadyPaid($order->getIncrementId())){
+            // Mage::getSingleton('core/session')->setOriginalTransactionKey(null);
+            $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $order->getStoreId());
+            $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
+            Mage::app()->getResponse()->setRedirect($returnUrl)->sendResponse(); die();
+        }
+
+/*        if(Mage::getSingleton('core/session')->getAlreadyPaid()){
+            Mage::getSingleton('core/session')->setAlreadyPaid(null);
+            Mage::getSingleton('core/session')->setOriginalTransactionKey(null);
+       
+            $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $order->getStoreId());
+            $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
+            Mage::app()->getResponse()->setRedirect($returnUrl)->sendResponse(); die();
+        }*/
+
+/*        if($currentgiftcard = $payment->getAdditionalInformation('currentgiftcard')){
             $process = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process');
             $process->sendRequest($observer);
-        }
+        }*/
 
         return $this;
     }

@@ -197,8 +197,15 @@ class Buckaroo_Buckaroo3Extended_Model_Request_Abstract extends Buckaroo_Buckaro
 
     protected function _addServices()
     {
+        $serviceAction = 'Pay';
+        $order = $observer->getOrder();
+        if($originalTransactionKey = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getOriginalTransactionKey($order->getIncrementId())){
+            $serviceAction = 'PayRemainder';
+            $this->_vars['services']['OriginalTransactionKey'] = $originalTransactionKey;
+        }
+
         $this->_vars['services'][$this->_method] = array(
-            'action'    => 'Pay',
+            'action'    => $serviceAction,
             'version'   => 1,
         );
     }

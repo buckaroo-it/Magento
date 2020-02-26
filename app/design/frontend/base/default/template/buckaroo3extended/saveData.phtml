@@ -44,3 +44,30 @@ document.observe('dom:loaded', function(){
 
 });
 </script>
+
+<script type="text/javascript">
+    function payWithGiftCard(id, form){
+    var validator = new Validation(form);
+    if (validator.validate()) {
+    jQuery_1123.post(
+        <?php // @codingStandardsIgnoreLine ?>
+         '<?php echo Mage::getUrl('buckaroo3extended/checkout/payWithGiftCard', array('_secure'=>true)); ?>',
+         {
+             giftcard: id,
+             cardNumber: jQuery_1123('#cardNumber_'+id).val(),
+             pin: jQuery_1123('#pin_'+id).val()
+         }, function(data) {
+            if(data.alreadyPaid){
+                jQuery_1123("#alreadyPaid").val(jQuery_1123("#alreadyPaid").val() - data.alreadyPaid);
+                checkStepButton();
+            }
+            if(data.error){
+                jQuery_1123("#errorCardMessage_"+id).append(data.error+'<br />');
+            }else{
+                jQuery_1123("#cardMessage_"+id).append(data.message+'<br />');
+            }
+         }
+     );
+    }
+}
+</script>

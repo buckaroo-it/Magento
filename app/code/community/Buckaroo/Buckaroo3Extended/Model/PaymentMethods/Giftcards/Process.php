@@ -21,49 +21,55 @@
 class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends Buckaroo_Buckaroo3Extended_Model_PaymentMethods_PaymentMethod
 {
 
-    public function sendRequest(Varien_Event_Observer $observer)
+    public function sendRequest($data)
     {
-        $order = $observer->getOrder();
-        $payment = $order->getPayment();
-        $currentgiftcard = $payment->getAdditionalInformation('currentgiftcard');
+        $quote = Mage::getModel('checkout/session')->getQuote();
+        $quoteData = $quote->getData();
+        if(!$quote->getReservedOrderId()){
+            $quote->reserveOrderId()->save();
+        }
 
-        $websiteKey = Mage::getStoreConfig('buckaroo/buckaroo3extended/key', $order->getStoreId());
-        $secretKey = Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $order->getStoreId());
-        $test = Mage::getStoreConfig('buckaroo/buckaroo3extended/mode', $order->getStoreId());
-        if (!$test && Mage::getStoreConfig('buckaroo/buckaroo3extended' . $this->_code . '/mode', $order->getStoreId())) {
+        $storeId = $quoteData['store_id'];
+        $websiteKey = Mage::getStoreConfig('buckaroo/buckaroo3extended/key', $storeId);
+        $secretKey = Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $storeId);
+        $test = Mage::getStoreConfig('buckaroo/buckaroo3extended/mode', $storeId);
+        if (!$test && Mage::getStoreConfig('buckaroo/buckaroo3extended' . $this->_code . '/mode', $storeId)) {
             $test = '1';
         }
-        $currency = $order->getBaseCurrency()->getCode();
-        $orderId = Mage::getSingleton('core/session')->getPartOrderId() ? Mage::getSingleton('core/session')->getPartOrderId() : $order->getIncrementId();
-        Mage::getSingleton('core/session')->setPartOrderId(null);
-
+        $currency = $quoteData['base_currency_code'];
         $oldQuoteId = Mage::getModel('checkout/session')->getQuote()->getId();
         Mage::getSingleton('checkout/session')->setOldQuoteId($oldQuoteId);
+        $orderId = $quote->getReservedOrderId();
+        $currentgiftcard = $data['giftcard'];
 
-        // $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $this->_order->getStoreId());
-        $returnLocation = Mage::getStoreConfig('buckaroo3extended/notify/return', $order->getStoreId());
+        $returnLocation = Mage::getStoreConfig('buckaroo3extended/notify/return', $storeId);
         $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
 
-        if($currentgiftcard == 'fashioncheque'){
-            $parameters = [
-                'number' => 'FashionChequeCardNumber',
-                'pin' => 'FashionChequePin',
-            ];
-        }elseif($currentgiftcard == 'tcs'){
-            $parameters = [
-                'number' => 'TCSCardnumber',
-                'pin' => 'TCSValidationCode',
-            ];
-        }else{
-            $parameters = [
-                'number' => 'IntersolveCardnumber',
-                'pin' => 'IntersolvePin',
-            ];
+        switch ($currentgiftcard) {
+            case 'fashioncheque':
+                $parameters = [
+                    'number' => 'FashionChequeCardNumber',
+                    'pin' => 'FashionChequePin',
+                ];
+                break;
+            case 'tcs':
+                $parameters = [
+                    'number' => 'TCSCardnumber',
+                    'pin' => 'TCSValidationCode',
+                ];
+                break;
+            default:
+                $parameters = [
+                    'number' => 'IntersolveCardnumber',
+                    'pin' => 'IntersolvePin',
+                ];
         }
+
+        $grandTotal = $quoteData['base_grand_total'];
 
         $postArray = array(
             "Currency" => $currency,
-            "AmountDebit" => $order->getGrandTotal(),
+            "AmountDebit" => $grandTotal,
             "Invoice" => $orderId,
             "ReturnURL" => $returnUrl,
             "Services" => array(
@@ -74,21 +80,20 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
                         "Parameters" => array(
                             array(
                                 "Name" => $parameters['number'],
-                                "Value" => $payment->getAdditionalInformation('IntersolveCardnumber')
+                                "Value" => $data['cardNumber']
                             ),array(
                                 "Name" => $parameters['pin'],
-                                "Value" => $payment->getAdditionalInformation('IntersolvePin')
+                                "Value" => $data['pin']
                             )
                         )
                     )
                 )
             )
         );
-        if($originalTransactionKey = Mage::getSingleton('core/session')->getOriginalTransactionKey()){
-            Mage::getSingleton('core/session')->setOriginalTransactionKey(null);
+
+        if($originalTransactionKey = $this->getOriginalTransactionKey($orderId)){
             $postArray['Services']['ServiceList'][0]['Action'] = 'PayRemainder';
             $postArray['OriginalTransactionKey'] = $originalTransactionKey;
-            Mage::getSingleton('checkout/session')->setOldOrderIdToRemove($order->getIncrementId());
         }
 
         $url = ($test == 1) ? 'testcheckout.buckaroo.nl' : 'checkout.buckaroo.nl';
@@ -126,61 +131,35 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
 
         $result = curl_exec($curl);
         $curlInfo = curl_getinfo($curl);
-        $decodedResult = json_decode($result, true);
+        $response = json_decode($result, true);
 
-        if($decodedResult['Status']['Code']['Code']=='190'){
-            $this->partialPaymentSave($decodedResult, $observer);
-            return $this;
-        }
-    }
+        $res['status'] = $response['Status']['Code']['Code'];
+        $orderId = $response['Invoice'];
+        if($response['Status']['Code']['Code']=='190'){
+            $res['RemainderAmount'] = $response['RequiredAction']['PayRemainderDetails']['RemainderAmount'];
+            $alreadyPaid = $this->getAlreadyPaid($orderId) + $response['AmountDebit'];
+            
+            if($response['RequiredAction']['PayRemainderDetails']['RemainderAmount']>0){
+                $this->setOriginalTransactionKey($orderId, $response['RequiredAction']['PayRemainderDetails']['GroupTransaction']);
+            }
 
-    protected function partialPaymentSave($response, Varien_Event_Observer $observer)
-    {
-        $order = $observer->getOrder();
-        
-        if($response['RequiredAction']['PayRemainderDetails']['RemainderAmount']>0){
-            $message = "A partial payment of ".$response['Currency']." ".$response['AmountDebit']." was successfully performed on a requested amount. Remainder amount ".$response['RequiredAction']['PayRemainderDetails']['RemainderAmount']." ".$response['RequiredAction']['PayRemainderDetails']['Currency'];
-            Mage::getSingleton('core/session')->setPartOrderId($response['Invoice']);
-            Mage::getSingleton('core/session')->setOriginalTransactionKey($response['RequiredAction']['PayRemainderDetails']['GroupTransaction']);
-
-            Mage::getSingleton('core/session')->setAlreadyPaid(Mage::getSingleton('core/session')->getAlreadyPaid() + $response['AmountDebit']);
- 
-            $this->restoreQuote($order);
-
+            if($response['RequiredAction']['PayRemainderDetails']['RemainderAmount']>0){
+                $message = "A partial payment of ".$response['Currency']." ".$response['AmountDebit']." was successfully performed on a requested amount. Remainder amount ".$response['RequiredAction']['PayRemainderDetails']['RemainderAmount']." ".$response['RequiredAction']['PayRemainderDetails']['Currency'];
+            }else{
+                $message = "Your payed succesfully. Please finish your order";
+            }
+            $this->setAlreadyPaid($orderId, $alreadyPaid);
+            $res['alreadyPaid'] = $alreadyPaid;
+            $res['message'] = Mage::helper('buckaroo3extended')->__($message);
         }else{
-            Mage::getSingleton('core/session')->setAlreadyPaid(null);
-            $message = "Your order has been placed succesfully.";
+            $res['error'] = $response['Status']['SubCode']['Description'];
         }
-
-        $helper = Mage::helper('buckaroo3extended');
-
-        $order->addStatusHistoryComment(
-            $helper->__($message)
-        );
-        
-        $order->save();
-
-        Mage::getSingleton('core/session')->addSuccess(
-            $helper->__($message)
-        );
-
-        $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/' . ($response['RequiredAction']['PayRemainderDetails']['RemainderAmount'] > 0 ? 'failure_redirect' : 'success_redirect'), $order->getStoreId());
-        $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
-
-        if($remove_order_id = Mage::getSingleton('checkout/session')->getOldOrderIdToRemove()){
-            Mage::register('isSecureArea', true);
-            Mage::getModel('sales/order')->loadByIncrementId($remove_order_id)->delete();
-            Mage::unregister('isSecureArea');
-            Mage::getSingleton('checkout/session')->setOldOrderIdToRemove(null);
-        }
-
-        Mage::app()->getResponse()->setRedirect($returnUrl)->sendResponse();
-        die();
+        return $res;
     }
 
-    public function restoreQuote($order)
+    public function restoreQuote()
     {
-        $quoteId = $order->getQuoteId();
+        $quoteId = Mage::getSingleton('checkout/session')->getOldQuoteId();
 
         $quote = Mage::getModel('sales/quote')
             ->load($quoteId)
@@ -189,7 +168,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
             ->save();
         Mage::getSingleton('checkout/session')->replaceQuote($quote);
     }
-    
+
     public static function stringRandom($length = 16)
     {
         $chars = str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
@@ -203,4 +182,44 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
 
         return $str;
     }
+
+    public static function getQuoteBaseGrandTotal()
+    {
+        $quote = Mage::getModel('checkout/session')->getQuote();
+        $quoteData = $quote->getData();
+        return $quoteData['base_grand_total'];
+    }
+
+    public static function getAlreadyPaid($orderId= false)
+    {
+        if(!$orderId){
+            $quote = Mage::getModel('checkout/session')->getQuote();
+            if($reservedOrderId = $quote->getReservedOrderId()){
+                $orderId = $reservedOrderId;
+            }
+        }
+        $alreadyPaid = Mage::getSingleton('core/session')->getAlreadyPaid();
+        return $alreadyPaid[$orderId] ? $alreadyPaid[$orderId] : false;
+    }
+
+    public static function setAlreadyPaid($orderId, $amount)
+    {
+        $alreadyPaid = Mage::getSingleton('core/session')->getAlreadyPaid();
+        $alreadyPaid[$orderId] = $amount;
+        Mage::getSingleton('core/session')->setAlreadyPaid($alreadyPaid);
+    }
+
+    public static function getOriginalTransactionKey($orderId)
+    {
+        $originalTransactionKey = Mage::getSingleton('core/session')->getOriginalTransactionKey();
+        return $originalTransactionKey[$orderId] ? $originalTransactionKey[$orderId] : false;
+    }
+
+    public static function setOriginalTransactionKey($orderId, $transactionKey)
+    {
+        $originalTransactionKey = Mage::getSingleton('core/session')->getOriginalTransactionKey();
+        $originalTransactionKey[$orderId] = $transactionKey;
+        Mage::getSingleton('core/session')->setOriginalTransactionKey($originalTransactionKey);
+    }
+
 }

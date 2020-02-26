@@ -591,6 +591,11 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
                 $articles[] = $discountArticle;
                 $i++;
             }
+            $alreadyPaidArticle = $this->getAlreadyPaid($i);
+            if (!empty($alreadyPaidArticle)) {
+                $articles[] = $alreadyPaidArticle;
+                $i++;
+            }
             $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
             $shippingArticle = $this->getShippingArticle($shippingCosts, $i);
             if (!empty($shippingArticle)) {
@@ -865,6 +870,33 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         $article[] = $this->getParameterLine('VatPercentage', 0, 'Article', $groupId);
         $article[] = $this->getParameterLine('Quantity', 1, 'Article', $groupId);
         $article[] = $this->getParameterLine('Identifier', 'discount_1', 'Article', $groupId);
+
+        return $article;
+    }
+
+    /**
+     * @param $groupId
+     *
+     * @return array
+     */
+    private function getAlreadyPaid($groupId)
+    {
+        $article = array();
+
+        $discount = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getAlreadyPaid($this->_order->getIncrementId());
+
+        if ($discount == 0) {
+            return $article;
+        }
+
+        $discount = (-1 * round($discount, 2));
+
+        $article = array();
+        $article[] = $this->getParameterLine('Description', 'AlreadyPaid Discount', 'Article', $groupId);
+        $article[] = $this->getParameterLine('GrossUnitPrice', $discount, 'Article', $groupId);
+        $article[] = $this->getParameterLine('VatPercentage', 0, 'Article', $groupId);
+        $article[] = $this->getParameterLine('Quantity', 1, 'Article', $groupId);
+        $article[] = $this->getParameterLine('Identifier', 'discount_2', 'Article', $groupId);
 
         return $article;
     }

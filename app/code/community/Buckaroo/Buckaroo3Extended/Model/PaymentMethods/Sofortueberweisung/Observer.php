@@ -14,10 +14,17 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Sofortueberweisung_Observe
         $request = $observer->getRequest();
         
         $vars = $request->getVars();
-        
+    
+        $serviceAction = 'Pay';
+        $order = $observer->getOrder();
+        if($originalTransactionKey = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getOriginalTransactionKey($order->getIncrementId())){
+            $serviceAction = 'PayRemainder';
+            $vars['OriginalTransactionKey'] = $originalTransactionKey;
+        }
+
         $array = array(
             $this->_method     => array(
-                'action'    => 'Pay',
+                'action'    => $serviceAction,
                 'version'   => 1,
             ),
         );

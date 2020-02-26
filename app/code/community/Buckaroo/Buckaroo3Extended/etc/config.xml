@@ -178,6 +178,11 @@
                         <before>grand_total</before>
                         <after>subtotal,discount,shipping,tax</after>
                     </buckaroo_fee_tax>
+                    <buckaroo_gift_card_total>
+                        <class>buckaroo3extended/sales_quote_total_giftcard</class>
+                        <after>discount,tax</after>
+                        <before>grand_total</before>
+                    </buckaroo_gift_card_total>
                 </totals>
             </quote>
             <order_invoice>
