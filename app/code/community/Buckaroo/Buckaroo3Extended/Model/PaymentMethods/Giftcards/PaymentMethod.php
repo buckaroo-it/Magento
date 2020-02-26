@@ -69,4 +69,17 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_PaymentMethod ex
 
         return parent::validate();
     }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAvailable($quote = null)
+    {
+        $session = Mage::getSingleton('checkout/session');
+        if($alreadyPaid = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getAlreadyPaid()){
+            return true;
+        }
+        return parent::isAvailable($quote);
+    }
 }

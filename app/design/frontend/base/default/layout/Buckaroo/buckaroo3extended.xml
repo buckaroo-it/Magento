@@ -44,6 +44,10 @@
             </action>
             <action method="addItem">
                 <type>skin_js</type>
+                <name>js/Buckaroo/Buckaroo3Extended/giftcardsObserver.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
                 <name>js/Buckaroo/Buckaroo3Extended/ClientSideEncryption.js</name>
             </action>
             <block type="core/text" name="buckaroo">
@@ -85,6 +89,10 @@
             <action method="addItem">
                 <type>skin_js</type>
                 <name>js/Buckaroo/Buckaroo3Extended/afterpayObserver.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/Buckaroo/Buckaroo3Extended/giftcardsObserver.js</name>
             </action>
             <action method="addItem">
                 <type>skin_js</type>

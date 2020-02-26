@@ -505,4 +505,21 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
         
         return $failedUrl;
     }
+
+    public function payWithGiftCardAction()
+    {
+        $data = $this->getRequest()->getPost();
+        
+        if (!is_array($data) || !isset($data['cardNumber']) || !isset($data['pin'])) {
+            return;
+        }
+        
+        $result = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->sendRequest($data);
+
+        /** @var Mage_Core_Helper_Data $coreHelper $coreHelper */
+        $coreHelper = Mage::helper('core');
+        $this->getResponse()->clearHeaders()->setHeader('Content-type', 'application/json', true);
+        $this->getResponse()->setBody($coreHelper->jsonEncode($result));
+
+    }
 }

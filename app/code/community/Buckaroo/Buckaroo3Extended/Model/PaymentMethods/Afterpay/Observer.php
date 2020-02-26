@@ -601,6 +601,18 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             break;
         }
 
+        $alreadyPaid = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getAlreadyPaid($this->_order->getIncrementId());
+        if($alreadyPaid){
+            $alreadyPaid = (-1 * round($alreadyPaid, 2));
+            $article['ArticleDescription']['value'] = "AlreadyPaid";
+            $article['ArticleId']['value']          = 'alreadyPaid';
+            $article['ArticleQuantity']['value']    = 1;
+            $article['ArticleUnitPrice']['value']   = $alreadyPaid;
+            $article['ArticleVatcategory']['value'] = 1;
+
+            $group[$i] = $article;
+        }
+
         if (Mage::helper('buckaroo3extended')->isEnterprise()) {
             $gwId = 1;
             $gwTax = Mage::helper('enterprise_giftwrapping')->getWrappingTaxClass($this->_order->getStoreId());
