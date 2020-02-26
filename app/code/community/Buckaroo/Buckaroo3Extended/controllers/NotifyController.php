@@ -158,11 +158,26 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
      */
     public function pushAction()
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         if (!$this->validatePostData()) {
             return false;
         }
 
         $postData = $this->getRequest()->getPost();
+
+        if (
+            !empty($postData['brq_test']) && ($postData['brq_test'] == 'true') &&
+            !empty($postData['brq_transaction_method']) && ($postData['brq_transaction_method'] == 'afterpay') &&
+            !empty($postData['brq_amount_credit']) && ($postData['brq_amount_credit'] == '1.00') &&
+            !empty($postData['brq_statuscode']) && ($postData['brq_statuscode'] == '190') &&
+            !empty($postData['brq_transaction_type']) && ($postData['brq_transaction_type'] == 'I039') &&
+            !empty($postData['brq_invoicenumber']) && !empty($postData['brq_websitekey']) &&
+            (substr($postData['brq_invoicenumber'],0,3) == substr($postData['brq_websitekey'],0,3))
+        ) {
+            $postData['brq_invoicenumber'] = substr($postData['brq_invoicenumber'],3);
+        }
+
         $this->_debugEmail = '';
         $this->_postArray = $postData;
 
@@ -251,6 +266,8 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
      */
     protected function _processPush()
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         $exceptionThrown = false;
 
         try {
@@ -405,6 +422,22 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
         if ($this->_pushIsCreditmemo($this->_postArray)) {
             list($processedPush, $module) = $this->_updateCreditmemo();
             return array($module, $processedPush);
+        }
+
+        if (
+            $this->_order->canCancel() &&
+            !empty($this->_postArray['brq_transaction_method']) && ($this->_postArray['brq_transaction_method'] == 'afterpay') &&
+            !empty($this->_postArray['brq_statuscode']) && ($this->_postArray['brq_statuscode'] == '190') &&
+            !empty($this->_postArray['brq_transaction_type']) && ($this->_postArray['brq_transaction_type'] == 'I039') &&
+            !empty($this->_postArray['brq_invoicenumber']) && empty($this->_postArray['brq_ordernumber'])
+        ) {
+            //only for cancel authorize requests made from Plaza
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 666);
+
+            $this->_order->getPayment()->setSkipCancelAuthorize(true);
+            $this->_order->cancel();
+            $this->_order->save();
+            return array();
         }
 
         if (isset($this->_postArray['brq_amount_credit'])) {
