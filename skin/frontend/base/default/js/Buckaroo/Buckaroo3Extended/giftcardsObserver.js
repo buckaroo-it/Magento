@@ -16,6 +16,18 @@
  * @copyright Copyright (c) Buckaroo B.V.
  * @license   https://tldrlegal.com/license/mit-license
  */
+
+function whenAvailable(name, callback) {
+    var interval = 10; // ms
+    window.setTimeout(function() {
+        if (window[name]) {
+            callback(window[name]);
+        } else {
+            window.setTimeout(arguments.callee, interval);
+        }
+    }, interval);
+}
+
 function checkStepButton(){
     jQuery_1123('#payment-buttons-container button').removeAttr('disabled');
     current = jQuery_1123("input[name='payment[method]']:checked").val();
@@ -24,6 +36,16 @@ function checkStepButton(){
         if(Math.round(jQuery_1123("#alreadyPaid").val())>0){
             jQuery_1123('#payment-buttons-container button').attr('disabled', true);
         }
+    }
+}
+
+function checkPayments(){
+    console.log('checkPayments', jQuery_1123("#alreadyPaid").val());
+    if(Math.round(jQuery_1123("#alreadyPaid").val())>0){
+        var p = ["afterpay","afterpay2","afterpay20","klarna","capayableinstallments"];
+        p.forEach(function(item) {
+            jQuery_1123('#dt_method_buckaroo3extended_'+item+', dd_method_buckaroo3extended_'+item).remove();
+        });
     }
 }
 

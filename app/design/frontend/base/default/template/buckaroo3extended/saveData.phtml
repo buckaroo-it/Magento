@@ -60,6 +60,7 @@ document.observe('dom:loaded', function(){
             if(data.alreadyPaid){
                 jQuery_1123("#alreadyPaid").val(jQuery_1123("#alreadyPaid").val() - data.alreadyPaid);
                 checkStepButton();
+                checkPayments();
             }
             if(data.error){
                 jQuery_1123("#errorCardMessage_"+id).append(data.error+'<br />');

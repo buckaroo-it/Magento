@@ -78,7 +78,16 @@ $conn->addColumn(
     'base_buckaroo_fee_tax_refunded',
     "decimal(12,4) null"
 );
-
+$conn->addColumn(
+    $installer->getTable('sales/order'),
+    'buckaroo_already_paid',
+    "decimal(12,4) null"
+);
+$conn->addColumn(
+    $installer->getTable('sales/order'),
+    'base_buckaroo_already_paid',
+    "decimal(12,4) null"
+);
 /**
  * Add PaymentFee columns to sales/order_invoice
  */
@@ -100,6 +109,16 @@ $conn->addColumn(
 $conn->addColumn(
     $installer->getTable('sales/invoice'),
     'base_buckaroo_fee_tax',
+    "decimal(12,4) null"
+);
+$conn->addColumn(
+    $installer->getTable('sales/invoice'),
+    'buckaroo_already_paid',
+    "decimal(12,4) null"
+);
+$conn->addColumn(
+    $installer->getTable('sales/invoice'),
+    'base_buckaroo_already_paid',
     "decimal(12,4) null"
 );
 
@@ -126,6 +145,16 @@ $conn->addColumn(
     'base_buckaroo_fee_tax',
     "decimal(12,4) null"
 );
+$conn->addColumn(
+    $installer->getTable('sales/quote'),
+    'buckaroo_already_paid',
+    "decimal(12,4) null"
+);
+$conn->addColumn(
+    $installer->getTable('sales/quote'),
+    'base_buckaroo_already_paid',
+    "decimal(12,4) null"
+);
 
 /**
  * Add PaymentFee columns to sales/quote_address
@@ -150,6 +179,16 @@ $conn->addColumn(
     'base_buckaroo_fee_tax',
     "decimal(12,4) null"
 );
+$conn->addColumn(
+    $installer->getTable('sales/quote_address'),
+    'buckaroo_already_paid',
+    "decimal(12,4) null"
+);
+$conn->addColumn(
+    $installer->getTable('sales/quote_address'),
+    'base_buckaroo_already_paid',
+    "decimal(12,4) null"
+);
 
 /**
  * Add PaymentFee columns to sales/order_creditmemo
@@ -172,6 +211,16 @@ $conn->addColumn(
 $conn->addColumn(
     $installer->getTable('sales/creditmemo'),
     'base_buckaroo_fee_tax',
+    "decimal(12,4) null"
+);
+$conn->addColumn(
+    $installer->getTable('sales/creditmemo'),
+    'buckaroo_already_paid',
+    "decimal(12,4) null"
+);
+$conn->addColumn(
+    $installer->getTable('sales/creditmemo'),
+    'base_buckaroo_already_paid',
     "decimal(12,4) null"
 );
 

@@ -190,7 +190,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
         return $quoteData['base_grand_total'];
     }
 
-    public static function getAlreadyPaid($orderId= false)
+    public static function getAlreadyPaid($orderId = false)
     {
         if(!$orderId){
             $quote = Mage::getModel('checkout/session')->getQuote();
@@ -198,12 +198,26 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
                 $orderId = $reservedOrderId;
             }
         }
+
+        if($orderId){
+            if($order = Mage::getModel('sales/order')->loadByIncrementId($orderId)){
+                if($alreadyPaid = $order->getBuckarooAlreadyPaid()){
+                    return $alreadyPaid;
+                }
+            }
+        }
+
         $alreadyPaid = Mage::getSingleton('core/session')->getAlreadyPaid();
         return $alreadyPaid[$orderId] ? $alreadyPaid[$orderId] : false;
     }
 
     public static function setAlreadyPaid($orderId, $amount)
     {
+        if($orderId){
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            $quote->setBuckarooAlreadyPaid($amount);
+        }
+
         $alreadyPaid = Mage::getSingleton('core/session')->getAlreadyPaid();
         $alreadyPaid[$orderId] = $amount;
         Mage::getSingleton('core/session')->setAlreadyPaid($alreadyPaid);

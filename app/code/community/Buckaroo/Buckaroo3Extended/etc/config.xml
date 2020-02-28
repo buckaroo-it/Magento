@@ -108,6 +108,13 @@
             <buckaroo3extended>
                 <class>Buckaroo_Buckaroo3Extended_Block</class>
             </buckaroo3extended>
+
+            <adminhtml>
+                <rewrite>
+                     <sales_order_totals>Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
+                </rewrite>
+            </adminhtml>
+
         </blocks>
 
         <models>
@@ -249,6 +256,9 @@
                 <base_buckaroo_fee_tax>
                     <to_order>*</to_order>
                 </base_buckaroo_fee_tax>
+                <buckaroo_already_paid>
+                    <to_order>*</to_order>
+                </buckaroo_already_paid>
             </sales_convert_quote_address>
             <sales_convert_order>
                 <buckaroo_fee>
@@ -263,6 +273,9 @@
                 <base_buckaroo_fee_tax>
                     <to_quote_address_shipping>*</to_quote_address_shipping>
                 </base_buckaroo_fee_tax>
+                <buckaroo_already_paid>
+                    <to_quote_address_shipping>*</to_quote_address_shipping>
+                </buckaroo_already_paid>
             </sales_convert_order>
         </fieldsets>
         <events>

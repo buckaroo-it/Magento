@@ -56,20 +56,22 @@ class Buckaroo_Buckaroo3Extended_Model_Sales_Quote_Total_Giftcard
         $address->setAlreadyPaid(0);
         $quote->setAlreadyPaid(0);
 
-        if($reservedOrderId = $quote->getReservedOrderId()){
-            $process = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process');
-            if($alreadyPaid = $process->getAlreadyPaid($reservedOrderId)){
-                $address->setAlreadyPaid($alreadyPaid);
-                $quote->setAlreadyPaid($alreadyPaid);
-                $address->setBaseGrandTotal($address->getBaseGrandTotal() - $alreadyPaid);
-                $address->setGrandTotal($address->getGrandTotal() - $store->convertPrice($alreadyPaid));
-            }
-        }
-
         /**
          * Check if the order was placed using Buckaroo
          */
         $paymentMethod = $quote->getPayment()->getMethod();
+
+        if($reservedOrderId = $quote->getReservedOrderId()){
+            $process = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process');
+            if($alreadyPaid = $process->getAlreadyPaid($reservedOrderId)){
+                if($paymentMethod != 'buckaroo3extended_giftcards'){
+                    $address->setAlreadyPaid($alreadyPaid);
+                    $quote->setAlreadyPaid($alreadyPaid);
+                    $address->setBaseGrandTotal($address->getBaseGrandTotal() - $alreadyPaid);
+                    $address->setGrandTotal($address->getGrandTotal() - $store->convertPrice($alreadyPaid));
+                }
+            }
+        }
 
         if (strpos($paymentMethod, 'buckaroo') === false) {
             return $this;

@@ -6,7 +6,15 @@ $alreadyPaid = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_proces
 if($group_giftcards == 0){ ?>
     <input type="hidden" name="payment[currentgiftcard]" value="" id="currentgiftcard"/>
     <input type="hidden" id="alreadyPaid" value="<?php echo $alreadyPaid ?>" />
-    <script>jQuery_1123('.giftcard_label').append(jQuery_1123('#dt_method_buckaroo3extended_giftcards > label > span').html()); </script>
+    <script>jQuery_1123('.giftcard_label').append(jQuery_1123('#dt_method_buckaroo3extended_giftcards > label > span').html()); 
+        <?php if(Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getAlreadyPaid()){
+            foreach (['afterpay','afterpay2','afterpay20','klarna','capayableinstallments'] as $item){
+                foreach (['dd','dt'] as $prefix) {
+                   echo "jQuery_1123('#".$prefix."_method_buckaroo3extended_".$item.")').hide()";
+                }
+            }
+        }?>
+    </script>
     <style>#dt_method_buckaroo3extended_giftcards{display:none}</style>
 <?php
     $allGiftcards = [];
