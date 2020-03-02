@@ -83,9 +83,11 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
         $request->setVars($vars);
 
         if($alreadyPaid = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getAlreadyPaid($order->getIncrementId())){
-            $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $order->getStoreId());
-            $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
-            Mage::app()->getResponse()->setRedirect($returnUrl)->sendResponse(); die();
+            if($alreadyPaid > 0){
+                $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $order->getStoreId());
+                $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
+                Mage::app()->getResponse()->setRedirect($returnUrl)->sendResponse(); die();
+            }
         }
         
         return $this;
