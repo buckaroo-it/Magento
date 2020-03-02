@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Buckaroo_Buckaroo3Extended>
-            <version>5.6.0</version>
+            <version>5.6.1</version>
         </Buckaroo_Buckaroo3Extended>
     </modules>
     <buckaroo>
@@ -259,6 +259,9 @@
                 <buckaroo_already_paid>
                     <to_order>*</to_order>
                 </buckaroo_already_paid>
+                <base_buckaroo_already_paid>
+                    <to_order>*</to_order>
+                </base_buckaroo_already_paid>
             </sales_convert_quote_address>
             <sales_convert_order>
                 <buckaroo_fee>
@@ -276,6 +279,9 @@
                 <buckaroo_already_paid>
                     <to_quote_address_shipping>*</to_quote_address_shipping>
                 </buckaroo_already_paid>
+                <base_buckaroo_already_paid>
+                    <to_quote_address_shipping>*</to_quote_address_shipping>
+                </base_buckaroo_already_paid>
             </sales_convert_order>
         </fieldsets>
         <events>

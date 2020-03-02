@@ -201,13 +201,13 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
 
         if($orderId){
             if($order = Mage::getModel('sales/order')->loadByIncrementId($orderId)){
-                if($alreadyPaid = $order->getBuckarooAlreadyPaid()){
+                if($alreadyPaid = $order->getBaseBuckarooAlreadyPaid()){
                     return $alreadyPaid;
                 }
             }
         }
 
-        $alreadyPaid = Mage::getSingleton('core/session')->getAlreadyPaid();
+        $alreadyPaid = Mage::getSingleton('core/session')->getBuckarooAlreadyPaid();
         return $alreadyPaid[$orderId] ? $alreadyPaid[$orderId] : false;
     }
 
@@ -215,12 +215,14 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
     {
         if($orderId){
             $quote = Mage::getSingleton('checkout/session')->getQuote();
-            $quote->setBuckarooAlreadyPaid($amount);
+            $quote->setBaseBuckarooAlreadyPaid($amount);
+            $store = $quote->getStore();
+            $quote->setBuckarooAlreadyPaid($store->convertPrice($alreadyPaid));
         }
 
-        $alreadyPaid = Mage::getSingleton('core/session')->getAlreadyPaid();
+        $alreadyPaid = Mage::getSingleton('core/session')->getBuckarooAlreadyPaid();
         $alreadyPaid[$orderId] = $amount;
-        Mage::getSingleton('core/session')->setAlreadyPaid($alreadyPaid);
+        Mage::getSingleton('core/session')->setBuckarooAlreadyPaid($alreadyPaid);
     }
 
     public static function getOriginalTransactionKey($orderId)

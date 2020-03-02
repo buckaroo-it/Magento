@@ -53,8 +53,10 @@ class Buckaroo_Buckaroo3Extended_Model_Sales_Quote_Total_Giftcard
         /**
          * First, reset the fee amounts to 0 for this address and the quote.
          */
-        $address->setAlreadyPaid(0);
-        $quote->setAlreadyPaid(0);
+        $address->setBuckarooAlreadyPaid(0)
+                ->setBaseBuckarooAlreadyPaid(0);
+        $quote->setBuckarooAlreadyPaid(0)
+                ->setBaseBuckarooAlreadyPaid(0);
 
         /**
          * Check if the order was placed using Buckaroo
@@ -63,11 +65,14 @@ class Buckaroo_Buckaroo3Extended_Model_Sales_Quote_Total_Giftcard
 
         if($reservedOrderId = $quote->getReservedOrderId()){
             $process = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process');
-            if($alreadyPaid = $process->getAlreadyPaid($reservedOrderId)){
+            if($baseAlreadyPaid = $process->getAlreadyPaid($reservedOrderId)){
+                $alreadyPaid = $store->convertPrice($baseAlreadyPaid);
+                $address->setBuckarooAlreadyPaid($alreadyPaid)
+                        ->setBaseBuckarooAlreadyPaid($baseAlreadyPaid);
+                $quote->setBuckarooAlreadyPaid($alreadyPaid)
+                      ->setBaseBuckarooAlreadyPaid($baseAlreadyPaid);
                 if($paymentMethod != 'buckaroo3extended_giftcards'){
-                    $address->setAlreadyPaid($alreadyPaid);
-                    $quote->setAlreadyPaid($alreadyPaid);
-                    $address->setBaseGrandTotal($address->getBaseGrandTotal() - $alreadyPaid);
+                    $address->setBaseGrandTotal($address->getBaseGrandTotal() - $baseAlreadyPaid);
                     $address->setGrandTotal($address->getGrandTotal() - $store->convertPrice($alreadyPaid));
                 }
             }
@@ -82,7 +87,7 @@ class Buckaroo_Buckaroo3Extended_Model_Sales_Quote_Total_Giftcard
 
     public function fetch(Mage_Sales_Model_Quote_Address $address)
     {
-        $amount = $address->getAlreadyPaid();
+        $amount = $address->getBuckarooAlreadyPaid();
 
         if ($amount <= 0) {
             return $this;
@@ -90,19 +95,13 @@ class Buckaroo_Buckaroo3Extended_Model_Sales_Quote_Total_Giftcard
 
         $helper = Mage::helper('buckaroo3extended');
 
-        $quote = Mage::getModel('checkout/session')->getQuote();
-        $process = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process');
-        if($orderId = $quote->getReservedOrderId()){
-            if($alreadyPaid = $process->getAlreadyPaid($orderId)){
-                $address->addTotal(
-                    array(
-                        'code'  => $this->getCode(),
-                        'title' => $helper->__("Already paid"),
-                        'value' => $alreadyPaid,
-                    )
-                );
-            }
-        }
+        $address->addTotal(
+            array(
+                'code'  => $this->getCode(),
+                'title' => $helper->__("Paid with Giftcard"),
+                'value' => $amount,
+            )
+        );
 
         return $this;
     }

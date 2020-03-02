@@ -28,14 +28,16 @@
         $orderId = $this->getOrder()->getIncrementId();
 
         parent::_initTotals();
-        $this->_totals['alreadyPaid'] = new Varien_Object(array(
-            'code'      => 'already_paid',
-            'strong'    => true,
-            'value'     => $this->getSource()->getBuckarooAlreadyPaid(),
-            'base_value'=> $this->getSource()->getBuckarooBaseAlreadyPaid(),
-            'label'     => $this->helper('sales')->__('Paid with Giftcard'),
-            'area'      => 'footer'
-        ));
+        if($this->getSource()->getBaseBuckarooAlreadyPaid()){
+          $this->_totals['alreadyPaid'] = new Varien_Object(array(
+              'code'      => 'already_paid',
+              'strong'    => true,
+              'value'     => $this->getSource()->getBuckarooAlreadyPaid(),
+              'base_value'=> $this->getSource()->getBaseBuckarooAlreadyPaid(),
+              'label'     => $this->helper('sales')->__('Paid with Giftcard'),
+              'area'      => 'footer'
+          ));
+        }
 
         return $this;
     }
