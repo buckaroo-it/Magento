@@ -586,11 +586,6 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
                 $i++;
             }
 
-            $discountArticle = $this->getDiscountArticle($i);
-            if (!empty($discountArticle)) {
-                $articles[] = $discountArticle;
-                $i++;
-            }
             $alreadyPaidArticle = $this->getAlreadyPaid($i);
             if (!empty($alreadyPaidArticle)) {
                 $articles[] = $alreadyPaidArticle;
@@ -600,7 +595,13 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
             $shippingArticle = $this->getShippingArticle($shippingCosts, $i);
             if (!empty($shippingArticle)) {
                 $articles[] = $shippingArticle;
+                $i++;
             }
+        }
+
+        $discountArticle = $this->getDiscountArticle($i);
+        if (!empty($discountArticle)) {
+            $articles[] = $discountArticle;
         }
 
         $requestArray = array('Articles' => $articles);
