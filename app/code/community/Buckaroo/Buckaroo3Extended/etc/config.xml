@@ -122,6 +122,11 @@
                 <class>Buckaroo_Buckaroo3Extended_Model</class>
                 <resourceModel>buckaroo3extended_resource</resourceModel>
             </buckaroo3extended>
+            <sales>
+                <rewrite>
+                    <order_creditmemo>Buckaroo_Buckaroo3Extended_Model_Creditmemo</order_creditmemo>
+                </rewrite>
+            </sales>
             <buckaroo3extended_resource>
                 <class>Buckaroo_Buckaroo3Extended_Model_Resource</class>
                 <deprecatedNode>buckaroo3extended_mysql4</deprecatedNode>

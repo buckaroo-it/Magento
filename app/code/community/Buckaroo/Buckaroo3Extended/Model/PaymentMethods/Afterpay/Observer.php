@@ -765,6 +765,13 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
 
     protected function _addCreditmemoArticlesVariables(&$vars, $payment)
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+        $refundType = Mage::getStoreConfig(
+            'buckaroo/' . $this->_code . '/refundtype',
+            Mage::app()->getStore()->getStoreId()
+        );
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, $refundType);
+
         /** @var Mage_Sales_Model_Resource_Order_Creditmemo_Collection $creditmemoCollection */
         $creditmemoCollection = $this->_order->getCreditmemosCollection();
 
@@ -775,27 +782,57 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
         $i        = 1;
         $group    = array();
 
-        /** @var Mage_Sales_Model_Order_Creditmemo_Item $item */
-        foreach ($products as $item) {
-            if (empty($item) || ($item->getOrderItem() && $item->getOrderItem()->getParentItem())) {
-                continue;
-            }
+        if ($refundType == 'without') {
 
-            $article['ArticleDescription']['value'] = (int) $item->getQty() . 'x ' . $item->getName();
-            $article['ArticleId']['value']          = $item->getOrderItemId();
-            $article['ArticleQuantity']['value']    = 1;
-            $article['ArticleUnitPrice']['value']   = $item->getRowTotalInclTax() - $item->getDiscountAmount();
-            $article['ArticleVatcategory']['value'] =
-                $this->_getTaxCategory($this->_getTaxClassId($item->getOrderItem()));
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 4, $creditmemo->getAdjustmentPositive());
 
-            $group[$i] = $article;
+            if ($creditmemo->getAdjustmentPositive() > 0) {
+                $refundTaxClass = 0;
+                if ($orderItems = $this->_order->getAllItems()) {
+                    foreach ($orderItems as $item) {
+                        $refundTaxClass = $this->_getTaxCategory($this->_getTaxClassId($item));
+                        if ($refundTaxClass) break;
+                    }
+                }
 
-            if ($i <= $max) {
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 444, $refundTaxClass);
+
+                $article['ArticleDescription']['value'] = 'Return';
+                $article['ArticleId']['value'] = 1;
+                $article['ArticleQuantity']['value'] = 1;
+                $article['ArticleUnitPrice']['value'] = $creditmemo->getAdjustmentPositive() - $creditmemo->getAdjustmentNegative(); //$payment->getOrder()->getSubtotalInclTax();
+                $article['ArticleVatcategory']['value'] = $refundTaxClass;
+                $group[$i] = $article;
                 $i++;
-                continue;
             }
 
-            break;
+        } else {
+
+            /** @var Mage_Sales_Model_Order_Creditmemo_Item $item */
+            foreach ($products as $item) {
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2);
+
+                if (empty($item) || ($item->getOrderItem() && $item->getOrderItem()->getParentItem())) {
+                    continue;
+                }
+
+                $article['ArticleDescription']['value'] = (int)$item->getQty() . 'x ' . $item->getName();
+                $article['ArticleId']['value'] = $item->getOrderItemId();
+                $article['ArticleQuantity']['value'] = 1;
+                $article['ArticleUnitPrice']['value'] = $item->getRowTotalInclTax() - $item->getDiscountAmount();
+                $article['ArticleVatcategory']['value'] =
+                    $this->_getTaxCategory($this->_getTaxClassId($item->getOrderItem()));
+
+                $group[$i] = $article;
+
+                if ($i <= $max) {
+                    $i++;
+                    continue;
+                }
+
+                break;
+            }
+
         }
 
         $group = $this->handleEnterprise($group, $creditmemoCollection);
