@@ -8,7 +8,11 @@ class Buckaroo_Buckaroo3Extended_Model_Creditmemo extends Mage_Sales_Model_Order
             Mage::app()->getStore()->getStoreId()
         );
 
-        if ($refundType == 'without') {
+        if (
+            ($this->getOrder()->getPayment()->getMethod() == 'buckaroo3extended_afterpay')
+            &&
+            ($refundType == 'without')
+        ) {
             return array();
         } else {
             return parent::getAllItems();

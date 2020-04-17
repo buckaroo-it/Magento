@@ -32,7 +32,11 @@ class Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Creditmemo_Create_I
 
         $totalbarData = parent::getOrderTotalbarData();
 
-        if ($refundType == 'without') {
+        if (
+            ($this->getOrder()->getPayment()->getMethod() == 'buckaroo3extended_afterpay')
+            &&
+            ($refundType == 'without')
+        ) {
             $remainingAmount = $this->displayPrices(
                 $this->getOrder()->getData('total_invoiced') - $this->getOrder()->getData('total_refunded'),
                 $this->getOrder()->getData('total_invoiced') - $this->getOrder()->getData('total_refunded')
