@@ -112,6 +112,7 @@
             <adminhtml>
                 <rewrite>
                      <sales_order_totals>Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
+                     <sales_order_creditmemo_create_items>Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Creditmemo_Create_Items</sales_order_creditmemo_create_items>
                 </rewrite>
             </adminhtml>
 
