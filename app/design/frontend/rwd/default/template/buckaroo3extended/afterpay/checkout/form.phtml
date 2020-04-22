@@ -180,6 +180,12 @@
     var paymentCode = '<?php echo $code;?>';
 
     <?php if($currentBusiness == '3'):?>
+    if($(paymentCode + '_BPE_BusinessSelect').getValue() == 2){
+        document.getElementById('<?php echo $code; ?>_dob_block').style.display = 'none';
+    }
+    if($(paymentCode + '_BPE_BusinessSelect').getValue() == 1){
+        document.getElementById('<?php echo $code; ?>_dob_block').style.display = 'block';
+    }
     $(paymentCode + '_BPE_BusinessSelect').observe('change', function(event){
         if($(paymentCode + '_BPE_BusinessSelect').getValue() == 2){
             $('b2b-fields').show();
