@@ -43,7 +43,17 @@
                        id="<?php echo $code;?>_BPE_Customerphone"/>
             </div>
         </li>
-        <li>
+
+        <?php $currentBusiness = $this->getBusiness(); ?>
+
+        <?php
+        if ($this->getPaymethod() != 'afterpaydigiaccept' || $this->getBillingCountry() == 'BE') {
+            $currentBusiness = '1';
+        }
+        ?>
+
+        <?php if(in_array($currentBusiness, ['1', '3'])): ?>
+        <li id="<?php echo $code;?>_dob_block">
             <?php
             echo $this->getLayout()->createBlock('buckaroo3extended/customer_widget_dob')
                 ->setFieldIdFormat($code . ':billing:%s')
@@ -54,6 +64,7 @@
                 ->toHtml();
             ?>
         </li>
+        <?php endif;?>
 
         <?php if($this->getPaymethod() == 'afterpayacceptgiro'):?>
             <li>
@@ -71,13 +82,7 @@
         <?php endif;?>
 
 
-        <?php $currentBusiness = $this->getBusiness(); ?>
 
-        <?php
-        if ($this->getPaymethod() != 'afterpaydigiaccept' || $this->getBillingCountry() == 'BE') {
-            $currentBusiness = '1';
-        }
-        ?>
 
         <?php if($currentBusiness == '1'): ?>
             <li>
@@ -180,12 +185,14 @@
             $('b2b-fields').show();
             var b2bUrl = '<?php echo $this->getB2BUrl(); ?>';
             $('<?php echo $code; ?>-tos-url').href =  b2bUrl;
+            document.getElementById('<?php echo $code; ?>_dob_block').style.display = 'none';
         }
 
         if($(paymentCode + '_BPE_BusinessSelect').getValue() == 1){
             $('b2b-fields').hide();
             var b2cUrl = '<?php echo $this->getB2CUrl(); ?>';
             $('<?php echo $code; ?>-tos-url').href = b2cUrl;
+            document.getElementById('<?php echo $code; ?>_dob_block').style.display = 'block';
         }
     });
 </script>
