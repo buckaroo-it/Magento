@@ -660,6 +660,19 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
                 continue;
             }
 
+            if($item->getOrderItem()->getProduct()->getTypeId() == 'bundle'){
+                foreach ($products as $bundleItem) {
+                    if (empty($bundleItem) || ($bundleItem->getOrderItem() && !$bundleItem->getOrderItem()->getParentItem())) {
+                        continue;
+                    }
+
+                    if($bundleItem->getOrderItem()->getParentItemId() == $item->getOrderItem()->getId()){
+                        $productArticles[] = $this->getPartialSingleProductArticle($bundleItem, $i++);
+                    }
+                }
+                continue;
+            }
+
             $productArticles[] = $this->getPartialSingleProductArticle($item, $i++);
 
             if ($i > $max) {
