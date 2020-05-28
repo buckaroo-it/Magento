@@ -17,7 +17,7 @@
  * @copyright Copyright (c) Buckaroo B.V.
  * @license   https://tldrlegal.com/license/mit-license
  */
-class Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Creditmemo_Create_Items extends Mage_Adminhtml_Block_Sales_Order_Creditmemo_Create_Items {
+class Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Invoice_Create_Items extends Mage_Adminhtml_Block_Sales_Order_Invoice_Create_Items {
     /**
      * Retrieve order totalbar block data
      *
@@ -28,16 +28,25 @@ class Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Creditmemo_Create_I
         $totalbarData = parent::getOrderTotalbarData();
 
         if (
-            ($this->getOrder()->getPayment()->getMethod() == 'buckaroo3extended_afterpay')
+            ($this->getOrder()->getPayment()->getMethod() == 'buckaroo3extended_afterpay20')
             &&
-            (Mage::getStoreConfig(
-                    'buckaroo/buckaroo3extended_afterpay/refundtype',
-                    Mage::app()->getStore()->getStoreId()
-            ) == 'without')
+            Mage::getStoreConfig(
+                'buckaroo/buckaroo3extended_afterpay20/custom_amount_capture',
+                Mage::app()->getStore()->getStoreId()
+            )
         ) {
+            $paid = $this->displayPrices(
+                $this->getOrder()->getData('base_total_invoiced'),
+                $this->getOrder()->getData('total_invoiced')
+            );
+
+            $totalbarData[0] = array(
+                Mage::helper('sales')->__('Paid Amount'), $paid, false
+            );
+
             $remainingAmount = $this->displayPrices(
-                $this->getOrder()->getData('total_invoiced') - $this->getOrder()->getData('total_refunded'),
-                $this->getOrder()->getData('total_invoiced') - $this->getOrder()->getData('total_refunded')
+                $this->getOrder()->getData('base_grand_total') - $this->getOrder()->getData('base_total_invoiced'),
+                $this->getOrder()->getData('grand_total') - $this->getOrder()->getData('total_invoiced')
             );
 
             array_splice(

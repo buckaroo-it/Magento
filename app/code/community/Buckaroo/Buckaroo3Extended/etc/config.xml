@@ -113,6 +113,7 @@
                 <rewrite>
                      <sales_order_totals>Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
                      <sales_order_creditmemo_create_items>Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Creditmemo_Create_Items</sales_order_creditmemo_create_items>
+                     <sales_order_invoice_create_items>Buckaroo_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Invoice_Create_Items</sales_order_invoice_create_items>
                 </rewrite>
             </adminhtml>
 
@@ -126,6 +127,8 @@
             <sales>
                 <rewrite>
                     <order_creditmemo>Buckaroo_Buckaroo3Extended_Model_Creditmemo</order_creditmemo>
+                    <order_invoice>Buckaroo_Buckaroo3Extended_Model_Invoice</order_invoice>
+                    <order>Buckaroo_Buckaroo3Extended_Model_Order</order>
                 </rewrite>
             </sales>
             <buckaroo3extended_resource>

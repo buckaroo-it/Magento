@@ -552,56 +552,79 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
      */
     private function addArticlesVariables(&$vars, $isCapture = false)
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         $i        = 1;
         $articles = array();
 
-        $partialCapture = $isCapture
-            &&
-            $this->_order->getPayment()->canCapturePartial()
-            &&
-            ($invoiceCollection = $this->_order->getInvoiceCollection())
-            &&
-            ($lastInvoice = $invoiceCollection->getLastItem())
-            &&
-            ($lastInvoice->getBaseGrandTotal() < $this->_order->getBaseGrandTotal());
+        $customAmountCapture = Mage::getStoreConfig(
+            'buckaroo/' . $this->_code . '/custom_amount_capture',
+            Mage::app()->getStore()->getStoreId()
+        );
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, $customAmountCapture);
 
-        if ($partialCapture) {
-            $productArticles = $this->getPartialProductArticles($i);
+        if ($isCapture && $customAmountCapture) {
+                Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2);
+                $article = array();
+                $article[] = $this->getParameterLine('Description', 'Custom capture amount', 'Article', $i);
+                $article[] = $this->getParameterLine('GrossUnitPrice', $vars['amountDebit'], 'Article', $i);
+                $article[] = $this->getParameterLine('VatPercentage', round(21, 2), 'Article', $i);
+                $article[] = $this->getParameterLine('Quantity', 1, 'Article', $i);
+                $article[] = $this->getParameterLine('Identifier', 'custom_amount_capture', 'Article', $i);
+                $articles[] = $article;
         } else {
-            $productArticles = $this->getProductArticles($i);
-        }
-        $i += count($productArticles);
-        $articles = array_merge($articles, $productArticles);
+            Mage::helper('buckaroo3extended')->devLog(__METHOD__, 3);
 
-        if (!$partialCapture || ($partialCapture && $invoiceCollection && (sizeof($invoiceCollection)==1)))  {
-            $enterpriseArticles = $this->getEnterpriseArticles($i);
-            $i += count($enterpriseArticles);
-            $articles = array_merge($articles, $enterpriseArticles);
+            $partialCapture = $isCapture
+                &&
+                $this->_order->getPayment()->canCapturePartial()
+                &&
+                ($invoiceCollection = $this->_order->getInvoiceCollection())
+                &&
+                ($lastInvoice = $invoiceCollection->getLastItem())
+                &&
+                ($lastInvoice->getBaseGrandTotal() < $this->_order->getBaseGrandTotal());
 
-            $fee = (double)$this->_order->getBuckarooFee();
-            $feeTax = (double)$this->_order->getBuckarooFeeTax();
-            $paymentFeeArticles = $this->getPaymentFeeLine($fee, $feeTax, $i);
-            if (!empty($paymentFeeArticles)) {
-                $articles[] = $paymentFeeArticles;
-                $i++;
+            if ($partialCapture) {
+                $productArticles = $this->getPartialProductArticles($i);
+            } else {
+                $productArticles = $this->getProductArticles($i);
+            }
+            $i += count($productArticles);
+            $articles = array_merge($articles, $productArticles);
+
+            if (!$partialCapture || ($partialCapture && $invoiceCollection && (sizeof($invoiceCollection) == 1))) {
+
+                $enterpriseArticles = $this->getEnterpriseArticles($i);
+                $i += count($enterpriseArticles);
+                $articles = array_merge($articles, $enterpriseArticles);
+
+                $fee = (double)$this->_order->getBuckarooFee();
+                $feeTax = (double)$this->_order->getBuckarooFeeTax();
+                $paymentFeeArticles = $this->getPaymentFeeLine($fee, $feeTax, $i);
+                if (!empty($paymentFeeArticles)) {
+                    $articles[] = $paymentFeeArticles;
+                    $i++;
+                }
+
+                $alreadyPaidArticle = $this->getAlreadyPaid($i);
+                if (!empty($alreadyPaidArticle)) {
+                    $articles[] = $alreadyPaidArticle;
+                    $i++;
+                }
+                $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
+                $shippingArticle = $this->getShippingArticle($shippingCosts, $i);
+                if (!empty($shippingArticle)) {
+                    $articles[] = $shippingArticle;
+                    $i++;
+                }
             }
 
-            $alreadyPaidArticle = $this->getAlreadyPaid($i);
-            if (!empty($alreadyPaidArticle)) {
-                $articles[] = $alreadyPaidArticle;
-                $i++;
+            $discountArticle = $this->getDiscountArticle($i);
+            if (!empty($discountArticle)) {
+                $articles[] = $discountArticle;
             }
-            $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
-            $shippingArticle = $this->getShippingArticle($shippingCosts, $i);
-            if (!empty($shippingArticle)) {
-                $articles[] = $shippingArticle;
-                $i++;
-            }
-        }
 
-        $discountArticle = $this->getDiscountArticle($i);
-        if (!empty($discountArticle)) {
-            $articles[] = $discountArticle;
         }
 
         $requestArray = array('Articles' => $articles);

@@ -22,6 +22,9 @@
     <adminhtml_sales_order_invoice_view>
         <reference name="invoice_totals">
             <block name="buckaroo_fee" type="buckaroo3extended/adminhtml_sales_order_invoice_totals_fee" before="tax"/>
+            <action method = 'setTemplate'>
+                <template>buckaroo3extended/sales/invoice/totals.phtml</template>
+            </action>
         </reference>
         <reference name="tax">
             <action method = 'setTemplate'>
@@ -38,6 +41,9 @@
     <adminhtml_sales_order_invoice_new>
         <reference name="invoice_totals">
             <block name="buckaroo_fee" type="buckaroo3extended/adminhtml_sales_order_invoice_totals_fee" before="tax"/>
+            <action method = 'setTemplate'>
+                <template>buckaroo3extended/sales/invoice/totals.phtml</template>
+            </action>
         </reference>
         <reference name="tax">
             <action method = 'setTemplate'>
@@ -54,12 +60,18 @@
     <adminhtml_sales_order_invoice_updateqty>
     	<reference name="invoice_totals">
             <block name="buckaroo_fee" type="buckaroo3extended/adminhtml_sales_order_invoice_totals_fee" before="tax"/>
+            <action method = 'setTemplate'>
+                <template>buckaroo3extended/sales/invoice/totals.phtml</template>
+            </action>
         </reference>
     </adminhtml_sales_order_invoice_updateqty>
 
     <adminhtml_sales_order_invoice_print>
     	<reference name="invoice_totals">
             <block name="buckaroo_fee" type="buckaroo3extended/adminhtml_sales_order_invoice_totals_fee" before="tax"/>
+            <action method = 'setTemplate'>
+                <template>buckaroo3extended/sales/invoice/totals.phtml</template>
+            </action>
         </reference>
     </adminhtml_sales_order_invoice_print>
 
