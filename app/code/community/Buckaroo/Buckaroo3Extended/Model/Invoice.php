@@ -19,6 +19,8 @@ class Buckaroo_Buckaroo3Extended_Model_Invoice extends Mage_Sales_Model_Order_In
                 &&
                 !empty($paramInvoice['custom_amount_capture'])
                 &&
+                ($paramInvoice['custom_amount_capture'] = trim($paramInvoice['custom_amount_capture']))
+                &&
                 ($paramInvoice['custom_amount_capture'] > 0)
             ) {
 
