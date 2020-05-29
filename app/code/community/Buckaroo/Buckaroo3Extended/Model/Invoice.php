@@ -77,6 +77,15 @@ class Buckaroo_Buckaroo3Extended_Model_Invoice extends Mage_Sales_Model_Order_In
             }
         }
 
+        if (
+            ($this->getOrder()->getPayment()->getMethod() == 'buckaroo3extended_afterpay20')
+            &&
+            ($this->getGrandTotal() == 0)
+        ) {
+            Mage::throwException(Mage::helper('sales')->__('Capture amount should be positive'));
+            return false;
+        }
+
         return parent::capture();
     }
 
