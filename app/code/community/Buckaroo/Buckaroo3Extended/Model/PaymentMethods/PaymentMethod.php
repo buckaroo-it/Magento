@@ -64,6 +64,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_PaymentMethod extends Mage
 
     public function getTitle()
     {
+        return parent::getTitle();
+        
         if(Mage::helper('buckaroo3extended')->getIsKlarnaEnabled()) {
             return parent::getTitle();
         }
