@@ -18,9 +18,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Transfer_PaymentMethod ext
     protected $_code = 'buckaroo3extended_transfer';
 
     protected $_formBlockType = 'buckaroo3extended/paymentMethods_transfer_checkout_form';
-
-    protected $_canRefund               = false;
-    protected $_canRefundInvoicePartial = false;
+//    protected $_canRefund               = false;
+//    protected $_canRefundInvoicePartial = false;
+//    protected $_canRefund               = true;
+//    protected $_canRefundInvoicePartial = true;
     protected $_orderMailStatusses      = array( Buckaroo_Buckaroo3Extended_Model_Response_Abstract::BUCKAROO_SUCCESS, Buckaroo_Buckaroo3Extended_Model_Response_Abstract::BUCKAROO_PENDING_PAYMENT);
 
     public function getOrderPlaceRedirectUrl()

@@ -1,8 +1,10 @@
 <?php
-class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Transfer_Observer extends Buckaroo_Buckaroo3Extended_Model_Observer_Abstract
+class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Transfer_Observer
+    extends Buckaroo_Buckaroo3Extended_Model_Observer_Abstract
 {
     protected $_code = 'buckaroo3extended_transfer';
     protected $_method = 'transfer';
+    protected $_channel = 'Web';
 
     public function buckaroo3extended_request_addservices(Varien_Event_Observer $observer)
     {
@@ -128,6 +130,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Transfer_Observer extends 
         $refundRequest = $observer->getRequest();
 
         $vars = $refundRequest->getVars();
+
+        $vars['channel'] = $this->_channel;
 
         $array = array(
             'action'    => 'Refund',

@@ -526,6 +526,11 @@
                         <class>buckaroo3extended/paymentMethods_trustly_observer</class>
                         <method>buckaroo3extended_refund_request_setmethod</method>
                     </buckaroo3extended_paymentmethod_observer_trustly>
+                    <buckaroo3extended_paymentmethod_observer_transfer>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_transfer_observer</class>
+                        <method>buckaroo3extended_refund_request_setmethod</method>
+                    </buckaroo3extended_paymentmethod_observer_transfer>
                 </observers>
             </buckaroo3extended_refund_request_setmethod>
             <buckaroo3extended_refund_request_addservices>
@@ -715,6 +720,11 @@
                         <class>buckaroo3extended/paymentMethods_trustly_observer</class>
                         <method>buckaroo3extended_refund_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_trustly>
+                    <buckaroo3extended_paymentmethod_observer_transfer>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_transfer_observer</class>
+                        <method>buckaroo3extended_refund_request_addservices</method>
+                    </buckaroo3extended_paymentmethod_observer_transfer>
                 </observers>
             </buckaroo3extended_refund_request_addservices>
             <buckaroo3extended_refund_request_addcustomvars>
@@ -904,6 +914,11 @@
                         <class>buckaroo3extended/paymentMethods_trustly_observer</class>
                         <method>buckaroo3extended_refund_request_addcustomvars</method>
                     </buckaroo3extended_paymentmethod_observer_trustly>
+                    <buckaroo3extended_paymentmethod_observer_transfer>
+                        <type>Singleton</type>
+                        <class>buckaroo3extended/paymentMethods_transfer_observer</class>
+                        <method>buckaroo3extended_refund_request_addcustomvars</method>
+                    </buckaroo3extended_paymentmethod_observer_transfer>
                 </observers>
             </buckaroo3extended_refund_request_addcustomvars>
             <buckaroo3extended_refund_response_custom_processing>
