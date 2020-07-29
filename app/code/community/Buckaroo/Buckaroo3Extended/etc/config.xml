@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Buckaroo_Buckaroo3Extended>
-            <version>5.10.0</version>
+            <version>5.11.0</version>
         </Buckaroo_Buckaroo3Extended>
     </modules>
     <buckaroo>
