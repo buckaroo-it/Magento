@@ -275,10 +275,10 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
 
         //prevent completed orders from recieving further updates
         if($completedStateAndStatus != $currentStateAndStatus
-            && $cancelledStateAndStatus != $currentStateAndStatus
-            && $holdedStateAndStatus    != $currentStateAndStatus
-            && $closedStateAndStatus    != $currentStateAndStatus
-            && $this->_order->canInvoice()
+            // && $cancelledStateAndStatus != $currentStateAndStatus
+            // && $holdedStateAndStatus    != $currentStateAndStatus
+            // && $closedStateAndStatus    != $currentStateAndStatus
+            // && $this->_order->canInvoice()
         ){
             return true;
         }
@@ -414,6 +414,12 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
                          ->save();
 
             $this->_order->setStatus($newStates[1])->save();
+        } elseif (in_array($this->_order->getState() ,[Mage_Sales_Model_Order::STATE_CANCELED])) {
+            $this->_order->addStatusHistoryComment($description, $newStates[1])
+                         ->save();
+
+            $this->_order->setStatus($newStates[1])->save();
+            $this->_autoInvoice(1);
         } else {
             $this->_order->addStatusHistoryComment($description)
                          ->save();
@@ -608,7 +614,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
      *
      * @return bool
      */
-    protected function _autoInvoice()
+    protected function _autoInvoice($skip=false)
     {
         //check if the module is configured to create invoice on success
         if (!Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/auto_invoice', $this->_order->getStoreId())) {
@@ -622,7 +628,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
         }
 
         //returns true if invoice has been made, else false
-        $invoiceSaved = $this->_saveInvoice();
+        $invoiceSaved = $this->_saveInvoice($skip);
 
         if($invoiceSaved && Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/invoice_mail', $this->_order->getStoreId())) {
             $this->sendInvoiceEmail();
@@ -684,10 +690,10 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
      *
      * @return bool
      */
-    protected function _saveInvoice()
+    protected function _saveInvoice($skip=false)
     {
-
-        if ($this->_order->canInvoice() && !$this->_order->hasInvoices()) {
+        $canInvoice = $skip ? true : $this->_order->canInvoice();
+        if ($canInvoice && !$this->_order->hasInvoices()) {
             $payment = $this->_order->getPayment();
             $payment->registerCaptureNotification($this->_order->getBaseGrandTotal());
 
