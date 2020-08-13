@@ -778,6 +778,9 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
         }
 
         switch ($brqKey) {
+            case 'brq_customer_name':
+            case 'brq_SERVICE_ideal_consumerName':
+            case 'brq_SERVICE_transfer_consumerName':
             case 'brq_SERVICE_payconiq_PayconiqAndroidUrl':
             case 'brq_SERVICE_payconiq_PayconiqIosUrl':
             case 'brq_SERVICE_payconiq_PayconiqUrl':
