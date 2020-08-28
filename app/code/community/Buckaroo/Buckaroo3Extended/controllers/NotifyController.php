@@ -292,6 +292,8 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
 
     public function returnAction()
     {
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1);
+
         if (!$this->validatePostData()) {
             return false;
         }
@@ -340,6 +342,17 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
         }
 
         $this->_order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
+
+        Mage::helper('buckaroo3extended')->devLog(
+            __METHOD__, 2, [$orderId, $this->_order->getQuoteId(), $this->_order->getEntityId()]
+        );
+
+        $checkoutSingleton = Mage::getModel('checkout/type_onepage');
+        $session = $checkoutSingleton->getCheckout();
+        $session->setLastSuccessQuoteId($this->_order->getQuoteId());
+        $session->setLastQuoteId($this->_order->getQuoteId());
+        $session->setLastOrderId($this->_order->getEntityId());
+        $session->setLastRealOrderId($orderId);
 
         $this->_paymentCode = $this->_order->getPayment()->getMethod();
 
