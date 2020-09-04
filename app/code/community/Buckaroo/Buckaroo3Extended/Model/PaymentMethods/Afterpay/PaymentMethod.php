@@ -302,13 +302,26 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod
      */
     public function getRejectedMessage($responseData)
     {
+        if ($responseData) {
+            if ($responseData->TransactionType == 'I038') {
+                if (
+                    isset($responseData->Services->Service->ResponseParameter->Name)
+                    &&
+                    ($responseData->Services->Service->ResponseParameter->Name === 'ErrorResponseMessage')
+                    &&
+                    isset($responseData->Services->Service->ResponseParameter->_)
+                )
+                    return $responseData->Services->Service->ResponseParameter->_;
+            }
+        }
+
         // @codingStandardsIgnoreLine
-        if (!isset($responseData->ConsumerMessage->HtmlText)) {
+        if (!isset($responseData->Status->SubCode->_)) {
             return false;
         }
 
         // @codingStandardsIgnoreLine
-        $rejectedMessage = $responseData->ConsumerMessage->HtmlText;
+        $rejectedMessage = $responseData->Status->SubCode->_;
 
         if (!$rejectedMessage) {
             return false;

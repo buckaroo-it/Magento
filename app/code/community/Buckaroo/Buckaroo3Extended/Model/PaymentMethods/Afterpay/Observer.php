@@ -102,9 +102,44 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
         }
 
         $response = $observer->getResponse();
+        $push = $observer->getPush();
+        $postArray = $push->getPostArray();
         /** @var Mage_Sales_Model_Order $order */
         $order = $observer->getOrder();
         $paymentMethod = $order->getPayment()->getMethodInstance();
+
+        if (
+            ($response['status'] == Buckaroo_Buckaroo3Extended_Helper_Data::BUCKAROO_REJECTED)
+            &&
+            ($paymentMethod->getConfigPaymentAction() == Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE)
+        ) {
+            $method = $order->getPayment()->getMethod();
+            $helper = Mage::helper('buckaroo3extended');
+
+            $status = $helper->getNewStates(Buckaroo_Buckaroo3Extended_Helper_Data::BUCKAROO_FAILED, $order, $method);
+            if (
+                $postArray
+                &&
+                isset($postArray['brq_transaction_type'])
+                &&
+                ($postArray['brq_transaction_type'] == 'I038')
+                &&
+                !empty($postArray['brq_SERVICE_afterpay_ErrorResponseMessage'])
+            ) {
+                $message = $postArray['brq_SERVICE_afterpay_ErrorResponseMessage'];
+            } else {
+                $message = $helper->__('AfterPay has rejected the payment request. Please check the Buckaroo Payment Plaza for additional information.');
+            }
+
+            // skipCancelAuthorize is a custom, temporary data.
+            // This allows us to cancel an order without sending a call to Buckaroo.
+            $order->getPayment()->setSkipCancelAuthorize(true);
+            $order->cancel();
+            $order->addStatusHistoryComment($message, $status[1]);
+            $order->save();
+
+            return $this;
+        }
 
         // Authorize is successful
         if ($response['status'] == Buckaroo_Buckaroo3Extended_Helper_Data::BUCKAROO_SUCCESS ||

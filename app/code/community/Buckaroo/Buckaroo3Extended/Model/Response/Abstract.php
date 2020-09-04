@@ -528,7 +528,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         if (
             isset($this->_response->ServiceCode)
             &&
-            ($this->_response->ServiceCode == 'afterpay')
+            (in_array($this->_response->ServiceCode , ['afterpay', 'afterpaydigiaccept']))
             &&
             isset($this->_response->Status->Code->Code)
             &&

@@ -439,7 +439,7 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
 
         if (
             $this->_order->canCancel() &&
-            !empty($this->_postArray['brq_transaction_method']) && ($this->_postArray['brq_transaction_method'] == 'afterpay') &&
+            !empty($this->_postArray['brq_transaction_method']) && (in_array($this->_postArray['brq_transaction_method'],  ['afterpay', 'afterpaydigiaccept'])) &&
             !empty($this->_postArray['brq_statuscode']) && ($this->_postArray['brq_statuscode'] == '190') &&
             !empty($this->_postArray['brq_transaction_type']) && ($this->_postArray['brq_transaction_type'] == 'I039') &&
             !empty($this->_postArray['brq_invoicenumber']) && empty($this->_postArray['brq_ordernumber'])
