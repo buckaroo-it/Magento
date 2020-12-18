@@ -99,6 +99,10 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Ideal_Checkout_Form
                     'name' => 'Handelsbanken',
                     'logo' => 'logo_handelsbanken_s.gif',
                 ),
+                'REVOLT21' => array(
+                    'name' => 'Revolut',
+                    'logo' => 'logo_revolut.gif',
+                ),
             ),
         );
 
