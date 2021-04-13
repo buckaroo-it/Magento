@@ -14,6 +14,8 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Creditmemo extends Buckaroo_Buckar
 
         $this->_debugEmail .= "Is the PUSH valid? " . $valid . "\nCan the creditmemo be created? " . $canProcess . "\n";
 
+        Mage::helper('buckaroo3extended')->devLog(__METHOD__, 5, [$valid, $canProcess]);
+
         if (!$valid || !$canProcess) {
             return false;
         }
@@ -326,7 +328,9 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Creditmemo extends Buckaroo_Buckar
 
         //check if the order can receive a new creditmemo
         if ($correctSignature === true) {
-            $canProcess = $this->_canProcessCreditmemo();
+            if ($this->_postArray['brq_statuscode'] == '190') {
+                $canProcess = $this->_canProcessCreditmemo();
+            }
         }
 
         $return = array(
