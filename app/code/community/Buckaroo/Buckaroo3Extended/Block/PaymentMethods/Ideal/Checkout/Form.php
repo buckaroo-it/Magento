@@ -71,10 +71,6 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Ideal_Checkout_Form
                     'name' => 'Knab bank',
                     'logo' => 'logo_knab_s.gif',
                 ),
-                'MOYONL21' => array(
-                    'name' => 'Moneyou',
-                    'logo' => 'logo_moneyou_s.gif',
-                ),
                 'RABONL2U' => array(
                     'name' => 'Rabobank',
                     'logo' => 'logo_rabo_s.gif',
