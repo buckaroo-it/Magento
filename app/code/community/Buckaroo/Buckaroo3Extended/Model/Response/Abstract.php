@@ -863,8 +863,19 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         //Canonicalize nodeset
         $signedInfo = $SignedInfoNodeSet->C14N(true, false);
 
+        $keyIdentifier = '//wsse:Security/sig:Signature/sig:KeyInfo/wsse:SecurityTokenReference/wsse:KeyIdentifier';
+        $keyIdentifierList = $xPath->query($keyIdentifier);
+
+        $certificatesDir = CERTIFICATE_DIR . DS;
+        if ($keyIdentifierList && $keyIdentifierList->item(0) && $keyIdentifierList->item(0)->nodeValue) {
+            $certificatePath = $certificatesDir . 'Buckaroo' . $keyIdentifierList->item(0)->nodeValue . '.pem';
+            if (!file_exists($certificatePath)) {
+                $certificatePath = $certificatesDir . 'Checkout.pem';
+            }
+        }
+
         //get the public key
-        $pubKey = openssl_get_publickey(openssl_x509_read(file_get_contents(CERTIFICATE_DIR . DS .'Checkout.pem')));
+        $pubKey = openssl_get_publickey(openssl_x509_read(file_get_contents($certificatePath)));
 
         //verify the signature
         $sigVerify = openssl_verify($signedInfo, $sigDecoded, $pubKey);
