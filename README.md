@@ -4,6 +4,17 @@
 
 # Buckaroo Magento Payments Plugin
 
+### Index
+- [About](#about)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Upgrade](#upgrade)
+- [Configuration](#configuration)
+- [Contribute](#contribute)
+- [Versioning](#versioning)
+- [Additional information](#additional-information)
+---
+
 ### About
 
 Magento Open Source, previously Magento Community Edition, is an open-source eCommerce platform. Please note that Magento is currently end of life and Adobe only publishes updates for Magento 2 which is the successor (newer version).
@@ -28,6 +39,7 @@ composer require buckaroo/magento1
 ```
 
 **Extension activation and updates**
+
 Execute the following commands via the command line:
 ```
 cp -ra vendor/buckaroo/magento1/app/* YOUR_MAGENTO_INSTALLATION_ROOT/app
@@ -35,13 +47,16 @@ cp -ra vendor/buckaroo/magento1/skin/* YOUR_MAGENTO_INSTALLATION_ROOT/skin
 ```
 
 **File access rights**
+
 Depending on the operating system, make sure the just added files have the correct access rights so that the web server can access and execute the files correctly.
 
 The composer command can be executed by the logged in user on the server which is sometimes not the same as the user of the web server. The files created by composer can not be read by the web server which can lead to unexpected behavior.
 > Composer will install the files in:
 vendor/buckaroo/magento1
 
+
 **Flush cache and sessions**
+
 Flush your Magento cache using the following command:
 ```
 rm -rf MAGENTO_INSTALLATION_ROOT/var/cache/*
