@@ -91,10 +91,6 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Ideal_Checkout_Form
                     'name' => 'Van Lanschot',
                     'logo' => 'logo_lanschot_s.gif',
                 ),
-                'HANDNL2A' => array(
-                    'name' => 'Handelsbanken',
-                    'logo' => 'logo_handelsbanken_s.gif',
-                ),
                 'REVOLT21' => array(
                     'name' => 'Revolut',
                     'logo' => 'logo_revolut.gif',
