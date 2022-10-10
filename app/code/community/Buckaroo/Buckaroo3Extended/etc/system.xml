@@ -940,7 +940,7 @@
                     </fields>
                 </buckaroo3extended_paymentguarantee>
                 <buckaroo3extended_afterpay translate="label">
-                    <label>Afterpay (old)</label>
+                    <label>Riverty | AfterPay (old)</label>
                     <sort_order>5001</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -995,8 +995,8 @@
                             <show_in_store>1</show_in_store>
                         </refundtype>
                         <paymethod translate="label comment">
-                            <label>Afterpay payment method</label>
-                            <comment>Select which paymethod must be used at Afterpay</comment>
+                            <label>Riverty | AfterPay payment method</label>
+                            <comment>Select which paymethod must be used at Riverty | AfterPay</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>buckaroo3extended/sources_acceptgiroDirectdebit</source_model>
                             <sort_order>46</sort_order>
@@ -1254,7 +1254,7 @@
                     </fields>
                 </buckaroo3extended_afterpay>
                 <buckaroo3extended_afterpay2 translate="label">
-                    <label>Afterpay 2 (old)</label>
+                    <label>Riverty | AfterPay 2 (old)</label>
                     <sort_order>5002</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -1299,8 +1299,8 @@
                             <show_in_store>1</show_in_store>
                         </sort_order>
                         <paymethod translate="label comment">
-                            <label>Afterpay 2 payment method</label>
-                            <comment>Select which paymethod must be used at Afterpay</comment>
+                            <label>Riverty | AfterPay 2 payment method</label>
+                            <comment>Select which paymethod must be used at Riverty | AfterPay</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>buckaroo3extended/sources_acceptgiroDirectdebit</source_model>
                             <sort_order>46</sort_order>
@@ -1558,7 +1558,7 @@
                     </fields>
                 </buckaroo3extended_afterpay2>
                 <buckaroo3extended_afterpay20 translate="label">
-                    <label>Afterpay</label>
+                    <label>Riverty | AfterPay</label>
                     <sort_order>5003</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>

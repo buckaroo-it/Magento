@@ -1926,21 +1926,21 @@
             <buckaroo3extended_afterpay>
                 <active>1</active>
                 <model>buckaroo3extended/paymentMethods_afterpay_paymentMethod</model>
-                <title>Afterpay (oud)</title>
+                <title>Riverty | AfterPay (oud)</title>
                 <sort_order>25</sort_order>
                 <group>buckaroo3extended</group>
             </buckaroo3extended_afterpay>
             <buckaroo3extended_afterpay2>
                 <active>1</active>
                 <model>buckaroo3extended/paymentMethods_afterpay2_paymentMethod</model>
-                <title>Afterpay 2 (oud)</title>
+                <title>Riverty | AfterPay 2 (oud)</title>
                 <sort_order>25</sort_order>
                 <group>buckaroo3extended</group>
             </buckaroo3extended_afterpay2>
             <buckaroo3extended_afterpay20>
                 <active>1</active>
                 <model>buckaroo3extended/paymentMethods_afterpay20_paymentMethod</model>
-                <title>Afterpay</title>
+                <title>Riverty | AfterPay</title>
                 <sort_order>25</sort_order>
                 <group>buckaroo3extended</group>
             </buckaroo3extended_afterpay20>
@@ -2602,7 +2602,7 @@
             <buckaroo3extended_afterpay>
                 <active>0</active>
                 <mode>0</mode>
-                <title>Afterpay (oud)</title>
+                <title>Riverty | AfterPay (oud)</title>
                 <allowspecific>0</allowspecific>
                 <specificcountry></specificcountry>
                 <order_status_success></order_status_success>
@@ -2618,7 +2618,7 @@
             <buckaroo3extended_afterpay2>
                 <active>0</active>
                 <mode>0</mode>
-                <title>Afterpay 2 (oud)</title>
+                <title>Riverty | AfterPay 2 (oud)</title>
                 <allowspecific>0</allowspecific>
                 <specificcountry></specificcountry>
                 <order_status_success></order_status_success>
@@ -2634,7 +2634,7 @@
             <buckaroo3extended_afterpay20>
                 <active>0</active>
                 <mode>0</mode>
-                <title>Afterpay</title>
+                <title>Riverty | AfterPay</title>
                 <allowspecific>0</allowspecific>
                 <specificcountry></specificcountry>
                 <order_status_success></order_status_success>

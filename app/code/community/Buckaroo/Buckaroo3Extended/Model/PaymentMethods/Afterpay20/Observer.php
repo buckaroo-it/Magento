@@ -136,7 +136,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
             ) {
                 $message = $postArray['brq_SERVICE_afterpay_ErrorResponseMessage'];
             } else {
-                $message = $helper->__('AfterPay has rejected the payment request. Please check the Buckaroo Payment Plaza for additional information.');
+                $message = $helper->__('Riverty | AfterPay has rejected the payment request. Please check the Buckaroo Payment Plaza for additional information.');
             }
 
             // skipCancelAuthorize is a custom, temporary data.
