@@ -39,39 +39,6 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_PaymentMethod ex
     }
 
     /**
-     * @param array $post
-     *
-     * @return array
-     */
-    protected function _getPostData($post)
-    {
-        $array = [
-            'currentgiftcard' => $post['payment']['currentgiftcard'],
-            'IntersolveCardnumber' => $post['payment']['cardNumber'],
-            'IntersolvePin' => $post['payment']['pin'],
-        ];
-        return $array;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws Mage_Core_Exception
-     */
-    public function validate()
-    {
-        $postData = Mage::app()->getRequest()->getPost();
-
-        $postArray = $this->_getPostData($postData);
-        foreach ($postArray as $key => $value) {
-            $this->getInfoInstance()->setAdditionalInformation($key, $value);
-        }
-
-        return parent::validate();
-    }
-
-
-    /**
      * {@inheritdoc}
      */
     public function isAvailable($quote = null)

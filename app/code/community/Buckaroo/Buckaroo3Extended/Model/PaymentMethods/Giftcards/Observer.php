@@ -58,14 +58,6 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
         $parameters_array = [];
         $order = $observer->getOrder();
         $payment = $order->getPayment();
-      
-        if($currentgiftcard = $payment->getAdditionalInformation('currentgiftcard')){
-            $availableCards = $currentgiftcard;
-            $parameters_array = [
-                'IntersolveCardnumber' => $payment->getAdditionalInformation('IntersolveCardnumber'),
-                'IntersolvePin' => $payment->getAdditionalInformation('IntersolvePin'),
-            ];
-        }
 
         $array = array(
             'servicesSelectableByClient' => $availableCards,
