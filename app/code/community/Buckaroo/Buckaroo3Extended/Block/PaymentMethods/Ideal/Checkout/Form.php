@@ -95,6 +95,10 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Ideal_Checkout_Form
                     'name' => 'Revolut',
                     'logo' => 'logo_revolut.gif',
                 ),
+                'BITSNL2A' => array(
+                    'name' => 'Yoursafe',
+                    'logo' => 'YourSafe.png',
+                ),
             ),
         );
 
