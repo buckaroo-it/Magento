@@ -519,11 +519,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends Bu
             $vars['customVars'][$this->_method] = $requestArray;
         }
 
-        // Reserve Webservice doesn't support amount and orderId, but does require an invoiceId
+        // Reserve Webservice require an invoiceId
         $vars['invoiceId'] = $vars['orderId'];
-        unset($vars['amountCredit']);
-        unset($vars['amountDebit']);
-        unset($vars['orderId']);
     }
 
     /**
