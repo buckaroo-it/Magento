@@ -108,6 +108,12 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Ideal_Checkout_Form
         return $this;
     }
 
+    public function canShowIssuers() {
+        return Mage::getStoreConfig(
+            'buckaroo/'.$this->getMethodCode().'/show_issuers', Mage::app()->getStore()->getId()
+        ) != 0;
+    }
+
     public function getIssuerList()
     {
         $version = (int)Mage::getStoreConfig(

@@ -2359,6 +2359,7 @@
                 <payment_fee_label>Fee</payment_fee_label>
                 <service_version>2</service_version>
                 <order_email>1</order_email>
+                <show_issuers>1</show_issuers>
             </buckaroo3extended_ideal>
 
             <buckaroo3extended_idealprocessing>
@@ -2375,6 +2376,7 @@
                 <payment_fee_label>Fee</payment_fee_label>
                 <service_version>2</service_version>
                 <order_email>1</order_email>
+                <show_issuers>1</show_issuers>
             </buckaroo3extended_idealprocessing>
 
             <buckaroo3extended_visa>

@@ -7,7 +7,7 @@
 <?php $validation = ''; ?>
 <div id="payment-errors" class="validation-advice" style="display:none;"></div>
 
-
+<?php if ($this->canShowIssuers()) { ?>
 <ul id="payment_form_<?php echo $code ?>" style="display:none"
     class="buckaroo3extended_input form-list buckaroo-method">
     <li><label class="required"><?php echo $this->__('Please, choose your bank'); ?>: <em>*</em></label></li>
@@ -35,3 +35,4 @@
             </li>
         <?php endforeach; ?>
 </ul>
+<?php }
