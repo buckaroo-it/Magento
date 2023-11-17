@@ -15,4 +15,10 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Idealprocessing_Checkout_F
 
         return $issuers->getVersion1();
     }
+
+    public function canShowIssuers() {
+        return Mage::getStoreConfig(
+            'buckaroo/buckaroo3extended_idealprocessing/show_issuers', Mage::app()->getStore()->getId()
+        ) !== 0;
+    }
 }

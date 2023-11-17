@@ -249,6 +249,18 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </mode>
+
+                        <show_issuers translate="label comment">
+                            <label>Show Issuer Selection in the Checkout</label>
+                            <comment>When the "NO" option is selected, the issuer selection for iDEAL will not be displayed in the checkout. Instead, customers will be redirected to a separate page where they can choose their iDEAL issuer (i.e., their bank). On the other hand, selecting the "Enable" option will display the issuer selection directly in the checkout. It's important to note that enabling this option will incur additional costs from Buckaroo, estimated at around €0.002 for each transaction. For precise cost details, please reach out to <a href="mailto:wecare@buckaroo.nl">Buckaroo</a> directly.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>buckaroo3extended/sources_yesno</source_model>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </show_issuers>
+
                         <title translate="label comment">
                             <label>Frontend label</label>
                             <comment>Determines the frontend label shown.</comment>
@@ -484,6 +496,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </mode>
+                        <show_issuers translate="label comment">
+                            <label>Show Issuer Selection in the Checkout</label>
+                            <comment>When the "NO" option is selected, the issuer selection for iDEAL will not be displayed in the checkout. Instead, customers will be redirected to a separate page where they can choose their iDEAL issuer (i.e., their bank). On the other hand, selecting the "Enable" option will display the issuer selection directly in the checkout. It's important to note that enabling this option will incur additional costs from Buckaroo, estimated at around €0.002 for each transaction. For precise cost details, please reach out to <a href="mailto:wecare@buckaroo.nl">Buckaroo</a> directly.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>buckaroo3extended/sources_yesno</source_model>
+                            <sort_order>21</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </show_issuers>
                         <title translate="label comment">
                             <label>Frontend label</label>
                             <comment>Determines the frontend label shown.</comment>
