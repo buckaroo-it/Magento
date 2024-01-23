@@ -10,10 +10,10 @@
 
 #checkout-step-payment .buckaroo-method .ideal_container {height:20px;}
 #checkout-step-payment .buckaroo-method label { display:block; float:none; margin-bottom:2px; text-align:left !important; }
-#checkout-step-payment .buckaroo-method label img { height:15px; width:auto; margin-top:1px; display:block;}
+#checkout-step-payment .buckaroo-method label img { height:25px; width:auto; display:block;}
 #checkout-step-payment .buckaroo-method label .bank_logo {display:block; height:17px; width: 40px; float: left;}
-#checkout-step-payment .buckaroo-method label input {float: left;}
-#checkout-step-payment .buckaroo-method label span.bank_name {display:block; height:17px; width:120px; margin-left: 5px; line-height: 1.2; float: left;}
+#checkout-step-payment .buckaroo-method label input {float: left; margin-top: 8px;}
+#checkout-step-payment .buckaroo-method label span.bank_name {display:block; height:17px; width:160px; margin-left: 5px; line-height: 1.2; float: left; margin-top: 7px;}
 
 #checkout-step-payment .buckaroo-method .input-box .disabled { display:block; background:#f2f2f2; border:1px solid #b6b6b6; color:#999; padding:2px; height:15px; width:254px; line-height:16px; overflow:hidden; white-space:nowrap; }
 #checkout-step-payment .buckaroo-method .input-box .disabled.stylefix { height:auto; padding:8px;}

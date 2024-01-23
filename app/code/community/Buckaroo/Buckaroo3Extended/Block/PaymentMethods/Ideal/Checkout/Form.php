@@ -15,89 +15,89 @@ class Buckaroo_Buckaroo3Extended_Block_PaymentMethods_Ideal_Checkout_Form
             'version1' => array(
                 '0031' => array(
                     'name' => 'ABN AMRO',
-                    'logo' => 'logo_abn_s.gif',
+                    'logo' => 'issuers/abnamro.svg',
                 ),
                 '0761' => array(
                     'name' => 'ASN Bank',
-                    'logo' => 'icon_asn.gif',
+                    'logo' => 'issuers/asnbank.svg',
                 ),
                 '0721' => array(
                     'name' => 'ING',
-                    'logo' => 'logo_ing_s.gif',
+                    'logo' => 'issuers/ing.svg',
                 ),
                 '0021' => array(
                     'name' => 'Rabobank',
-                    'logo' => 'logo_rabo_s.gif',
+                    'logo' => 'issuers/rabobank.svg',
                 ),
                 '0751' => array(
                     'name' => 'SNS Bank',
-                    'logo' => 'logo_sns_s.gif',
+                    'logo' => 'issuers/sns.svg',
                 ),
                 '0771' => array(
                     'name' => 'RegioBank',
-                    'logo' => 'logo_sns_s.gif',
+                    'logo' => 'issuers/regiobank.svg',
                 ),
                 '0511' => array(
                     'name' => 'Triodos Bank',
-                    'logo' => 'logo_triodos.gif',
+                    'logo' => 'issuers/triodos.svg',
                 ),
                 '0161' => array(
-                    'name' => 'Van Lanschot',
-                    'logo' => 'logo_lanschot_s.gif',
+                    'name' => 'Van Lanschot Kempen',
+                    'logo' => 'issuers/vanlanschot.svg',
                 ),
                 '0801' => array(
                     'name' => 'Knab',
-                    'logo' => 'logo_knab_s.gif',
+                    'logo' => 'issuers/knab.svg',
                 ),
             ),
             'version2' => array(
                 'ABNANL2A' => array(
                     'name' => 'ABN AMRO',
-                    'logo' => 'logo_abn_s.gif',
+                    'logo' => 'issuers/abnamro.svg',
                 ),
                 'ASNBNL21' => array(
                     'name' => 'ASN Bank',
-                    'logo' => 'icon_asn.gif',
+                    'logo' => 'issuers/asnbank.svg',
                 ),
                 'BUNQNL2A' => array(
                     'name' => 'bunq',
-                    'logo' => 'logo_bunq_s.gif',
+                    'logo' => 'issuers/bunq.svg',
                 ),
                 'INGBNL2A' => array(
                     'name' => 'ING',
-                    'logo' => 'logo_ing_s.gif',
+                    'logo' => 'issuers/ing.svg',
                 ),
                 'KNABNL2H' => array(
                     'name' => 'Knab bank',
-                    'logo' => 'logo_knab_s.gif',
+                    'logo' => 'issuers/knab.svg',
                 ),
                 'RABONL2U' => array(
                     'name' => 'Rabobank',
-                    'logo' => 'logo_rabo_s.gif',
+                    'logo' => 'issuers/rabobank.svg',
                 ),
                 'RBRBNL21' => array(
                     'name' => 'RegioBank',
-                    'logo' => 'logo_sns_s.gif',
+                    'logo' => 'issuers/regiobank.svg',
                 ),
                 'SNSBNL2A' => array(
                     'name' => 'SNS Bank',
-                    'logo' => 'logo_sns_s.gif',
+                    'logo' => 'issuers/sns.svg',
                 ),
                 'TRIONL2U' => array(
                     'name' => 'Triodos Bank',
-                    'logo' => 'logo_triodos.gif',
+                    'logo' => 'issuers/triodos.svg',
                 ),
                 'FVLBNL22' => array(
-                    'name' => 'Van Lanschot',
-                    'logo' => 'logo_lanschot_s.gif',
+                    'name' => 'Van Lanschot Kempen',
+                    'logo' => 'issuers/vanlanschot.svg',
                 ),
                 'REVOLT21' => array(
                     'name' => 'Revolut',
-                    'logo' => 'Revolut.png',
+                    'logo' => 'issuers/revolut.svg',
                 ),
                 'BITSNL2A' => array(
                     'name' => 'Yoursafe',
-                    'logo' => 'YourSafe.png',
+                    'logo' => 'issuers/yoursafe.svg',
                 ),
             ),
         );
