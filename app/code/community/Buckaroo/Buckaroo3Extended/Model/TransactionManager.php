@@ -94,6 +94,11 @@ class Buckaroo_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Mode
         //suggested
         $calculatedTransactions = $this->calculateRefundTransaction($amount);
 
+        //the parts have to add up to the amount that has to be refunded
+        if (abs(array_sum($calculatedTransactions) - $amount) > 0.005) {
+            return false;
+        }
+
         return $calculatedTransactions;
     }
 
@@ -160,9 +165,14 @@ class Buckaroo_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Mode
             $this->transactionArray['transaction'][$transactionKey]['type'] = $type;
         }
 
+        //a push for a transaction that is already known replaces its amount instead of adding it again
+        $previous = isset($this->transactionArray['transaction'][$transactionKey]['amount'])
+            ? $this->transactionArray['transaction'][$transactionKey]['amount']
+            : 0;
+
         $this->transactionArray['transaction'][$transactionKey]['amount'] = $amount;
 
-        $this->transactionArray['total_debit'] += $amount;
+        $this->transactionArray['total_debit'] += $amount - $previous;
 
         return $this->transactionArray;
     }
@@ -208,7 +218,7 @@ class Buckaroo_Buckaroo3Extended_Model_TransactionManager extends Mage_Core_Mode
             if (!isset($transactionValue['amount']) ||
                 $transactionValue['amount'] == 0
             ) {
-                Mage::log('TransactionManager Transaction had no amount or amount of 0.00 for transaction: ' . $transactionValue['transactionkey']);
+                Mage::log('TransactionManager Transaction had no amount or amount of 0.00 for transaction: ' . $transactionKey);
                 continue;
             }
 

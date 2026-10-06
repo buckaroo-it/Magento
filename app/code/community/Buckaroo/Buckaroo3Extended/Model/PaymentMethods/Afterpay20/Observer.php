@@ -530,16 +530,19 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         $discount = 0;
         $helper = $this->getHelper();
 
-        if ($helper->isEnterprise() && abs((double)$discountObject->getGiftCardsAmount()) > 0) {
-            $discount = abs((double)$discountObject->getGiftCardsAmount());
+        $giftCards = abs((double)$this->_currencyAmount($discountObject->getGiftCardsAmount(), $discountObject->getBaseGiftCardsAmount()));
+        if ($helper->isEnterprise() && $giftCards > 0) {
+            $discount = $giftCards;
         }
 
-        if (abs((double)$discountObject->getDiscountAmount()) > 0) {
-            $discount += abs((double)$discountObject->getDiscountAmount());
+        $catalogDiscount = abs((double)$this->_currencyAmount($discountObject->getDiscountAmount(), $discountObject->getBaseDiscountAmount()));
+        if ($catalogDiscount > 0) {
+            $discount += $catalogDiscount;
         }
 
-        if ($helper->isEnterprise() && abs((double)$discountObject->getCustomerBalanceAmount()) > 0) {
-            $discount += abs((double)$discountObject->getCustomerBalanceAmount());
+        $customerBalance = abs((double)$this->_currencyAmount($discountObject->getCustomerBalanceAmount(), $discountObject->getBaseCustomerBalanceAmount()));
+        if ($helper->isEnterprise() && $customerBalance > 0) {
+            $discount += $customerBalance;
         }
 
         $discount = (-1 * round($discount, 2));
@@ -599,8 +602,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
                 $i += count($enterpriseArticles);
                 $articles = array_merge($articles, $enterpriseArticles);
 
-                $fee = (double)$this->_order->getBuckarooFee();
-                $feeTax = (double)$this->_order->getBuckarooFeeTax();
+                $fee = (double)$this->_currencyAmount($this->_order->getBuckarooFee(), $this->_order->getBaseBuckarooFee());
+                $feeTax = (double)$this->_currencyAmount($this->_order->getBuckarooFeeTax(), $this->_order->getBaseBuckarooFeeTax());
                 $paymentFeeArticles = $this->getPaymentFeeLine($fee, $feeTax, $i);
                 if (!empty($paymentFeeArticles)) {
                     $articles[] = $paymentFeeArticles;
@@ -612,7 +615,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
                     $articles[] = $alreadyPaidArticle;
                     $i++;
                 }
-                $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
+                $shippingCosts = round($this->_currencyAmount($this->_order->getShippingInclTax(), $this->_order->getBaseShippingInclTax()), 2);
                 $shippingArticle = $this->getShippingArticle($shippingCosts, $i);
                 if (!empty($shippingArticle)) {
                     $articles[] = $shippingArticle;
@@ -718,9 +721,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         // Changed calculation from unitPrice to orderLinePrice due to impossible to recalculate unitprice,
         // because of differences in outcome between TAX settings: Unit, OrderLine and Total.
         // Quantity will always be 1 and quantity ordered will be in the article description.
-        $productPrice = ($item->getBasePrice() * $item->getQtyOrdered())
-            + $item->getBaseTaxAmount()
-            + $item->getBaseHiddenTaxAmount();
+        $productPrice = $this->_currencyAmount(
+            ($item->getPrice() * $item->getQtyOrdered()) + $item->getTaxAmount() + $item->getHiddenTaxAmount(),
+            ($item->getBasePrice() * $item->getQtyOrdered()) + $item->getBaseTaxAmount() + $item->getBaseHiddenTaxAmount()
+        );
         $productPrice = round($productPrice, 2);
 
         $description = (int) $item->getQtyOrdered() . 'x ' . $item->getName();
@@ -748,9 +752,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         // Changed calculation from unitPrice to orderLinePrice due to impossible to recalculate unitprice,
         // because of differences in outcome between TAX settings: Unit, OrderLine and Total.
         // Quantity will always be 1 and quantity ordered will be in the article description.
-        $productPrice = ($item->getBasePrice() * $item->getQty())
-            + $item->getBaseTaxAmount()
-            + $item->getBaseHiddenTaxAmount();
+        $productPrice = $this->_currencyAmount(
+            ($item->getPrice() * $item->getQty()) + $item->getTaxAmount() + $item->getHiddenTaxAmount(),
+            ($item->getBasePrice() * $item->getQty()) + $item->getBaseTaxAmount() + $item->getBaseHiddenTaxAmount()
+        );
         $productPrice = round($productPrice, 2);
 
         $description = (int) $item->getQty() . 'x ' . $item->getName();
@@ -845,7 +850,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         $gwTax = $this->getTaxPercent($gwTaxClass);
 
         if ($this->_order->getGwBasePrice() > 0) {
-            $gwPrice = $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount();
+            $gwPrice = $this->_currencyAmount(
+                $this->_order->getGwPrice() + $this->_order->getGwTaxAmount(),
+                $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount()
+            );
             $description = $helper->__('Gift Wrapping for Order');
 
             $gwArticle = array();
@@ -862,7 +870,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
         }
 
         if ($this->_order->getGwItemsBasePrice() > 0) {
-            $gwiPrice = $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount();
+            $gwiPrice = $this->_currencyAmount(
+                $this->_order->getGwItemsPrice() + $this->_order->getGwItemsTaxAmount(),
+                $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount()
+            );
             $description = $helper->__('Gift Wrapping for Items');
 
             $gwiArticle = array();
@@ -927,6 +938,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_Observer
             return $article;
         }
 
+        //the amount paid with giftcards is stored in the base currency
+        $discount = $this->_currencyAmount($discount * (float) $this->_order->getBaseToOrderRate(), $discount);
         $discount = (-1 * round($discount, 2));
 
         $article = array();

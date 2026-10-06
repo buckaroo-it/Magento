@@ -241,7 +241,9 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Creditmemo extends Buckaroo_Buckar
         if ($baseCurrency == $currency) {
             return $amountPushed;
         } else {
-            $amount = round($amountPushed * $this->_order->getBaseToOrderRate(), 2);
+            //the pushed amount is in the order currency and has to be turned into the base currency
+            $rate = (float) $this->_order->getBaseToOrderRate();
+            $amount = $rate > 0 ? round($amountPushed / $rate, 2) : $amountPushed;
             return $amount;
         }
     }
