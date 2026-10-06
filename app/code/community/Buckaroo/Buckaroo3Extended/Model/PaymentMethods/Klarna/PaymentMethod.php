@@ -48,10 +48,9 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Klarna_PaymentMethod exten
      */
     private function getBPEPostData($post)
     {
-        $dobPost = $post['payment'][$this->_code];
-        $customerDob = date(
-            'dmY',
-            strtotime($dobPost['year'] . '-' . $dobPost['month'] . '-' . $dobPost['day'])
+        $customerDob = $this->_getBirthDate(
+            isset($post['payment'][$this->_code]) ? $post['payment'][$this->_code] : array(),
+            'dmY'
         );
 
         $postArray = array(

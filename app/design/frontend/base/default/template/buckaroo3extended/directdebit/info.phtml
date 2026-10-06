@@ -9,7 +9,7 @@
         </tr>
         <tr>
             <?php // @codingStandardsIgnoreLine ?>
-            <td><?php echo nl2br(implode($this->getValueAsArray($value, true), "\n"))?></td>
+            <td><?php echo nl2br(implode("\n", $this->getValueAsArray($value, true)))?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>

@@ -73,7 +73,7 @@ class Buckaroo_Buckaroo3Extended_Model_Sales_Quote_Total_Giftcard
                       ->setBaseBuckarooAlreadyPaid($baseAlreadyPaid);
                 if($paymentMethod != 'buckaroo3extended_giftcards'){
                     $address->setBaseGrandTotal($address->getBaseGrandTotal() - $baseAlreadyPaid);
-                    $address->setGrandTotal($address->getGrandTotal() - $store->convertPrice($alreadyPaid));
+                    $address->setGrandTotal($address->getGrandTotal() - $alreadyPaid);
                 }
             }
         }

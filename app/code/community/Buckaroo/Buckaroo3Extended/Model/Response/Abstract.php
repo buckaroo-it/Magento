@@ -220,16 +220,12 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         Mage::app()->getResponse()->clearHeaders();
 
         Mage::helper('buckaroo3extended')->devLog(__METHOD__, 1, [$this->_response]);
+        //Apple Pay is placed with an AJAX call, so the redirect (test status page) is passed on as JSON. This does not
+        //depend on the transaction type, because Buckaroo uses different codes over time (C848, C853).
         if (
-            !empty($this->_response->TransactionType)
-            &&
-            ($this->_response->TransactionType == 'C848')
-            &&
             !empty($this->_response->ServiceCode)
             &&
             ($this->_response->ServiceCode == 'applepay')
-            &&
-            !empty($this->_response->IsTest)
         ) {
             Mage::helper('buckaroo3extended')->devLog(__METHOD__, 3);
 
@@ -339,7 +335,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         $this->emptyCart();
 
         Mage::getSingleton('core/session')->addSuccess(
-            Mage::helper('buckaroo3extended')->__('Your order has been placed succesfully.')
+            Mage::helper('buckaroo3extended')->__('Your order has been placed successfully.')
         );
 
         $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $this->_order->getStoreId());
@@ -587,7 +583,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
 
         Mage::getSingleton('core/session')->addSuccess(
             Mage::helper('buckaroo3extended')->__(
-                'Your order has been placed succesfully. You will receive an e-mail containing further payment instructions shortly.'
+                'Your order has been placed successfully. You will receive an e-mail containing further payment instructions shortly.'
             )
         );
 

@@ -122,13 +122,16 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
          */
         $options = array();
         if ($productCollection->isConfigurable()) {
-            $form             = array_column($postData['product']['options'], 'value', 'name');
+            //name => value of the submitted product form fields (array_column and ARRAY_FILTER_USE_BOTH need PHP 5.5/5.6)
+            $selectedOptions = array();
+            foreach ($postData['product']['options'] as $optionField) {
+                if (isset($optionField['name']) && isset($optionField['value'])
+                    && strpos($optionField['name'], 'super_attribute') !== false
+                ) {
+                    $selectedOptions[$optionField['name']] = $optionField['value'];
+                }
+            }
             $availableOptions = $productCollection->getTypeInstance(true)->getConfigurableAttributes($productCollection)->getItems();
-            $selectedOptions  = array_filter(
-                $form, function ($name, $value) {
-                return (strpos($value, 'super_attribute') !== false);
-            }, ARRAY_FILTER_USE_BOTH
-            );
             
             foreach ($availableOptions as $option) {
                 $id = $option->getAttributeId();
@@ -380,19 +383,33 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
     {
         /** @var Mage_Checkout_Model_Session $checkoutSession */
         $checkoutSession = Mage::getModel('checkout/session');
-        $quote           = $checkoutSession->getQuote();
         /** @var Mage_Checkout_Model_Type_Onepage $checkoutSingleton */
         $checkoutSingleton = Mage::getModel('checkout/type_onepage');
         $session           = $checkoutSingleton->getCheckout();
-        $orderCollection   = Mage::getModel('sales/order')->getCollection();
-        $orderCollection->getSelect()->order('entity_id DESC')->limit('1');
-        $lastItem    = $orderCollection->getLastItem();
-        $orderId     = $lastItem->getEntityId();
-        $incrementId = $lastItem->getIncrementId();
-        
+
+        //show the order of the current checkout
+        $order = Mage::getModel('sales/order');
+        $quoteId = null;
+        foreach (array($checkoutSession->getLastSuccessQuoteId(), $checkoutSession->getLastQuoteId(), $checkoutSession->getQuoteId()) as $candidate) {
+            if ($candidate) {
+                $order->load($candidate, 'quote_id');
+                if ($order->getId()) {
+                    $quoteId = $candidate;
+                    break;
+                }
+            }
+        }
+
+        if (!$order->getId() || $order->getPayment()->getMethod() !== 'buckaroo3extended_applepay') {
+            return $this->_redirect('checkout/cart', array('_secure' => true));
+        }
+
+        $orderId     = $order->getEntityId();
+        $incrementId = $order->getIncrementId();
+
         $session->clearHelperData();
-        $session->setLastSuccessQuoteId($quote->getId());
-        $session->setLastQuoteId($quote->getId());
+        $session->setLastSuccessQuoteId($quoteId);
+        $session->setLastQuoteId($quoteId);
         $session->setLastOrderId($orderId);
         $session->setLastRealOrderId($incrementId);
         $session->setRedirectUrl('/checkout/onepage/success');
@@ -407,7 +424,8 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
         $data = $this->getRequest()->getPost();
         
         if (!is_array($data) || !isset($data['name']) || !isset($data['value'])
-            || strpos($data['name'], 'buckaroo') === false
+            || !is_string($data['name']) || !is_string($data['value'])
+            || !preg_match('/^buckaroo3extended_[A-Za-z0-9_]{1,100}$/', $data['name'])
         ) {
             return;
         }
@@ -444,7 +462,7 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
             case 'processing':
                 $responseHandler->emptyCart();
                 Mage::getSingleton('core/session')->addSuccess(
-                    Mage::helper('buckaroo3extended')->__('Your order has been placed succesfully.')
+                    Mage::helper('buckaroo3extended')->__('Your order has been placed successfully.')
                 );
                 $response['returnUrl'] = $this->getSuccessUrl($order->getStoreId());
                 break;
@@ -509,16 +527,32 @@ class Buckaroo_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller
     public function payWithGiftCardAction()
     {
         $data = $this->getRequest()->getPost();
-        
-        if (!is_array($data) || !isset($data['cardNumber']) || !isset($data['pin'])) {
+
+        if (!is_array($data) || !isset($data['cardNumber']) || !isset($data['pin']) || !isset($data['giftcard'])
+            || !is_string($data['cardNumber']) || !is_string($data['pin']) || !is_string($data['giftcard'])
+        ) {
             return;
         }
-        
-        $result = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->sendRequest($data);
 
         /** @var Mage_Core_Helper_Data $coreHelper $coreHelper */
         $coreHelper = Mage::helper('core');
         $this->getResponse()->clearHeaders()->setHeader('Content-type', 'application/json', true);
+
+        $session  = Mage::getSingleton('core/session');
+        $attempts = (int) $session->getBuckarooGiftcardAttempts();
+
+        if (!$this->_validateFormKey() || $attempts >= 10) {
+            $result = array('error' => Mage::helper('buckaroo3extended')->__('The giftcard could not be used. Please try again later.'));
+            $this->getResponse()->setBody($coreHelper->jsonEncode($result));
+            return;
+        }
+
+        $result = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->sendRequest($data);
+
+        if (empty($result['alreadyPaid'])) {
+            $session->setBuckarooGiftcardAttempts($attempts + 1);
+        }
+
         $this->getResponse()->setBody($coreHelper->jsonEncode($result));
 
     }
