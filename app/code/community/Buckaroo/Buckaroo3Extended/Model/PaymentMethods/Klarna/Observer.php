@@ -579,7 +579,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends Bu
             }
 
             $article['ArticleNumber']['value']   = $item->getId();
-            $article['ArticlePrice']['value']    = $item->getBasePriceInclTax();
+            $article['ArticlePrice']['value']    = $this->_currencyAmount($item->getPriceInclTax(), $item->getBasePriceInclTax());
             $article['ArticleQuantity']['value'] = round($item->getQtyOrdered(), 0);
             $article['ArticleTitle']['value']    = $item->getName();
             $article['ArticleVat']['value']      = $item->getTaxPercent();
@@ -597,7 +597,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends Bu
             $gwId = 1;
 
             if ($this->_order->getGwBasePrice() > 0) {
-                $gwPrice = $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount();
+                $gwPrice = $this->_currencyAmount(
+                    $this->_order->getGwPrice() + $this->_order->getGwTaxAmount(),
+                    $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount()
+                );
 
                 $gwOrder = array();
                 $gwOrder['ArticleNumber']['value']   = 'gwo_' . $this->_order->getGwId();
@@ -613,7 +616,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends Bu
             }
 
             if ($this->_order->getGwItemsBasePrice() > 0) {
-                $gwiPrice = $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount();
+                $gwiPrice = $this->_currencyAmount(
+                    $this->_order->getGwItemsPrice() + $this->_order->getGwItemsTaxAmount(),
+                    $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount()
+                );
 
                 $gwiOrder = array();
                 $gwiOrder['ArticleNumber']['value']   = 'gwi_' . $gwId;
@@ -977,11 +983,11 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends Bu
             $discountData = $invoiceCollection->getLastItem();
         }
 
-        $discount = abs((double)$discountData->getDiscountAmount());
+        $discount = abs((double)$this->_currencyAmount($discountData->getDiscountAmount(), $discountData->getBaseDiscountAmount()));
 
         if (Mage::helper('buckaroo3extended')->isEnterprise()) {
-            $discount += (double)$discountData->getGiftCardsAmount();
-            $discount += (double)$discountData->getCustomerBalanceAmount();
+            $discount += (double)$this->_currencyAmount($discountData->getGiftCardsAmount(), $discountData->getBaseGiftCardsAmount());
+            $discount += (double)$this->_currencyAmount($discountData->getCustomerBalanceAmount(), $discountData->getBaseCustomerBalanceAmount());
         }
 
         if ($discount <= 0) {
@@ -1007,8 +1013,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends Bu
      */
     private function getPaymentFeeLine()
     {
-        $fee    = (double) $this->_order->getBuckarooFee();
-        $feeTax = (double) $this->_order->getBuckarooFeeTax();
+        $fee    = (double) $this->_currencyAmount($this->_order->getBuckarooFee(), $this->_order->getBaseBuckarooFee());
+        $feeTax = (double) $this->_currencyAmount($this->_order->getBuckarooFeeTax(), $this->_order->getBaseBuckarooFeeTax());
 
         $store = $this->_order->getStore();
         $taxCalculation = Mage::getModel('tax/calculation');
@@ -1037,7 +1043,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends Bu
      */
     private function getShipmentCostsLine()
     {
-        $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
+        $shippingCosts = round($this->_currencyAmount($this->_order->getShippingInclTax(), $this->_order->getBaseShippingInclTax()), 2);
 
         $store = $this->_order->getStore();
         $taxCalculation = Mage::getModel('tax/calculation');

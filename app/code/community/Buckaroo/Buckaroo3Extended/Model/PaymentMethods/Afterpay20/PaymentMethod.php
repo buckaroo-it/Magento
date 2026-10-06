@@ -79,15 +79,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay20_PaymentMethod
      */
     protected function _getBPEPostData($post)
     {
-        $customerBirthDate = null;
-        $dobPostData = $post['payment'][$this->_code];
-
-        if (isset($dobPostData['day']) && isset($dobPostData['month']) && isset($dobPostData['year'])) {
-            $customerBirthDate = date(
-                'd-m-Y',
-                strtotime($dobPostData['day'] . '-' . $dobPostData['month'] . '-' . $dobPostData['year'])
-            );
-        }
+        $customerBirthDate = $this->_getBirthDate(
+            isset($post['payment'][$this->_code]) ? $post['payment'][$this->_code] : array(),
+            'd-m-Y'
+        );
 
         $array = array(
             'BPE_Customergender'    => $post[$this->_code . '_BPE_Customergender'],

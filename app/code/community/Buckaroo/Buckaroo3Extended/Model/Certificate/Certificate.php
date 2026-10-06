@@ -30,10 +30,31 @@ class Buckaroo_Buckaroo3Extended_Model_Certificate_Certificate extends Mage_Core
                     Mage::throwException('please enter a name for this certificate');
                 }
 
-                if (strpos(
-                    $_FILES['groups']['name']['buckaroo3extended_certificate']['fields']['certificate_upload']['value'],
-                    '.pem'
-                ) === false) {
+                $certificateName = $postData['groups']['buckaroo3extended_certificate']['fields']
+                                   ['certificate_name']['value'];
+
+                if (!is_string($certificateName) || !preg_match('/^[A-Za-z0-9 _.-]{1,15}$/', $certificateName)) {
+                    Mage::throwException(
+                        'The certificate name may only contain letters, numbers, spaces, dots, dashes and '
+                        . 'underscores (maximum 15 characters).'
+                    );
+                }
+
+                $uploadedFile = $_FILES['groups']['tmp_name']['buckaroo3extended_certificate']['fields']
+                                ['certificate_upload']['value'];
+
+                if (!preg_match(
+                    '/\.pem$/i',
+                    $_FILES['groups']['name']['buckaroo3extended_certificate']['fields']['certificate_upload']['value']
+                ) || filesize($uploadedFile) > 16384) {
+                    Mage::throwException('invalid certificate file uploaded');
+                }
+
+                //the file has to contain a private key that can be used without a passphrase
+                $certificateContents = file_get_contents($uploadedFile);
+                if (strpos($certificateContents, '-----BEGIN') === false
+                    || openssl_pkey_get_private($certificateContents, '') === false
+                ) {
                     Mage::throwException('invalid certificate file uploaded');
                 }
 
@@ -53,13 +74,9 @@ class Buckaroo_Buckaroo3Extended_Model_Certificate_Certificate extends Mage_Core
                 }
 
                 $data = array(
-                    'certificate'      => file_get_contents(
-                        $_FILES['groups']['tmp_name']['buckaroo3extended_certificate']['fields']['certificate_upload']
-                        ['value']
-                    ),
-                    'certificate_name' => $postData['groups']['buckaroo3extended_certificate']['fields']
-                                          ['certificate_name']['value'],
-                    'upload_date'      => date('Y:m:d H:i:s'),
+                    'certificate'      => $certificateContents,
+                    'certificate_name' => $certificateName,
+                    'upload_date'      => date('Y-m-d H:i:s'),
                 );
                 $model->setData($data);
                 $model->save();

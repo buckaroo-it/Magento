@@ -15,8 +15,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Ideal_PaymentMethod extend
 
         $postData = Mage::app()->getRequest()->getPost();
 
-        if(isset($postData[$this->_code.'_BPE_Issuer']))
-        {
+        if (isset($postData[$this->_code.'_BPE_Issuer'])
+            && is_string($postData[$this->_code.'_BPE_Issuer'])
+            && preg_match('/^[A-Za-z0-9]{2,11}$/', $postData[$this->_code.'_BPE_Issuer'])
+        ) {
             $session->setData('additionalFields', array('Issuer' => $postData[$this->_code.'_BPE_Issuer']));
         }
 

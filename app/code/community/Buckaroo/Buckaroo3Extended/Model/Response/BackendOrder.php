@@ -10,7 +10,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_BackendOrder extends Buckaroo_Bu
         }
 
         Mage::getSingleton('core/session')->addSuccess(
-            Mage::helper('buckaroo3extended')->__('Your order has been placed succesfully.')
+            Mage::helper('buckaroo3extended')->__('Your order has been placed successfully.')
         );
         $this->sendDebugEmail();
     }
@@ -61,7 +61,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_BackendOrder extends Buckaroo_Bu
 
         Mage::getSingleton('core/session')->addSuccess(
             Mage::helper('buckaroo3extended')->__(
-                'Your order has been placed succesfully. You will receive an e-mail containing further payment instructions shortly.'
+                'Your order has been placed successfully. You will receive an e-mail containing further payment instructions shortly.'
             )
         );
 

@@ -165,6 +165,7 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
         }
 
         $postData = $this->getRequest()->getPost();
+        $signedPostData = $postData;
 
         if (
             !empty($postData['brq_test']) && ($postData['brq_test'] == 'true') &&
@@ -200,6 +201,23 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
             return false;
         }
 
+        $this->_paymentCode = $this->_order->getPayment()->getMethod();
+
+        /** @var Buckaroo_Buckaroo3Extended_Model_Response_Push $verifier */
+        $verifier = Mage::getModel(
+            'buckaroo3extended/response_push',
+            array(
+                'order'      => $this->_order,
+                'postArray'  => $signedPostData,
+                'debugEmail' => '',
+                'method'     => $this->_paymentCode,
+            )
+        );
+
+        if (!$verifier->isAuthentic()) {
+            return false;
+        }
+
         //check if push needs to skipped
         $payment = $this->_order->getPayment();
         if ($payment->getAdditionalInformation('skip_push') > 0) {
@@ -217,7 +235,8 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
         //order exists, instantiate the lock-object for the push
         $this->setPushLock($this->_order->getId());
 
-        if ($this->_processPush->isLocked()) {
+        //check and lock in one step
+        if (!$this->_processPush->tryLock()) {
             $this->_debugEmail .= "\n".'Currently another push is being processed, ';
             $this->_debugEmail .= 'the current push will not be processed.'."\n";
             $this->_debugEmail .= "\n".'sent from: ' . __FILE__ . '@' . __LINE__."\n";
@@ -228,7 +247,8 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
             return false;
         }
 
-        $this->_processPush->lockAndBlock();
+        //reload the order, it may have changed while waiting for the lock
+        $this->_order = Mage::getModel('sales/order')->load($this->_order->getId());
         $this->_debugEmail .= "\n".'Push is gelocked, hij kan nu verwerkt worden.'."\n";
 
         $this->_paymentCode = $this->_order->getPayment()->getMethod();
@@ -347,12 +367,10 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
             __METHOD__, 2, [$orderId, $this->_order->getQuoteId(), $this->_order->getEntityId()]
         );
 
-        $checkoutSingleton = Mage::getModel('checkout/type_onepage');
-        $session = $checkoutSingleton->getCheckout();
-        $session->setLastSuccessQuoteId($this->_order->getQuoteId());
-        $session->setLastQuoteId($this->_order->getQuoteId());
-        $session->setLastOrderId($this->_order->getEntityId());
-        $session->setLastRealOrderId($orderId);
+        if (!$this->_order->getId()) {
+            $this->_redirect('');
+            return;
+        }
 
         $this->_paymentCode = $this->_order->getPayment()->getMethod();
 
@@ -371,6 +389,18 @@ class Buckaroo_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_F
                 'method'     => $this->_paymentCode,
             )
         );
+
+        if (!$module->isAuthentic()) {
+            $module->rejectReturn();
+            return;
+        }
+
+        $checkoutSingleton = Mage::getModel('checkout/type_onepage');
+        $session = $checkoutSingleton->getCheckout();
+        $session->setLastSuccessQuoteId($this->_order->getQuoteId());
+        $session->setLastQuoteId($this->_order->getQuoteId());
+        $session->setLastOrderId($this->_order->getEntityId());
+        $session->setLastRealOrderId($orderId);
 
         $module->processReturn();
         return;

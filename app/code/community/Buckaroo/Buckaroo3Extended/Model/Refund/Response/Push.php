@@ -122,7 +122,7 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Response_Push extends Buckaroo_Buc
         $correctSignature = false;
         $canUpdate = false;
         $signature = $this->_calculateSignature();
-        if ($signature === $this->_postArray['brq_signature']) {
+        if ($this->_signatureMatches($signature, isset($this->_postArray['brq_signature']) ? $this->_postArray['brq_signature'] : null)) {
             $correctSignature = true;
         }
 
@@ -141,7 +141,7 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Response_Push extends Buckaroo_Buc
     }
 
     /**
-     * Process a succesful order. Sets its new state and status, sends an order confirmation email
+     * Process a successful order. Sets its new state and status, sends an order confirmation email
      * and creates an invoice if set in config.
      *
      * @TODO $trx will be used for Buckaroo2012Refund, to be added in 3.0.0
@@ -322,9 +322,8 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Response_Push extends Buckaroo_Buc
      */
     protected function _calculateSignature()
     {
-        if (isset($this->_postArray['isOldPost']) && $this->_postArray['isOldPost'])
-        {
-            return $this->_calculateOldSignature();
+        if (!$this->_postIsFlat()) {
+            return '';
         }
 
         $origArray = $this->_postArray;
@@ -340,33 +339,18 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Response_Push extends Buckaroo_Buc
             $signatureString .= $key . '=' . $value;
         }
 
-        $signatureString .= Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $this->getStoreId());
+        $secret = (string) Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $this->getStoreId());
+        if ($secret === '') {
+            return '';
+        }
 
-        $this->_debugEmail .= "\nSignaturestring: {$signatureString}\n";
+        $this->_debugEmail .= "\nSignaturestring (without secret): {$signatureString}\n";
 
         //return the SHA1 encoded string for comparison
-        $signature = SHA1($signatureString);
+        $signature = SHA1($signatureString . $secret);
 
         $this->_debugEmail .= "\nSignature: {$signature}\n";
 
         return $signature;
-    }
-
-    protected function _calculateOldSignature()
-    {
-        $signature2 = Mage::helper('buckaroo3extended')->getForbiddenFunc('md5',
-            $this->_postArray['oldPost']["bpe_trx"]
-            . $this->_postArray['oldPost']["bpe_timestamp"]
-            . Mage::getStoreConfig('buckaroo/buckaroo3extended/key', $this->getStoreId())
-            . $this->_postArray['oldPost']["bpe_invoice"]
-            . $this->_postArray['oldPost']["bpe_reference"]
-            . $this->_postArray['oldPost']["bpe_currency"]
-            . $this->_postArray['oldPost']["bpe_amount"]
-            . $this->_postArray['oldPost']["bpe_result"]
-            . $this->_postArray['oldPost']["bpe_mode"]
-            . Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $this->getStoreId())
-        );
-
-        return $signature2;
     }
 }

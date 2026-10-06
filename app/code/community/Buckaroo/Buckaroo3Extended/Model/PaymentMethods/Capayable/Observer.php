@@ -362,7 +362,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Capayable_Observer
         $article['Quantity']['value']   = round($item->getQtyOrdered(), 0);
         $article['Quantity']['group']   = 'ProductLine';
         $article['Quantity']['groupId'] = $groupId;
-        $article['Price']['value']      = $item->getBasePriceInclTax();
+        $article['Price']['value']      = $this->_currencyAmount($item->getPriceInclTax(), $item->getBasePriceInclTax());
         $article['Price']['group']      = 'ProductLine';
         $article['Price']['groupId']    = $groupId;
 
@@ -461,10 +461,11 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Capayable_Observer
      */
     protected function getDiscountLine(&$groupId)
     {
-        $discount = abs((double)$this->_order->getDiscountAmount());
+        $discount = abs((double)$this->_currencyAmount($this->_order->getDiscountAmount(), $this->_order->getBaseDiscountAmount()));
 
-        if (Mage::helper('buckaroo3extended')->isEnterprise() && (double)$this->_order->getGiftCardsAmount() > 0) {
-            $discount += (double)$this->_order->getGiftCardsAmount();
+        $giftCards = (double)$this->_currencyAmount($this->_order->getGiftCardsAmount(), $this->_order->getBaseGiftCardsAmount());
+        if (Mage::helper('buckaroo3extended')->isEnterprise() && $giftCards > 0) {
+            $discount += $giftCards;
         }
 
         if ($discount <= 0) {
@@ -484,13 +485,13 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Capayable_Observer
      */
     protected function getFeeLine(&$groupId)
     {
-        $fee    = (double) $this->_order->getBuckarooFee();
+        $fee    = (double) $this->_currencyAmount($this->_order->getBuckarooFee(), $this->_order->getBaseBuckarooFee());
 
         if ($fee <= 0) {
             return array();
         }
 
-        $feeTax = (double) $this->_order->getBuckarooFeeTax();
+        $feeTax = (double) $this->_currencyAmount($this->_order->getBuckarooFeeTax(), $this->_order->getBaseBuckarooFeeTax());
         $feeInclTax = round($fee + $feeTax, 2);
 
         $feeLine = $this->getSubtotalLine('Betaaltoeslag', $feeInclTax, $groupId++);
@@ -505,7 +506,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Capayable_Observer
      */
     protected function getShippingCostsLine(&$groupId)
     {
-        $shippingCosts = $this->_order->getBaseShippingInclTax();
+        $shippingCosts = $this->_currencyAmount($this->_order->getShippingInclTax(), $this->_order->getBaseShippingInclTax());
 
         if ($shippingCosts <= 0) {
             return array();

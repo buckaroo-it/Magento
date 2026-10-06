@@ -65,7 +65,7 @@ $useCreditManagement = Mage::getStoreConfig(
                 <div class="input-box">
                     <input class="input-text validate-email required-entry" type="text"
                            title="<?php echo $this->__('E-mail address') ?>" name="<?php echo $code ?>_BPE_Customermail"
-                           id="<?php echo $code ?>_BPE_Customermail" value="<?php echo $email ?>" />
+                           id="<?php echo $code ?>_BPE_Customermail" value="<?php echo $this->escapeHtml($email) ?>" />
                 </div>
             </li>
             <li>

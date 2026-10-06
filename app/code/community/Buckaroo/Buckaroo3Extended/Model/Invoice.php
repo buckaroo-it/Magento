@@ -19,7 +19,13 @@ class Buckaroo_Buckaroo3Extended_Model_Invoice extends Mage_Sales_Model_Order_In
                 &&
                 !empty($paramInvoice['custom_amount_capture'])
                 &&
-                ($paramInvoice['custom_amount_capture'] = trim($paramInvoice['custom_amount_capture']))
+                is_scalar($paramInvoice['custom_amount_capture'])
+                &&
+                ($paramInvoice['custom_amount_capture'] = str_replace(',', '.', trim((string) $paramInvoice['custom_amount_capture'])))
+                &&
+                is_numeric($paramInvoice['custom_amount_capture'])
+                &&
+                ($paramInvoice['custom_amount_capture'] = round((float) $paramInvoice['custom_amount_capture'], 2))
                 &&
                 ($paramInvoice['custom_amount_capture'] > 0)
             ) {
@@ -34,7 +40,11 @@ class Buckaroo_Buckaroo3Extended_Model_Invoice extends Mage_Sales_Model_Order_In
                     <=
                     round($this->getOrder()->getData('grand_total') - $this->getOrder()->getData('total_invoiced'), 2)
                 ) {
-                    $this->setBaseGrandTotal($paramInvoice['custom_amount_capture']);
+                    //the amount is entered in the order currency
+                    $rate = (float) $this->getOrder()->getBaseToOrderRate();
+                    $this->setBaseGrandTotal(
+                        round($rate > 0 ? $paramInvoice['custom_amount_capture'] / $rate : $paramInvoice['custom_amount_capture'], 2)
+                    );
                     $this->setGrandTotal($paramInvoice['custom_amount_capture']);
 
                     $this->setShippingTaxAmount(0);

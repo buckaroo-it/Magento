@@ -594,6 +594,44 @@ class Buckaroo_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Metho
         Mage::helper('buckaroo3extended')->logException($e);
     }
 
+    /**
+     * Removes customer and payment details from the text of the debug e-mail. Values are hidden by the name of
+     * the field they belong to.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    protected function _redactDebugText($text)
+    {
+        $tokens = 'name|mail|phone|street|address|city|postal|postcode|zip|birth|dob|iban|account|bic|card|cvc|cvv'
+            . '|pin|password|secret|passphrase|holder|company|coc|vat';
+
+        //var_export style: 'field' => 'value'
+        $text = preg_replace(
+            "/('[^'\n]*(?:$tokens)[^'\n]*'\s*=>\s*)'(?:[^'\\\\]|\\\\.)*'/i",
+            "$1'***REDACTED***'",
+            (string) $text
+        );
+
+        //XML request parameters: <RequestParameter Name="field">value</RequestParameter>
+        $text = preg_replace(
+            '/(Name="[^"]*(?:' . $tokens . ')[^"]*"[^>]*>)[^<]+(<)/i',
+            '$1***REDACTED***$2',
+            $text
+        );
+
+        //signature strings: field=valuefield=value...
+        $text = preg_replace(
+            '/((?:brq|add|cust)_[A-Za-z0-9_]*(?:' . $tokens . ')[A-Za-z0-9_]*=)(.*?)(?=(?:brq|add|cust)_[A-Za-z0-9_]*=|\n|$)/is',
+            '$1***REDACTED***',
+            $text
+        );
+
+        //e-mail addresses that are left
+        return preg_replace('/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/', '***@***', $text);
+    }
+
     public function sendDebugEmail()
     {
         $debugEmailConfig = Mage::getStoreConfig(
@@ -613,7 +651,7 @@ class Buckaroo_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Metho
             $mail = new Zend_Mail('utf-8');
             $mail->addTo(trim($recipient));
             $mail->setSubject('Buckaroo 3 Extended Debug Email');
-            $mail->setBodyText($this->_debugEmail);
+            $mail->setBodyText($this->_redactDebugText($this->_debugEmail));
             try {
                 $mail->send();
             }
@@ -621,6 +659,58 @@ class Buckaroo_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Metho
                 Mage::logException($e);
             }
         }
+    }
+
+    /**
+     * Whether all posted values are plain values (no arrays).
+     *
+     * @return bool
+     */
+    protected function _postIsFlat()
+    {
+        if (!is_array($this->_postArray)) {
+            return false;
+        }
+
+        foreach ($this->_postArray as $value) {
+            if (!is_scalar($value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Constant-time comparison of a calculated and a received signature.
+     * An empty value on either side never matches.
+     *
+     * @param string $calculated
+     * @param mixed  $received
+     *
+     * @return bool
+     */
+    protected function _signatureMatches($calculated, $received)
+    {
+        if (!is_string($calculated) || $calculated === '' || !is_string($received) || $received === '') {
+            return false;
+        }
+
+        if (function_exists('hash_equals')) {
+            return hash_equals($calculated, $received);
+        }
+
+        //constant-time comparison for PHP < 5.6
+        if (strlen($calculated) !== strlen($received)) {
+            return false;
+        }
+
+        $difference = 0;
+        for ($i = 0; $i < strlen($calculated); $i++) {
+            $difference |= ord($calculated[$i]) ^ ord($received[$i]);
+        }
+
+        return $difference === 0;
     }
 
     public function buckarooSort($array)
@@ -655,7 +745,7 @@ class Buckaroo_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Metho
         if ($success) {
             $comment = 'Buckaroo refund request was successfully processed.';
         } else {
-            $comment = 'Unfortunately the Buckaroo refund request could not be processed succesfully.';
+            $comment = 'Unfortunately the Buckaroo refund request could not be processed successfully.';
         }
 
         if ($this->_order->getBaseGrandTotal() != $this->_order->getBaseTotalRefunded()) {

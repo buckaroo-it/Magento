@@ -30,12 +30,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Transfer_PaymentMethod ext
 
         $post = Mage::app()->getRequest()->getPost();
 
-        $customerBirthDate = date(
-            'Y-m-d', strtotime(
-                $post['payment'][$this->_code]['year']
-                . '-' . $post['payment'][$this->_code]['month']
-                . '-' . $post['payment'][$this->_code]['day']
-            )
+        $customerBirthDate = $this->_getBirthDate(
+            isset($post['payment'][$this->_code]) ? $post['payment'][$this->_code] : array()
         );
 
         if (isset($post[$this->_code.'_BPE_Customergender'])) {
