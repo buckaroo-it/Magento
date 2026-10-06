@@ -88,8 +88,9 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Applepay_Observer extends 
             'PaymentData' => $applepayResponse,
         );
 
-        if (!empty($payment->getAdditionalInformation()['buckaroo3extended_applepay_billingContact'])) {
-            $billingContact = json_decode($payment->getAdditionalInformation()['buckaroo3extended_applepay_billingContact']);
+        $additionalInformation = $payment->getAdditionalInformation();
+        if (!empty($additionalInformation['buckaroo3extended_applepay_billingContact'])) {
+            $billingContact = json_decode($additionalInformation['buckaroo3extended_applepay_billingContact']);
             if ($billingContact && !empty($billingContact->givenName) && !empty($billingContact->familyName)) {
                 $array['CustomerCardName'] = $billingContact->givenName . ' ' . $billingContact->familyName;
             }
