@@ -12,6 +12,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Return extends Buckaroo_Buckaroo
 
         if (!$canProcess) {
             $this->_verifyError();
+            return false;
         }
 
         Mage::dispatchEvent('buckaroo3extended_return_custom_processing', array('return' => $this, 'order' => $this->getCurrentOrder(), 'post_array' => $this->_postArray));
@@ -23,6 +24,14 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Return extends Buckaroo_Buckaroo
         $parsedResponse = $this->_parsePostResponse($this->_postArray['brq_statuscode']);
 
         $this->_requiredAction($parsedResponse);
+    }
+
+    /**
+     * Sends the shopper away without processing the posted data.
+     */
+    public function rejectReturn()
+    {
+        $this->_verifyError();
     }
 
     public function customSuccess()

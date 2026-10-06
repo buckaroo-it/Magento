@@ -23,7 +23,18 @@ class Buckaroo_Buckaroo3Extended_Model_Process extends Mage_Index_Model_Process
     protected $_isLocked = null;
 
     /**
-     * Get lock file resource
+     * @return string
+     */
+    protected function _getLockFilePath()
+    {
+        $varDir = Mage::getConfig()->getVarDir('locks');
+
+        return $varDir . DS . 'buckaroo_process_' . $this->getId() . '.lock';
+    }
+
+    /**
+     * Get lock file resource. An existing lock file is opened without truncating it, so the process that holds
+     * the lock keeps its file intact.
      *
      * @return resource | Buckaroo_Buckaroo3Extended_Model_Process
      */
@@ -33,23 +44,56 @@ class Buckaroo_Buckaroo3Extended_Model_Process extends Mage_Index_Model_Process
             return $this->_lockFile;
         }
 
-        $varDir = Mage::getConfig()->getVarDir('locks');
-        $file = $varDir . DS . 'buckaroo_process_' . $this->getId() . '.lock';
-
-        if (is_file($file)) {
-            if($this->_lockIsExpired()){
-                unlink($file);//remove file
-                $this->_lockFile = fopen($file, 'x');//create new lock file
-            }else{
-                $this->_lockFile = fopen($file, 'w');
-            }
-        } else {
-            $this->_lockFile = fopen($file, 'x');
-        }
-
-        fwrite($this->_lockFile, date('r'));
+        $this->_lockFile = fopen($this->_getLockFilePath(), 'c');
 
         return $this->_lockFile;
+    }
+
+    /**
+     * Opens the lock file and takes the lock. Makes sure the locked file is still the file on disk, because the
+     * process that held the lock before us removes the file when it is done.
+     *
+     * @param bool $block
+     *
+     * @return bool
+     */
+    protected function _acquire($block)
+    {
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $this->_lockFile = null;
+            $handle = $this->_getLockFile();
+
+            if (!is_resource($handle)) {
+                return false;
+            }
+
+            if (!flock($handle, $block ? LOCK_EX : (LOCK_EX | LOCK_NB))) {
+                fclose($handle);
+                $this->_lockFile = null;
+
+                return false;
+            }
+
+            clearstatcache(true, $this->_getLockFilePath());
+            $onDisk = @stat($this->_getLockFilePath());
+            $held   = fstat($handle);
+
+            if ($onDisk && $held && $onDisk['ino'] === $held['ino']) {
+                ftruncate($handle, 0);
+                fwrite($handle, date('r'));
+                fflush($handle);
+
+                return true;
+            }
+
+            //the file was replaced while we were waiting; try again with the new one
+            flock($handle, LOCK_UN);
+            fclose($handle);
+        }
+
+        $this->_lockFile = null;
+
+        return false;
     }
 
     /**
@@ -60,11 +104,21 @@ class Buckaroo_Buckaroo3Extended_Model_Process extends Mage_Index_Model_Process
      */
     public function lock()
     {
-        $this->_isLocked = true;
-
-        flock($this->_getLockFile(), LOCK_EX | LOCK_NB);
+        $this->_isLocked = $this->_acquire(false);
 
         return $this;
+    }
+
+    /**
+     * Try to take the lock without blocking. Check and lock happen in one step.
+     *
+     * @return bool true when the lock is now held by this process
+     */
+    public function tryLock()
+    {
+        $this->_isLocked = $this->_acquire(false);
+
+        return $this->_isLocked;
     }
 
     /**
@@ -74,10 +128,7 @@ class Buckaroo_Buckaroo3Extended_Model_Process extends Mage_Index_Model_Process
      */
     public function lockAndBlock()
     {
-        $this->_isLocked = true;
-        $file = $this->_getLockFile();
-
-        flock($this->_getLockFile(), LOCK_EX);
+        $this->_isLocked = $this->_acquire(true);
 
         return $this;
     }
@@ -90,20 +141,22 @@ class Buckaroo_Buckaroo3Extended_Model_Process extends Mage_Index_Model_Process
     public function unlock()
     {
         $this->_isLocked = false;
-        $file = $this->_getLockFile();
 
-        flock($file, LOCK_UN);
+        if (is_resource($this->_lockFile)) {
+            //remove the file while we still hold the lock, then release it
+            @unlink($this->_getLockFilePath());
+            flock($this->_lockFile, LOCK_UN);
+            fclose($this->_lockFile);
+        }
 
-        //remove lockfile
-        $varDir   = Mage::getConfig()->getVarDir('locks');
-        $lockFile = $varDir . DS . 'buckaroo_process_' . $this->getId() . '.lock';
-        unlink($lockFile);
+        $this->_lockFile = null;
 
         return $this;
     }
 
     /**
-     * Check if process is locked
+     * Check if process is locked. A lock that is held by a process that no longer exists is released by the
+     * system, so no expiry is needed.
      *
      * @return bool
      */
@@ -113,56 +166,20 @@ class Buckaroo_Buckaroo3Extended_Model_Process extends Mage_Index_Model_Process
             return $this->_isLocked;
         }
 
-        $fp = $this->_getLockFile();
-        if (flock($fp, LOCK_EX | LOCK_NB)) {
-            flock($fp, LOCK_UN);
+        $handle = fopen($this->_getLockFilePath(), 'c');
+        if (!is_resource($handle)) {
             return false;
         }
 
-        //if the lock exists and exists for longer then 5minutes then remove lock & return false
-        if($this->_lockIsExpired()){
-            $varDir   = Mage::getConfig()->getVarDir('locks');
-            $lockFile = $varDir . DS . 'buckaroo_process_' . $this->getId() . '.lock';
-            unlink($lockFile);
+        if (flock($handle, LOCK_EX | LOCK_NB)) {
+            flock($handle, LOCK_UN);
+            fclose($handle);
 
-            $this->_getLockFile();//create new lock file
             return false;
         }
+
+        fclose($handle);
 
         return true;
-    }
-
-    /**
-     * Checks if the lock has expired
-     *
-     * @return bool
-     */
-    protected function _lockIsExpired()
-    {
-        $varDir     = Mage::getConfig()->getVarDir('locks');
-        $file       = $varDir . DS . 'buckaroo_process_'.$this->getId().'.lock';
-
-        if(!is_file($file)){
-            $fp = fopen($file, 'x');
-            fwrite($fp, date('r'));
-            fclose($fp);
-            return false;
-        }
-
-
-        $fiveMinAgo = time() - 300;//300
-        $contents   = file_get_contents($file);
-        $time       = strtotime($contents);
-        $debug      = 'current contents: '.$contents . "\n"
-                    . 'contents in timestamp: '.$time . "\n"
-                    . '5 minutes ago in timestamp: '.$fiveMinAgo;
-
-        if($time <= $fiveMinAgo){
-            $fp = fopen($file, 'w');
-            flock($fp, LOCK_UN);
-            return true;
-        }
-
-        return false;
     }
 }
