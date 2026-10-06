@@ -1855,14 +1855,14 @@
             <buckaroo3extended_ideal>
                 <active>1</active>
                 <model>buckaroo3extended/paymentMethods_ideal_paymentMethod</model>
-                <title>iDEAL</title>
+                <title>iDEAL | Wero</title>
                 <sort_order>10</sort_order>
                 <group>buckaroo3extended</group>
             </buckaroo3extended_ideal>
             <buckaroo3extended_idealprocessing>
                 <active>1</active>
                 <model>buckaroo3extended/paymentMethods_idealprocessing_paymentMethod</model>
-                <title>iDEAL Processing</title>
+                <title>iDEAL | Wero Processing</title>
                 <sort_order>11</sort_order>
                 <group>buckaroo3extended</group>
             </buckaroo3extended_idealprocessing>
@@ -2298,7 +2298,7 @@
             <buckaroo3extended_ideal>
                 <active>0</active>
                 <mode>0</mode>
-                <title>iDEAL</title>
+                <title>iDEAL | Wero</title>
                 <allowspecific>0</allowspecific>
                 <specificcountry></specificcountry>
                 <order_status_success></order_status_success>
@@ -2315,7 +2315,7 @@
             <buckaroo3extended_idealprocessing>
                 <active>0</active>
                 <mode>0</mode>
-                <title>iDEAL Processing</title>
+                <title>iDEAL | Wero Processing</title>
                 <allowspecific>0</allowspecific>
                 <specificcountry></specificcountry>
                 <order_status_success></order_status_success>

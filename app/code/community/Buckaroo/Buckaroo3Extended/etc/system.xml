@@ -223,7 +223,7 @@
                     </fields>
                 </buckaroo3extended>
                 <buckaroo3extended_ideal translate="label">
-                    <label>iDEAL</label>
+                    <label>iDEAL | Wero</label>
                     <sort_order>4000</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -469,8 +469,8 @@
                 </buckaroo3extended_ideal>
 
                 <buckaroo3extended_idealprocessing translate="label">
-                    <label>iDEAL Processing</label>
-                    <comment>iDeal Processing is an version of iDeal where the collected amount is directly booked on the bank account of the merchant.</comment>
+                    <label>iDEAL | Wero Processing</label>
+                    <comment>iDEAL | Wero Processing is a version of iDEAL | Wero where the collected amount is directly booked on the bank account of the merchant.</comment>
                     <sort_order>4500</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
