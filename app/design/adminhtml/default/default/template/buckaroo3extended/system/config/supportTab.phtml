@@ -42,7 +42,7 @@ $stability = $this->getStability();
                                     <li>
                                         <?php echo $helper->__(
                                             'Secret Key - Configuration &rarr; Secret key ' .
-                                            'for Digitale signature &rarr; Secret Key.'
+                                            'for digital signature &rarr; Secret Key.'
                                         );?>
                                     </li>
                                     <li>
@@ -96,8 +96,8 @@ $stability = $this->getStability();
                                 </strong>
                                 <ol>
                                     <li>
-                                        <?php echo $helper->__('After adding the keys Save Config.');?><
-                                        /li>
+                                        <?php echo $helper->__('After adding the keys Save Config.');?>
+                                    </li>
                                     <li>
                                         <?php echo $helper->__('Select the uploaded certificate from the dropdown.');?>
                                     </li>
@@ -123,7 +123,7 @@ $stability = $this->getStability();
                                     </li>
                                     <li>
                                         <?php echo $helper->__(
-                                            'Contact Buckaroo support for activating or availale payment methods.'
+                                            'Contact Buckaroo support for activating or available payment methods.'
                                         );?>
                                     </li>
                                 </ol>
@@ -178,7 +178,13 @@ $stability = $this->getStability();
                             </li>
                         </ul>
                         <ul>
-                            <li><?php echo $helper->__('OneStepCheckout version');?> 4.0.7, 4.1, 4.2 & 4.5.5</li>
+                            <li><?php echo $helper->__('OneStepCheckout version');?> 4.0.7, 4.1, 4.2 &amp; 4.5.5</li>
+                        </ul>
+                        <ul>
+                            <li><?php echo $helper->__('PHP version');?> 5.6 <?php echo $helper->__('or higher');?></li>
+                        </ul>
+                        <ul>
+                            <li><?php echo $helper->__('Tested with');?> OpenMage LTS 20.13, PHP 7.4</li>
                         </ul>
                     </div>
                     <div class="text-box">
@@ -206,7 +212,7 @@ $stability = $this->getStability();
                                     <a target="_blank" href="https://plaza.buckaroo.nl/">plaza.buckaroo.nl</a>
                                 </td>
                                 <td class="buckaroo_logo" rowspan="3">
-                                    <a href="http://www.buckaroo.nl" target="_blank">
+                                    <a href="https://www.buckaroo.nl" target="_blank" rel="noopener">
                                         <img src="<?php echo $this->getSkinUrl('images/buckaroo_buckaroo3extended/'); ?>buckaroo_small.png" alt="" />
                                     </a>
                                 </td>
@@ -225,8 +231,18 @@ $stability = $this->getStability();
                         <h3><?php echo $helper->__('Documentation');?></h3>
                         <ul>
                             <li>
-                                <a target="_blank" href="https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1">
-                                    <?php echo $helper->__('documents regarding the module');?>
+                                <a target="_blank" rel="noopener" href="https://docs.buckaroo.io/">
+                                    <?php echo $helper->__('Buckaroo documentation');?>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" rel="noopener" href="https://github.com/buckaroo-it/Magento">
+                                    <?php echo $helper->__('GitHub');?>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" rel="noopener" href="https://github.com/buckaroo-it/Magento/releases">
+                                    <?php echo $helper->__('Release notes');?>
                                 </a>
                             </li>
                         </ul>

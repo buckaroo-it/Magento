@@ -1,3 +1,5 @@
-Op onze support website kunt u de installatiehandleiding van deze extensie vinden. Deze handleiding is het meest actueel: https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1
+Installatie: zie de installatie-instructies in de README op GitHub: https://github.com/buckaroo-it/Magento#readme
+Meer informatie: https://docs.buckaroo.io/
 
-You can find our installation guide of all our releases on our support website. We will keep this guide updated. You can find this guide here: https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1 (dutch only)
+Installation: see the installation notes in the README on GitHub: https://github.com/buckaroo-it/Magento#readme
+More information: https://docs.buckaroo.io/

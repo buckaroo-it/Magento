@@ -20,15 +20,15 @@
 
 Magento Open Source, previously Magento Community Edition, is an open-source eCommerce platform. Please note that Magento is currently end of life and Adobe only publishes updates for Magento 2 which is the successor (newer version).
 
-The Buckaroo Payments Plugin ([Dutch](https://support.buckaroo.nl/categorieen/plugins/magento-1) or [English](https://support.buckaroo.eu/categories/plugins/magento-1)) for Magento enables a ready-to-sell payment gateway. You can choose from popular online payment methods in The Netherlands, Belgium, France, Germany and globally.
+The Buckaroo Payments Plugin ([documentation](https://docs.buckaroo.io/)) for Magento enables a ready-to-sell payment gateway. You can choose from popular online payment methods in The Netherlands, Belgium, France, Germany and globally.
 Start accepting payments within a few minutes.
 
 ### Requirements
 
 To use the Buckaroo plugin, please be aware of the following minimum requirements:
-- A Buckaroo account ([Dutch](https://www.buckaroo.nl/start) or [English](https://www.buckaroo.eu/solutions/request-form))
+- A Buckaroo account ([request an account](https://www.buckaroo.nl/start))
 - Magento version 1.9.x
-- PHP 7.4 or higher
+- PHP 5.6 or higher, as far as your Magento or OpenMage version supports it
 
 ### Installation
 
@@ -73,7 +73,7 @@ composer update buckaroo/magento1
 
 ### Configuration
 
-For the configuration of the plugin, please refer to our [Dutch](https://support.buckaroo.nl/categorieen/plugins/magento-1) or [English](https://support.buckaroo.eu/categories/plugins/magento-1) support website. You'll find all the needed information there.
+For the configuration of the plugin, please refer to our [documentation](https://docs.buckaroo.io/) and the installation notes in this README.
 You can also contact our [technical support department](mailto:support@buckaroo.nl) if you still have some unanswered questions.
 
 ### Contribute
@@ -91,7 +91,7 @@ If you want to contribute as well, then please follow our [Contribution Guidelin
 - **PATCHES:** Bug and hotfixes only.
 
 ### Additional information
-- **Knowledge base & FAQ:** Available in [Dutch](https://support.buckaroo.eu/categories/plugins/magento-1) or [English](https://support.buckaroo.nl/categorieen/plugins/magento-1).
-- **Support:** https://support.buckaroo.eu/contact
+- **Knowledge base & FAQ:** [docs.buckaroo.io](https://docs.buckaroo.io/).
+- **Support:** https://support.buckaroo.nl/contact
 - **Contact:** [support@buckaroo.nl](mailto:support@buckaroo.nl) or [+31 (0)30 711 50 50](tel:+310307115050)
 
