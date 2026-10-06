@@ -53,9 +53,10 @@ class Buckaroo_Buckaroo3Extended_Model_Soap_ClientWSSEC extends SoapClient
      * Buckaroo_Buckaroo3Extended_Model_Soap_ClientWSSEC constructor.
      *
      * @param string|array $wsdl
-     * @param array|null   $options
+     * @param array|null $options
+     * @throws SoapFault
      */
-    public function __construct($wsdl, array $options = null)
+    public function __construct($wsdl, $options = null)
     {
         $wsdlString = $wsdl;
 
@@ -73,11 +74,13 @@ class Buckaroo_Buckaroo3Extended_Model_Soap_ClientWSSEC extends SoapClient
      * @param string $action
      * @param int    $version
      * @param int    $oneWay
+     * @param mixed  $uriParserClass only passed by PHP 8.4 and later
      *
      * @return string
      * @throws Exception
      */
-    public function __doRequest($request , $location , $action , $version , $oneWay = 0 )
+    #[\ReturnTypeWillChange]
+    public function __doRequest($request , $location , $action , $version , $oneWay = 0 , $uriParserClass = null)
     {
         // Add code to inspect/dissect/debug/adjust the XML given in $request here
         $domDOC = new DOMDocument();
@@ -89,6 +92,10 @@ class Buckaroo_Buckaroo3Extended_Model_Soap_ClientWSSEC extends SoapClient
         $domDOC = $this->SignDomDocument($domDOC);
 
         // Uncomment the following line, if you actually want to do the request
+        if ($uriParserClass !== null) {
+            return parent::__doRequest($domDOC->saveXML($domDOC->documentElement), $location, $action, $version, $oneWay, $uriParserClass);
+        }
+
         return parent::__doRequest($domDOC->saveXML($domDOC->documentElement), $location, $action, $version, $oneWay);
     }
 

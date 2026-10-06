@@ -833,78 +833,85 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
 
     protected function _verifySignature()
     {
-        $verified = false;
-
-        //save response XML to string
         $responseDomDoc = $this->_responseXML;
-        $responseString = $responseDomDoc->saveXML();
+        if (!($responseDomDoc instanceof DOMDocument)) {
+            return false;
+        }
 
-        //retrieve the signature value
-        $sigatureRegex = "#<SignatureValue>(.*)</SignatureValue>#ims";
-        $signatureArray = array();
-        preg_match_all($sigatureRegex, $responseString, $signatureArray);
+        $xPath = $this->_getSignatureXPath($responseDomDoc);
 
-        //decode the signature
-        $signature = $signatureArray[1][0];
-        $sigDecoded = base64_decode($signature);
+        //there must be exactly one signature, and it has to carry a SignedInfo and a SignatureValue
+        $signedInfoNodes = $xPath->query('//wsse:Security/sig:Signature/sig:SignedInfo');
+        $signatureValueNodes = $xPath->query('//wsse:Security/sig:Signature/sig:SignatureValue');
+        if (!$signedInfoNodes || $signedInfoNodes->length !== 1
+            || !$signatureValueNodes || $signatureValueNodes->length !== 1
+            || $xPath->query('//sig:Signature')->length !== 1
+        ) {
+            return false;
+        }
 
-        $xPath = new DOMXPath($responseDomDoc);
-
-        //register namespaces to use in xpath query's
-        $xPath->registerNamespace('wsse', 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
-        $xPath->registerNamespace('sig', 'http://www.w3.org/2000/09/xmldsig#');
-        $xPath->registerNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-
-        //Get the SignedInfo nodeset
-        $SignedInfoQuery = '//wsse:Security/sig:Signature/sig:SignedInfo';
-        $SignedInfoQueryNodeSet = $xPath->query($SignedInfoQuery);
-        $SignedInfoNodeSet = $SignedInfoQueryNodeSet->item(0);
+        $sigDecoded = base64_decode(trim($signatureValueNodes->item(0)->nodeValue), true);
+        if ($sigDecoded === false || $sigDecoded === '') {
+            return false;
+        }
 
         //Canonicalize nodeset
-        $signedInfo = $SignedInfoNodeSet->C14N(true, false);
+        $signedInfo = $signedInfoNodes->item(0)->C14N(true, false);
 
-        $keyIdentifier = '//wsse:Security/sig:Signature/sig:KeyInfo/wsse:SecurityTokenReference/wsse:KeyIdentifier';
-        $keyIdentifierList = $xPath->query($keyIdentifier);
-
-        $certificatesDir = CERTIFICATE_DIR . DS;
-        if ($keyIdentifierList && $keyIdentifierList->item(0) && $keyIdentifierList->item(0)->nodeValue) {
-            $certificatePath = $certificatesDir . 'Buckaroo' . $keyIdentifierList->item(0)->nodeValue . '.pem';
-            if (!file_exists($certificatePath)) {
-                $certificatePath = $certificatesDir . 'Checkout.pem';
-            }
+        $certificatePath = $this->_getResponseCertificatePath($xPath);
+        if ($certificatePath === false) {
+            return false;
         }
 
         //get the public key
-        $pubKey = openssl_get_publickey(openssl_x509_read(file_get_contents($certificatePath)));
+        $certificate = openssl_x509_read(file_get_contents($certificatePath));
+        if ($certificate === false) {
+            return false;
+        }
+
+        $pubKey = openssl_get_publickey($certificate);
+        if ($pubKey === false) {
+            return false;
+        }
 
         //verify the signature
-        $sigVerify = openssl_verify($signedInfo, $sigDecoded, $pubKey);
-
-        if ($sigVerify === 1) {
-            $verified = true;
-        }
-
-        return $verified;
+        return openssl_verify($signedInfo, $sigDecoded, $pubKey) === 1;
     }
 
-    protected function _verifyDigest()
+    /**
+     * Finds the certificate file that belongs to the key identifier of the response.
+     *
+     * @param DOMXPath $xPath
+     *
+     * @return string|false
+     */
+    protected function _getResponseCertificatePath(DOMXPath $xPath)
     {
-        $verified = false;
+        $certificatesDir = CERTIFICATE_DIR . DS;
+        $certificatePath = $certificatesDir . 'Checkout.pem';
 
-        //save response XML to string
-        $responseDomDoc = $this->_responseXML;
-        $responseString = $responseDomDoc->saveXML();
-
-        //retrieve the signature value
-        $digestRegex = "#<DigestValue>(.*?)</DigestValue>#ims";
-        $digestArray = array();
-        preg_match_all($digestRegex, $responseString, $digestArray);
-
-        $digestValues = array();
-        foreach($digestArray[1] as $digest) {
-            $digestValues[] = $digest;
+        $keyIdentifierList = $xPath->query(
+            '//wsse:Security/sig:Signature/sig:KeyInfo/wsse:SecurityTokenReference/wsse:KeyIdentifier'
+        );
+        if ($keyIdentifierList && $keyIdentifierList->item(0)) {
+            $keyIdentifier = trim($keyIdentifierList->item(0)->nodeValue);
+            if (preg_match('/^[0-9A-Fa-f]{40}$/', $keyIdentifier)
+                && is_file($certificatesDir . 'Buckaroo' . $keyIdentifier . '.pem')
+            ) {
+                $certificatePath = $certificatesDir . 'Buckaroo' . $keyIdentifier . '.pem';
+            }
         }
 
+        return is_readable($certificatePath) ? $certificatePath : false;
+    }
+
+    /**
+     * @param DOMDocument $responseDomDoc
+     *
+     * @return DOMXPath
+     */
+    protected function _getSignatureXPath(DOMDocument $responseDomDoc)
+    {
         $xPath = new DOMXPath($responseDomDoc);
 
         //register namespaces to use in xpath query's
@@ -912,19 +919,52 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Abstract extends Buckaroo_Buckar
         $xPath->registerNamespace('sig', 'http://www.w3.org/2000/09/xmldsig#');
         $xPath->registerNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
 
-        $controlHashReference = $xPath->query('//*[@Id="_control"]')->item(0);
-        $controlHashCanonical = $controlHashReference->C14N(true, false);
-        $controlHash = base64_encode(pack('H*', sha1($controlHashCanonical)));
+        return $xPath;
+    }
 
-        $bodyHashReference = $xPath->query('//*[@Id="_body"]')->item(0);
-        $bodyHashCanonical = $bodyHashReference->C14N(true, false);
-        $bodyHash = base64_encode(pack('H*', sha1($bodyHashCanonical)));
-
-        if (in_array($controlHash, $digestValues) === true && in_array($bodyHash, $digestValues) === true) {
-            $verified = true;
+    /**
+     * Checks that the signed body and control block are the SOAP Body and the header control block of the
+     * response itself, and that their digests match the digests of the matching signature references.
+     */
+    protected function _verifyDigest()
+    {
+        $responseDomDoc = $this->_responseXML;
+        if (!($responseDomDoc instanceof DOMDocument)) {
+            return false;
         }
 
-        return $verified;
+        $xPath = $this->_getSignatureXPath($responseDomDoc);
+
+        $bodyNodes = $xPath->query('/soap:Envelope/soap:Body[@Id="_body"]');
+        $controlNodes = $xPath->query('/soap:Envelope/soap:Header/*[@Id="_control"]');
+
+        //each signed id has to occur exactly once
+        if (!$bodyNodes || $bodyNodes->length !== 1 || $xPath->query('//*[@Id="_body"]')->length !== 1
+            || !$controlNodes || $controlNodes->length !== 1 || $xPath->query('//*[@Id="_control"]')->length !== 1
+        ) {
+            return false;
+        }
+
+        $references = array(
+            '#_body'    => $bodyNodes->item(0),
+            '#_control' => $controlNodes->item(0),
+        );
+
+        foreach ($references as $uri => $node) {
+            $digestNodes = $xPath->query(
+                '//wsse:Security/sig:Signature/sig:SignedInfo/sig:Reference[@URI="' . $uri . '"]/sig:DigestValue'
+            );
+            if (!$digestNodes || $digestNodes->length !== 1) {
+                return false;
+            }
+
+            $calculated = base64_encode(pack('H*', sha1($node->C14N(true, false))));
+            if (!$this->_signatureMatches($calculated, trim($digestNodes->item(0)->nodeValue))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function sendNewOrderEmail($forceMode = true)
