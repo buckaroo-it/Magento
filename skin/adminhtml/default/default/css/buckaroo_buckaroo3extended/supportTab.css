@@ -34,7 +34,9 @@
 /* Labels */
 .entry-edit .entry-edit-head { background-color:#97c600; }
 .entry-edit .entry-edit-head.disabled { background-color:#c6cbc9; }
-.entry-edit .entry-edit-head.test { background-color:#fff000; }
+/* Magento styles div.disabled a itself (tiled arrow image, near white text); keep the header readable */
+.entry-edit .entry-edit-head.disabled a { background:none !important; color:#4b514f !important; }
+.entry-edit .entry-edit-head.test { background-color:#fff6a3; box-shadow:inset 6px 0 0 #fff000; }
 .entry-edit .entry-edit-head.test a { color:#222; }
 .entry-edit .entry-edit-head.live { background-color:#97c600; }
 .entry-edit .entry-edit-head.advanced { background-color:#f86000; }

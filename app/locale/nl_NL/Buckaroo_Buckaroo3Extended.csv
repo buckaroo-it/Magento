@@ -352,7 +352,7 @@ Buckaroo_Buckaroo3Extended::Fee label, Betaaltoeslag label
 "Your payment was unsuccessful, cancelled by the merchant. Please contact the shop owner.","Uw betaling was niet succesvol, deze is geannuleerd. Als het probleem zich blijft voordoen neem dan contact op met de shopbeheerder."
 "Your payment was unsuccessful, cancelled by consumer.","Uw betaling is volgens ons systeem door u geannuleerd. Mocht dit niet het geval zijn, neem dan contact op met de shopbeheerder."
 "A validation error has occurred. Please try again. If this problem persists, please contact the shop owner.","Er is een validatie fout opgetreden. Probeer het opnieuw. Als het probleem zich blijft voordoen neem dan contact op met de shopbeheerder."
-"Please read first our knowledge base article about this setting: <a href='https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1' target='_blank'>More information about custom error messages</a>.","Lees eerst even ons artikel over deze instelling: <a href='https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1' target='_blank'>Meer uitleg over aangepaste foutmelding teksten</a>."
+"Please read first our knowledge base article about this setting: <a href='https://docs.buckaroo.io/' target='_blank'>More information about custom error messages</a>.","Lees eerst even ons artikel over deze instelling: <a href='https://support.buckaroo.nl/categorie%C3%ABn/plugins/magento-1' target='_blank'>Meer uitleg over aangepaste foutmelding teksten</a>."
 "Set response message for an payment failure.","Bericht wanneer een betaling mislukt."
 "Payment failure","Betaling mislukt"
 "Validation error","Validatie error"
