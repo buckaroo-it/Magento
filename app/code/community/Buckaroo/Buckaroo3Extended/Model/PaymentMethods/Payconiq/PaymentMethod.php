@@ -8,14 +8,13 @@
  * If you are unable to obtain it through the world-wide-web, please send an email
  * to support@buckaroo.nl so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade this module to newer
- * versions in the future. If you wish to customize this module for your
- * needs please contact support@buckaroo.nl for more information.
- *
  * @copyright Copyright (c) Buckaroo B.V.
  * @license   https://tldrlegal.com/license/mit-license
+ */
+
+/**
+ * Payconiq is no longer offered at checkout. The class stays so orders that were paid with it can still be opened,
+ * invoiced and credited.
  */
 class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Payconiq_PaymentMethod extends Buckaroo_Buckaroo3Extended_Model_PaymentMethods_PaymentMethod
 {
@@ -46,13 +45,23 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Payconiq_PaymentMethod ext
 
     protected $_code = 'buckaroo3extended_payconiq';
 
-    protected $_formBlockType = 'buckaroo3extended/paymentMethods_payconiq_checkout_form';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrderPlaceRedirectUrl()
+    public function isAvailable($quote = null)
     {
-        return Mage::getUrl('buckaroo3extended/payconiq/checkout', array('_secure' => true, 'method' => $this->_code));
+        return false;
+    }
+
+    public function canUseCheckout()
+    {
+        return false;
+    }
+
+    public function canUseInternal()
+    {
+        return false;
+    }
+
+    public function canUseForMultishipping()
+    {
+        return false;
     }
 }

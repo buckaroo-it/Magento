@@ -8,7 +8,6 @@ class Buckaroo_Buckaroo3Extended_Block_Adminhtml_System_Config_Responsehint
     public $methods = array(
         'amex',
         'directdebit',
-        'giropay',
         'ideal',
         'mastercard',
         'cartebancaire',
@@ -16,7 +15,6 @@ class Buckaroo_Buckaroo3Extended_Block_Adminhtml_System_Config_Responsehint
         'onlinegiro',
         'paypal',
         'paysafecard',
-        'sofortueberweisung',
         'transfer',
         'visa',
         'payperemail',

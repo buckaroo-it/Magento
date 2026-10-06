@@ -133,21 +133,6 @@
         </reference>
     </buckaroo3extended_checkout_pospaymentpending>
 
-    <buckaroo3extended_payconiq_pay>
-        <reference name="root">
-            <action method="setTemplate"><template>page/1column.phtml</template></action>
-        </reference>
-        <reference name="head">
-            <block type="core/template" name="buckaroo_jquery" template="buckaroo3extended/jquery.phtml"/>
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/Buckaroo/Buckaroo3Extended/styles_payconiq_pay.css</name>
-            </action>
-        </reference>
-        <reference name="content">
-            <block type="buckaroo3extended/paymentMethods_payconiq_checkout_pay" name="buckaroo_payconiq_pay" template="buckaroo3extended/payconiq/checkout/pay.phtml" />
-        </reference>
-    </buckaroo3extended_payconiq_pay>
 
     <checkout_cart_index>
         <reference name="head">
