@@ -557,18 +557,20 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
         $discount = null;
 
         if (Mage::helper('buckaroo3extended')->isEnterprise()) {
-            if ((double)$discountData->getGiftCardsAmount() > 0) {
-                $discount = (double)$discountData->getGiftCardsAmount();
+            $giftCards = (double)$this->_currencyAmount($discountData->getGiftCardsAmount(), $discountData->getBaseGiftCardsAmount());
+            if ($giftCards > 0) {
+                $discount = $giftCards;
             }
         }
 
-        if (abs((double)$discountData->getDiscountAmount()) > 0) {
-            $discount += abs((double)$discountData->getDiscountAmount());
+        $catalogDiscount = abs((double)$this->_currencyAmount($discountData->getDiscountAmount(), $discountData->getBaseDiscountAmount()));
+        if ($catalogDiscount > 0) {
+            $discount += $catalogDiscount;
         }
 
-        if (Mage::helper('buckaroo3extended')->isEnterprise()
-            && abs((double)$discountData->getCustomerBalanceAmount()) > 0) {
-            $discount += abs((double)$discountData->getCustomerBalanceAmount());
+        $customerBalance = abs((double)$this->_currencyAmount($discountData->getCustomerBalanceAmount(), $discountData->getBaseCustomerBalanceAmount()));
+        if (Mage::helper('buckaroo3extended')->isEnterprise() && $customerBalance > 0) {
+            $discount += $customerBalance;
         }
 
         return round($discount, 2);
@@ -579,7 +581,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
      */
     protected function _addShippingCostsVariables(&$vars)
     {
-        $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
+        $shippingCosts = round($this->_currencyAmount($this->_order->getShippingInclTax(), $this->_order->getBaseShippingInclTax()), 2);
 
         $orderInfo = array(
             'ShippingCosts' => $shippingCosts,
@@ -613,9 +615,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             // Changed calculation from unitPrice to orderLinePrice due to impossible to recalculate unitprice,
             // because of differences in outcome between TAX settings: Unit, OrderLine and Total.
             // Quantity will always be 1 and quantity ordered will be in the article description.
-            $productPrice = ($item->getBasePrice() * $item->getQtyOrdered())
-                + $item->getBaseTaxAmount()
-                + $item->getBaseHiddenTaxAmount();
+            $productPrice = $this->_currencyAmount(
+                ($item->getPrice() * $item->getQtyOrdered()) + $item->getTaxAmount() + $item->getHiddenTaxAmount(),
+                ($item->getBasePrice() * $item->getQtyOrdered()) + $item->getBaseTaxAmount() + $item->getBaseHiddenTaxAmount()
+            );
             $productPrice = round($productPrice, 2);
 
 
@@ -638,6 +641,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
 
         $alreadyPaid = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getAlreadyPaid($this->_order->getIncrementId());
         if($alreadyPaid){
+            //the amount paid with giftcards is stored in the base currency
+            $alreadyPaid = $this->_currencyAmount($alreadyPaid * (float) $this->_order->getBaseToOrderRate(), $alreadyPaid);
             $alreadyPaid = (-1 * round($alreadyPaid, 2));
             $article['ArticleDescription']['value'] = "AlreadyPaid";
             $article['ArticleId']['value']          = 'alreadyPaid';
@@ -653,7 +658,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             $gwTax = Mage::helper('enterprise_giftwrapping')->getWrappingTaxClass($this->_order->getStoreId());
 
             if ($this->_order->getGwBasePrice() > 0) {
-                $gwPrice = $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount();
+                $gwPrice = $this->_currencyAmount(
+                    $this->_order->getGwPrice() + $this->_order->getGwTaxAmount(),
+                    $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount()
+                );
 
                 $gwOrder = array();
                 $gwOrder['ArticleDescription']['value'] =
@@ -669,7 +677,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             }
 
             if ($this->_order->getGwItemsBasePrice() > 0) {
-                $gwiPrice = $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount();
+                $gwiPrice = $this->_currencyAmount(
+                    $this->_order->getGwItemsPrice() + $this->_order->getGwItemsTaxAmount(),
+                    $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount()
+                );
 
                 $gwiOrder = array();
                 $gwiOrder['ArticleDescription']['value'] =
@@ -723,9 +734,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             // Changed calculation from unitPrice to orderLinePrice due to impossible to recalculate unitprice,
             // because of differences in outcome between TAX settings: Unit, OrderLine and Total.
             // Quantity will always be 1 and quantity ordered will be in the article description.
-            $productPrice = ($item->getBasePrice() * $item->getQty())
-                + $item->getBaseTaxAmount()
-                + $item->getBaseHiddenTaxAmount();
+            $productPrice = $this->_currencyAmount(
+                ($item->getPrice() * $item->getQty()) + $item->getTaxAmount() + $item->getHiddenTaxAmount(),
+                ($item->getBasePrice() * $item->getQty()) + $item->getBaseTaxAmount() + $item->getBaseHiddenTaxAmount()
+            );
             $productPrice = round($productPrice, 2);
 
             $article['ArticleDescription']['value'] = (int) $item->getQty() . 'x ' . $item->getName();
@@ -750,7 +762,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             $gwTax = Mage::helper('enterprise_giftwrapping')->getWrappingTaxClass($this->_order->getStoreId());
 
             if ($this->_order->getGwBasePrice() > 0) {
-                $gwPrice = $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount();
+                $gwPrice = $this->_currencyAmount(
+                    $this->_order->getGwPrice() + $this->_order->getGwTaxAmount(),
+                    $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount()
+                );
 
                 $gwOrder = array();
                 $gwOrder['ArticleDescription']['value'] =
@@ -766,7 +781,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             }
 
             if ($this->_order->getGwItemsBasePrice() > 0) {
-                $gwiPrice = $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount();
+                $gwiPrice = $this->_currencyAmount(
+                    $this->_order->getGwItemsPrice() + $this->_order->getGwItemsTaxAmount(),
+                    $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount()
+                );
 
                 $gwiOrder = array();
                 $gwiOrder['ArticleDescription']['value'] =
@@ -921,7 +939,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             $gwTax = Mage::helper('enterprise_giftwrapping')->getWrappingTaxClass($this->_order->getStoreId());
 
             if ($this->_order->getGwBasePrice() > 0) {
-                $gwPrice = $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount();
+                $gwPrice = $this->_currencyAmount(
+                    $this->_order->getGwPrice() + $this->_order->getGwTaxAmount(),
+                    $this->_order->getGwBasePrice() + $this->_order->getGwBaseTaxAmount()
+                );
 
                 $gwOrder = array();
                 $gwOrder['ArticleDescription']['value'] =
@@ -937,7 +958,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
             }
 
             if ($this->_order->getGwItemsBasePrice() > 0) {
-                $gwiPrice = $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount();
+                $gwiPrice = $this->_currencyAmount(
+                    $this->_order->getGwItemsPrice() + $this->_order->getGwItemsTaxAmount(),
+                    $this->_order->getGwItemsBasePrice() + $this->_order->getGwItemsBaseTaxAmount()
+                );
 
                 $gwiOrder = array();
                 $gwiOrder['ArticleDescription']['value'] =
@@ -956,8 +980,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer
 
     protected function _getPaymentFeeLine()
     {
-        $fee    = (double) $this->_order->getBuckarooFee();
-        $feeTax = (double) $this->_order->getBuckarooFeeTax();
+        $fee    = (double) $this->_currencyAmount($this->_order->getBuckarooFee(), $this->_order->getBaseBuckarooFee());
+        $feeTax = (double) $this->_currencyAmount($this->_order->getBuckarooFeeTax(), $this->_order->getBaseBuckarooFeeTax());
 
         if ($fee > 0) {
             $article['ArticleDescription']['value'] = 'Servicekosten';

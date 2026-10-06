@@ -19,10 +19,23 @@ class Buckaroo_Buckaroo3Extended_Model_Creditmemo extends Mage_Sales_Model_Order
         ) {
             Mage::helper('buckaroo3extended')->devLog(__METHOD__, 2);
 
-            $this->setBaseAdjustmentPositive($postData['adjustment_positive']);
-            $this->setAdjustmentPositive($postData['adjustment_positive']);
-            $this->setGrandTotal($postData['adjustment_positive']);
-            $this->setBaseGrandTotal($postData['adjustment_positive']);
+            $adjustment = is_scalar($postData['adjustment_positive'])
+                ? str_replace(',', '.', trim((string) $postData['adjustment_positive']))
+                : '';
+
+            if (!is_numeric($adjustment) || $adjustment <= 0) {
+                Mage::throwException(Mage::helper('sales')->__('The credit memo amount should be a positive number.'));
+            }
+
+            //the amount is entered in the order currency
+            $adjustment     = round((float) $adjustment, 2);
+            $rate           = (float) $this->getOrder()->getBaseToOrderRate();
+            $baseAdjustment = round($rate > 0 ? $adjustment / $rate : $adjustment, 2);
+
+            $this->setBaseAdjustmentPositive($baseAdjustment);
+            $this->setAdjustmentPositive($adjustment);
+            $this->setGrandTotal($adjustment);
+            $this->setBaseGrandTotal($baseAdjustment);
             $this->save();
         }
 

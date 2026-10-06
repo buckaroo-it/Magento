@@ -6,6 +6,21 @@ class Buckaroo_Buckaroo3Extended_Model_Observer_Abstract extends Buckaroo_Buckar
      *  @var Mage_Sales_Model_Order $_order
      */
     protected $_order;
+
+    /**
+     * Returns the order value when the request to Buckaroo is sent in the order currency, the base value when
+     * it is sent in the base currency (same rule as _determineAmountAndCurrency). Article lines have to use the
+     * same currency as the total amount of the request.
+     *
+     * @param float|string $orderValue
+     * @param float|string $baseValue
+     *
+     * @return float|string
+     */
+    protected function _currencyAmount($orderValue, $baseValue)
+    {
+        return $this->_currentCurrencyIsAllowed() ? $orderValue : $baseValue;
+    }
     protected $_billingInfo;
     protected $_method = '';
 
@@ -628,14 +643,12 @@ class Buckaroo_Buckaroo3Extended_Model_Observer_Abstract extends Buckaroo_Buckar
             $allowedArray = array(
                 'amex',
                 'directdebit',
-                'giropay',
                 'ideal',
                 'idealprocessing',
                 'mastercard',
                 'onlinegiro',
                 'paypal',
                 'paysafecard',
-                'sofortueberweisung',
                 'alipay',
                 'wechatpay',
                 'trustly',
