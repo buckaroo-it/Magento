@@ -95,7 +95,14 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
 
         if (!$canProcess) {
             return false;
-        } elseif ($canProcess && !$canUpdate) {
+        }
+
+        if ($this->_isStalePush()) {
+            $this->_debugEmail .= "This push is older than one that was already processed and is ignored. \n";
+            return false;
+        }
+
+        if ($canProcess && !$canUpdate) {
 
             // related transactions can be blocked when group transaction is sent.
             // still add transaction to transactionManager
@@ -182,13 +189,13 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
         );
 
         if (isset($updatedFailed) && $updatedFailed) {
-            $this->_debugEmail .= "Succesfully updated 'failed' state and status \n";
+            $this->_debugEmail .= "Successfully updated 'failed' state and status \n";
         } elseif (isset($updatedSuccess) && $updatedSuccess) {
-            $this->_debugEmail .= "Succesfully updated 'success' state and status \n";
+            $this->_debugEmail .= "Successfully updated 'success' state and status \n";
         } elseif (isset($updatedPendingPayment) && $updatedPendingPayment) {
-            $this->_debugEmail .= "Succesfully updated pending payment \n";
+            $this->_debugEmail .= "Successfully updated pending payment \n";
         } elseif (isset($updatedIncorrectPayment) && $updatedIncorrectPayment) {
-            $this->_debugEmail .= "Succesfully updated incorrect payment \n";
+            $this->_debugEmail .= "Successfully updated incorrect payment \n";
         } else {
             $this->_debugEmail .= "Order was not updated \n";
         }
@@ -222,6 +229,47 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
         return true;
     }
 
+    /**
+     * Whether the posted data carries a valid signature.
+     *
+     * @return bool
+     */
+    public function isAuthentic()
+    {
+        $received = isset($this->_postArray['brq_signature']) ? $this->_postArray['brq_signature'] : null;
+
+        if ($this->_signatureMatches($this->_calculateSignature(), $received)) {
+            return true;
+        }
+
+        //refund pushes are verified further on with every value url-decoded
+        return isset($this->_postArray['brq_amount_credit'])
+            && $this->_signatureMatches($this->_calculateRefundSignature(), $received);
+    }
+
+    /**
+     * @return string
+     */
+    protected function _calculateRefundSignature()
+    {
+        $secret = (string) Mage::getStoreConfig(
+            'buckaroo/buckaroo3extended/digital_signature',
+            $this->_order->getStoreId()
+        );
+        if ($secret === '' || !$this->_postIsFlat()) {
+            return '';
+        }
+
+        $origArray = $this->_postArray;
+        unset($origArray['brq_signature']);
+
+        $signatureString = '';
+        foreach ($this->buckarooSort($origArray) as $key => $value) {
+            $signatureString .= $key . '=' . urldecode($value);
+        }
+
+        return SHA1($signatureString . $secret);
+    }
 
     /**
      * Checks if the post received is valid by checking its signature field.
@@ -238,7 +286,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
         $correctSignature = false;
         $canUpdate        = false;
         $signature        = $this->_calculateSignature();
-        if ($signature === $this->_postArray['brq_signature']) {
+        if ($this->_signatureMatches($signature, isset($this->_postArray['brq_signature']) ? $this->_postArray['brq_signature'] : null)) {
             $correctSignature = true;
         }
 
@@ -316,14 +364,18 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
         $recipients         = explode(',', Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/debug_email', $this->getStoreId()));
         $recipients[]       = Mage::getStoreConfig('trans_email/ident_general/email');
 
-        $mail               = $helper->__('Status Success received for order %s while the order currently the status %s has.', $orderId, $currentOrderStatus);
+        $mailText           = $helper->__('Status Success received for order %s while the order currently the status %s has.', $orderId, $currentOrderStatus);
 
-        foreach($recipients as $recipient) {
-            mail(
-                trim($recipient),
-                'Dubbele transactie voor dezelfde order',
-                $mail
-            );
+        foreach (array_unique(array_filter(array_map('trim', $recipients))) as $recipient) {
+            try {
+                $mail = new Zend_Mail('utf-8');
+                $mail->addTo($recipient);
+                $mail->setSubject('Dubbele transactie voor dezelfde order');
+                $mail->setBodyText($mailText);
+                $mail->send();
+            } catch (Exception $e) {
+                Mage::logException($e);
+            }
         }
     }
 
@@ -361,7 +413,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
     }
 
     /**
-     * Process a succesful order. Sets its new state and status, sends an order confirmation email
+     * Process a successful order. Sets its new state and status, sends an order confirmation email
      * and creates an invoice if set in config.
      *
      * @param $newStates
@@ -370,6 +422,18 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
      */
     protected function _processSuccess($newStates, $description = false)
     {
+        if (!$this->_isPaidAmountSufficient()) {
+            $this->_order->addStatusHistoryComment(
+                Mage::helper('buckaroo3extended')->__(
+                    'Buckaroo reported a payment of %s %s, which is less than the order total. The order has not been marked as paid.',
+                    $this->_postArray['brq_amount'],
+                    $this->_postArray['brq_currency']
+                )
+            )->save();
+
+            return false;
+        }
+
         //send new order email if it hasnt already been sent
         if(!$this->_order->getEmailSent())
         {
@@ -734,9 +798,8 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
      */
     protected function _calculateSignature()
     {
-        if (isset($this->_postArray['isOldPost']) && $this->_postArray['isOldPost'])
-        {
-            return $this->_calculateOldSignature();
+        if (!$this->_postIsFlat()) {
+            return '';
         }
 
         $origArray = $this->_postArray;
@@ -752,12 +815,15 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
             $signatureString .= $key . '=' . $value;
         }
 
-        $signatureString .= Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $this->_order->getStoreId());
+        $secret = (string) Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $this->_order->getStoreId());
+        if ($secret === '') {
+            return '';
+        }
 
-        $this->_debugEmail .= "\nSignaturestring: {$signatureString}\n";
+        $this->_debugEmail .= "\nSignaturestring (without secret): {$signatureString}\n";
 
         //return the SHA1 encoded string for comparison
-        $signature = SHA1($signatureString);
+        $signature = SHA1($signatureString . $secret);
 
         $this->_debugEmail .= "\nSignature: {$signature}\n";
 
@@ -834,33 +900,71 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
     }
 
     /**
-     * Compatibility for BPE 2.0 pushes
-     *
-     * @return string
-     */
-    protected function _calculateOldSignature()
-    {
-        $signature2 = Mage::helper('buckaroo3extended')->getForbiddenFunc('md5',
-            $this->_postArray['oldPost']["bpe_trx"]
-            . $this->_postArray['oldPost']["bpe_timestamp"]
-            . Mage::getStoreConfig('buckaroo/buckaroo3extended/key', $this->_order->getStoreId())
-            . $this->_postArray['oldPost']["bpe_invoice"]
-            . $this->_postArray['oldPost']["bpe_reference"]
-            . $this->_postArray['oldPost']["bpe_currency"]
-            . $this->_postArray['oldPost']["bpe_amount"]
-            . $this->_postArray['oldPost']["bpe_result"]
-            . $this->_postArray['oldPost']["bpe_mode"]
-            . Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $this->_order->getStoreId())
-        );
-
-        return $signature2;
-    }
-
-    /**
      * Checks if the correct amount has been paid.
      */
     protected function _checkCorrectAmount()
     {
         return true;
+    }
+
+    /**
+     * Whether the pushed amount covers the order total, used before a successful push is booked as paid.
+     * A pushed amount that is clearly below the order total is not accepted as a full payment.
+     * Pushes without an amount, partial payments and unknown currencies are left as they were.
+     *
+     * @return bool
+     */
+    protected function _isPaidAmountSufficient()
+    {
+        if (!isset($this->_postArray['brq_amount']) || !is_numeric($this->_postArray['brq_amount'])
+            || (float) $this->_postArray['brq_amount'] <= 0
+            || isset($this->_postArray['brq_relatedtransaction_partialpayment'])
+            || empty($this->_postArray['brq_currency'])
+        ) {
+            return true;
+        }
+
+        if ($this->_postArray['brq_currency'] == $this->_order->getOrderCurrencyCode()) {
+            $expected = (float) $this->_order->getGrandTotal();
+        } elseif ($this->_postArray['brq_currency'] == $this->_order->getBaseCurrencyCode()) {
+            $expected = (float) $this->_order->getBaseGrandTotal();
+        } else {
+            return true;
+        }
+
+        return (float) $this->_postArray['brq_amount'] >= $expected - 0.01;
+    }
+
+    /**
+     * A push that is older than the newest one already handled for the same transaction is ignored.
+     * Otherwise, the newest push timestamp is remembered.
+     *
+     * @return bool true when the push is older than one that was already processed
+     */
+    protected function _isStalePush()
+    {
+        if (empty($this->_postArray['brq_timestamp']) || empty($this->_postArray['brq_transactions'])) {
+            return false;
+        }
+
+        $timestamp = strtotime($this->_postArray['brq_timestamp'] . ' UTC');
+        if ($timestamp === false) {
+            return false;
+        }
+
+        $payment = $this->_order->getPayment();
+        $seen = $payment->getAdditionalInformation('buckaroo_push_timestamps');
+        $seen = is_array($seen) ? $seen : array();
+        $key = (string) $this->_postArray['brq_transactions'];
+
+        if (isset($seen[$key]) && $seen[$key] > $timestamp) {
+            return true;
+        }
+
+        $seen[$key] = $timestamp;
+        $payment->setAdditionalInformation('buckaroo_push_timestamps', $seen);
+        $payment->save();
+
+        return false;
     }
 }

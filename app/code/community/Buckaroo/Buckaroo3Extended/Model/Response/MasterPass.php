@@ -31,6 +31,8 @@ class Buckaroo_Buckaroo3Extended_Model_Response_MasterPass extends Buckaroo_Buck
 
         if (!$canProcess) {
             $this->_verifyError();
+
+            return array('path' => 'checkout/cart', 'params' => array());
         }
 
         $masterPassData = $this->_processMasterPass($this->_postArray);
@@ -115,12 +117,12 @@ class Buckaroo_Buckaroo3Extended_Model_Response_MasterPass extends Buckaroo_Buck
      * Determines the signature using array sorting and the SHA1 hash algorithm
      *
      * @return string $signature
+     * @throws Mage_Core_Model_Store_Exception
      */
     protected function _calculateSignature()
     {
-        if (isset($this->_postArray['isOldPost']) && $this->_postArray['isOldPost'])
-        {
-            return $this->_calculateOldSignature();
+        if (!$this->_postIsFlat()) {
+            return '';
         }
 
         $origArray = $this->_postArray;
@@ -141,12 +143,15 @@ class Buckaroo_Buckaroo3Extended_Model_Response_MasterPass extends Buckaroo_Buck
             $signatureString .= $key . '=' . $value;
         }
 
-        $signatureString .= Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', Mage::app()->getStore()->getId());
+        $secret = (string) Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', Mage::app()->getStore()->getId());
+        if ($secret === '') {
+            return '';
+        }
 
-        $this->_debugEmail .= "\nSignaturestring: {$signatureString}\n";
+        $this->_debugEmail .= "\nSignaturestring (without secret): {$signatureString}\n";
 
         //return the SHA1 encoded string for comparison
-        $signature = SHA1($signatureString);
+        $signature = SHA1($signatureString . $secret);
 
         $this->_debugEmail .= "\nSignature: {$signature}\n";
 
@@ -165,7 +170,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_MasterPass extends Buckaroo_Buck
     {
         $correctSignature = false;
         $signature        = $this->_calculateSignature();
-        if ($signature === $this->_postArray['brq_signature']) {
+        if ($this->_signatureMatches($signature, isset($this->_postArray['brq_signature']) ? $this->_postArray['brq_signature'] : null)) {
             $correctSignature = true;
         }
 

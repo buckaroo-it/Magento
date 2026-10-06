@@ -322,7 +322,7 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Creditmemo extends Buckaroo_Buckar
         $correctSignature = false;
         $canProcess = false;
         $signature = $this->_calculateSignature();
-        if ($signature === $this->_postArray['brq_signature']) {
+        if ($this->_signatureMatches($signature, isset($this->_postArray['brq_signature']) ? $this->_postArray['brq_signature'] : null)) {
             $correctSignature = true;
         }
 
