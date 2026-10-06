@@ -296,6 +296,57 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_PaymentMethod extends Mage
     }
 
     /**
+     * Rejects an impossible date of birth before the order is placed, for every method that asks for one.
+     *
+     * @return $this
+     * @throws Mage_Core_Exception
+     */
+    public function validate()
+    {
+        $post = Mage::app()->getRequest()->getPost();
+
+        if (isset($post['payment'][$this->_code]) && is_array($post['payment'][$this->_code])
+            && (isset($post['payment'][$this->_code]['day'])
+                || isset($post['payment'][$this->_code]['month'])
+                || isset($post['payment'][$this->_code]['year']))
+        ) {
+            $this->_getBirthDate($post['payment'][$this->_code]);
+        }
+
+        return parent::validate();
+    }
+
+    /**
+     * Turns the date of birth fields of the checkout into a date string. Returns null when nothing was entered and
+     * throws an exception for a date that does not exist.
+     *
+     * @param array  $data   with the keys year, month and day
+     * @param string $format date() format of the result
+     *
+     * @return string|null
+     * @throws Mage_Core_Exception
+     */
+    protected function _getBirthDate($data, $format = 'Y-m-d')
+    {
+        $year  = isset($data['year'])  ? trim((string) $data['year'])  : '';
+        $month = isset($data['month']) ? trim((string) $data['month']) : '';
+        $day   = isset($data['day'])   ? trim((string) $data['day'])   : '';
+
+        if ($year === '' && $month === '' && $day === '') {
+            return null;
+        }
+
+        if (!ctype_digit($year) || !ctype_digit($month) || !ctype_digit($day)
+            || !checkdate((int) $month, (int) $day, (int) $year)
+            || (int) $year < 1900 || (int) $year > (int) date('Y')
+        ) {
+            Mage::throwException(Mage::helper('buckaroo3extended')->__('Please enter a valid date of birth.'));
+        }
+
+        return date($format, mktime(0, 0, 0, (int) $month, (int) $day, (int) $year));
+    }
+
+    /**
      * @return false|string
      */
     public function getPosPaymentTerminalId()

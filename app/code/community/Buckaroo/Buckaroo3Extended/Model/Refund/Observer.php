@@ -29,7 +29,7 @@ class Buckaroo_Buckaroo3Extended_Model_Refund_Observer extends Mage_Core_Model_A
         if ($success) {
             $comment = 'Buckaroo refund request was successfully processed.';
         } else {
-            $comment = 'Unfortunately the Buckaroo refund request could not be processed succesfully.';
+            $comment = 'Unfortunately the Buckaroo refund request could not be processed successfully.';
         }
 
         if ($order->getBaseGrandTotal() != $order->getBaseTotalRefunded()) {

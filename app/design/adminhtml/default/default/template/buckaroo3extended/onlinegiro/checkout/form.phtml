@@ -29,7 +29,7 @@
             <input class="input-text required-entry f-name"
                    type="input"
                    name="<?php echo $code;?>_BPE_Customerfirstname"
-                   value="<?php echo $this->getFirstname(); ?>"
+                   value="<?php echo $this->escapeHtml($this->getFirstname()); ?>"
                    id="<?php echo $code;?>_BPE_Customerfirstname" />
         </div>
     </li>
@@ -43,7 +43,7 @@
             <input class="input-text required-entry l-name"
                    type="input"
                    name="<?php echo $code;?>_BPE_Customerlastname"
-                   value="<?php echo $this->getLastname(); ?>"
+                   value="<?php echo $this->escapeHtml($this->getLastname()); ?>"
                    id="<?php echo $code;?>_BPE_Customerlastname" />
         </div>
     </li>
@@ -57,7 +57,7 @@
             <input class="input-text required-entry validate-email"
                    type="input"
                    name="<?php echo $code;?>_BPE_Customermail"
-                   value="<?php echo $this->getEmail(); ?>"
+                   value="<?php echo $this->escapeHtml($this->getEmail()); ?>"
                    id="<?php echo $code;?>_BPE_Customermail" />
         </div>
     </li>

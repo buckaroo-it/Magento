@@ -83,6 +83,15 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
         $request->setVars($vars);
 
         if($alreadyPaid = Mage::getModel('buckaroo3extended/paymentMethods_giftcards_process')->getAlreadyPaid($order->getIncrementId())){
+            if ($alreadyPaid > 0 && $alreadyPaid < (float) $order->getBaseGrandTotal() - 0.01) {
+                //the giftcards do not cover the order; do not book it as paid
+                Mage::throwException(
+                    Mage::helper('buckaroo3extended')->__(
+                        'The giftcards do not cover the total amount. Please choose a payment method for the remaining amount.'
+                    )
+                );
+            }
+
             if($alreadyPaid > 0){
                 $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $order->getStoreId());
                 $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));

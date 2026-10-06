@@ -40,7 +40,16 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
         $oldQuoteId = Mage::getModel('checkout/session')->getQuote()->getId();
         Mage::getSingleton('checkout/session')->setOldQuoteId($oldQuoteId);
         $orderId = $quote->getReservedOrderId();
-        $currentgiftcard = $data['giftcard'];
+        $currentgiftcard = isset($data['giftcard']) ? (string) $data['giftcard'] : '';
+
+        //only cards that are enabled in the configuration can be used as service name
+        $allowedCards = array_filter(array_map('trim', explode(',', (string) Mage::getStoreConfig(
+            'buckaroo/buckaroo3extended_giftcards/cards_allowed',
+            $storeId
+        ))));
+        if (!in_array($currentgiftcard, $allowedCards, true)) {
+            return array('error' => Mage::helper('buckaroo3extended')->__('This giftcard is not available.'));
+        }
 
         $returnLocation = Mage::getStoreConfig('buckaroo3extended/notify/return', $storeId);
         $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
@@ -119,6 +128,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($curl, CURLOPT_USERAGENT, 'Magento1');
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 60);
         curl_setopt($curl, CURLOPT_URL, $uri);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $httpMethod);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
@@ -133,6 +144,10 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
         $curlInfo = curl_getinfo($curl);
         $response = json_decode($result, true);
 
+        if (!is_array($response) || !isset($response['Status']['Code']['Code'])) {
+            return array('error' => Mage::helper('buckaroo3extended')->__('The giftcard payment could not be processed. Please try again.'));
+        }
+
         $res['status'] = $response['Status']['Code']['Code'];
         $orderId = $response['Invoice'];
         if($response['Status']['Code']['Code']=='190'){
@@ -146,13 +161,15 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
             if($response['RequiredAction']['PayRemainderDetails']['RemainderAmount']>0){
                 $message = "A partial payment of ".$response['Currency']." ".$response['AmountDebit']." was successfully performed on a requested amount. Remainder amount ".$response['RequiredAction']['PayRemainderDetails']['RemainderAmount']." ".$response['RequiredAction']['PayRemainderDetails']['Currency'];
             }else{
-                $message = "Your payed succesfully. Please finish your order";
+                $message = "You paid successfully. Please finish your order";
             }
             $this->setAlreadyPaid($orderId, $alreadyPaid);
             $res['alreadyPaid'] = $alreadyPaid;
             $res['message'] = Mage::helper('buckaroo3extended')->__($message);
         }else{
-            $res['error'] = $response['Status']['SubCode']['Description'];
+            $res['error'] = isset($response['Status']['SubCode']['Description'])
+                ? $response['Status']['SubCode']['Description']
+                : Mage::helper('buckaroo3extended')->__('The giftcard payment was not successful.');
         }
         return $res;
     }
@@ -208,7 +225,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
         }
 
         $alreadyPaid = Mage::getSingleton('core/session')->getBuckarooAlreadyPaid();
-        return $alreadyPaid[$orderId] ? $alreadyPaid[$orderId] : false;
+        return !empty($alreadyPaid[$orderId]) ? $alreadyPaid[$orderId] : false;
     }
 
     public static function setAlreadyPaid($orderId, $amount)
@@ -217,7 +234,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
             $quote = Mage::getSingleton('checkout/session')->getQuote();
             $quote->setBaseBuckarooAlreadyPaid($amount);
             $store = $quote->getStore();
-            $quote->setBuckarooAlreadyPaid($store->convertPrice($alreadyPaid));
+            $quote->setBuckarooAlreadyPaid($store->convertPrice($amount));
         }
 
         $alreadyPaid = Mage::getSingleton('core/session')->getBuckarooAlreadyPaid();
@@ -228,7 +245,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Process extends 
     public static function getOriginalTransactionKey($orderId)
     {
         $originalTransactionKey = Mage::getSingleton('core/session')->getOriginalTransactionKey();
-        return $originalTransactionKey[$orderId] ? $originalTransactionKey[$orderId] : false;
+        return !empty($originalTransactionKey[$orderId]) ? $originalTransactionKey[$orderId] : false;
     }
 
     public static function setOriginalTransactionKey($orderId, $transactionKey)

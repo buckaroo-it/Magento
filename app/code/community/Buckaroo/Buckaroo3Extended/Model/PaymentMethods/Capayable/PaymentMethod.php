@@ -152,12 +152,7 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Capayable_PaymentMethod
      */
     protected function getBirthdate($birthdateData)
     {
-        $customerBirthDate = date(
-            'Y-m-d',
-            strtotime($birthdateData['year'] . '-' . $birthdateData['month'] . '-' . $birthdateData['day'])
-        );
-
-        return $customerBirthDate;
+        return $this->_getBirthDate($birthdateData);
     }
 
     /**

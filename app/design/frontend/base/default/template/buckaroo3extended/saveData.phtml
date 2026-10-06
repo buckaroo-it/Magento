@@ -53,6 +53,7 @@ document.observe('dom:loaded', function(){
         <?php // @codingStandardsIgnoreLine ?>
          '<?php echo Mage::getUrl('buckaroo3extended/checkout/payWithGiftCard', array('_secure'=>true)); ?>',
          {
+             form_key: '<?php echo Mage::getSingleton('core/session')->getFormKey(); ?>',
              giftcard: id,
              cardNumber: jQuery_1123('#cardNumber_'+id).val(),
              pin: jQuery_1123('#pin_'+id).val()

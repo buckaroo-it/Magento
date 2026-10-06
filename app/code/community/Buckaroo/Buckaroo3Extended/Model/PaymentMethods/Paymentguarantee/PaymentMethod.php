@@ -20,12 +20,8 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Paymentguarantee_PaymentMe
 
         $accountNumber = $post[$this->_code.'_bpe_customer_account_number'];
 
-        $customerBirthDate = date(
-            'Y-m-d', strtotime(
-                $post['payment'][$this->_code]['year']
-                . '-' . $post['payment'][$this->_code]['month']
-                . '-' . $post['payment'][$this->_code]['day']
-            )
+        $customerBirthDate = $this->_getBirthDate(
+            isset($post['payment'][$this->_code]) ? $post['payment'][$this->_code] : array()
         );
 
         $session->setData(

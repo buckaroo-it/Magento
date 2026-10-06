@@ -126,7 +126,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_CancelAuthorize extends Buckaroo
     {
         $this->_debugEmail .= 'The request failed \n';
 
-        $comment = Mage::helper('buckaroo3extended')->__('Unfortunately the Buckaroo cancel request could not be processed succesfully.');
+        $comment = Mage::helper('buckaroo3extended')->__('Unfortunately the Buckaroo cancel request could not be processed successfully.');
         $this->_order->addStatusHistoryComment($comment)->save();
 
         $this->sendDebugEmail();
@@ -143,7 +143,7 @@ class Buckaroo_Buckaroo3Extended_Model_Response_CancelAuthorize extends Buckaroo
     {
         $this->_debugEmail .= "The request generated an error \n";
 
-        $comment = Mage::helper('buckaroo3extended')->__('Unfortunately the Buckaroo cancel request could not be processed succesfully.');
+        $comment = Mage::helper('buckaroo3extended')->__('Unfortunately the Buckaroo cancel request could not be processed successfully.');
         $this->_order->addStatusHistoryComment($comment)->save();
 
         $this->sendDebugEmail();
