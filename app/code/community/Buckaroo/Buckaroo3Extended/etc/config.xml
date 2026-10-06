@@ -976,11 +976,6 @@
                         <class>buckaroo3extended/paymentMethods_directdebit_observer</class>
                         <method>buckaroo3extended_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_directdebit>
-                    <buckaroo3extended_paymentmethod_observer_giropay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_giropay_observer</class>
-                        <method>buckaroo3extended_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_giropay>
                     <buckaroo3extended_paymentmethod_observer_ideal>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_ideal_observer</class>
@@ -1011,21 +1006,11 @@
                         <class>buckaroo3extended/paymentMethods_paypal_observer</class>
                         <method>buckaroo3extended_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_paypal>
-                    <buckaroo3extended_paymentmethod_observer_payconiq>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_payconiq_observer</class>
-                        <method>buckaroo3extended_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_payconiq>
                     <buckaroo3extended_paymentmethod_observer_paysafecard>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_paysafecard_observer</class>
                         <method>buckaroo3extended_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_paysafecard>
-                    <buckaroo3extended_paymentmethod_observer_sofortueberweisung>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_sofortueberweisung_observer</class>
-                        <method>buckaroo3extended_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_sofortueberweisung>
                     <buckaroo3extended_paymentmethod_observer_eps>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_eps_observer</class>
@@ -1215,26 +1200,11 @@
                         <class>buckaroo3extended/paymentMethods_paypal_observer</class>
                         <method>buckaroo3extended_request_addcustomvars</method>
                     </buckaroo3extended_paymentmethod_observer_paypal>
-                    <buckaroo3extended_paymentmethod_observer_payconiq>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_payconiq_observer</class>
-                        <method>buckaroo3extended_request_addcustomvars</method>
-                    </buckaroo3extended_paymentmethod_observer_payconiq>
-                    <buckaroo3extended_paymentmethod_observer_sofortueberweisung>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_sofortueberweisung_observer</class>
-                        <method>buckaroo3extended_request_addcustomvars</method>
-                    </buckaroo3extended_paymentmethod_observer_sofortueberweisung>
                     <buckaroo3extended_paymentmethod_observer_eps>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_eps_observer</class>
                         <method>buckaroo3extended_request_addcustomvars</method>
                     </buckaroo3extended_paymentmethod_observer_eps>
-                    <buckaroo3extended_paymentmethod_observer_giropay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_giropay_observer</class>
-                        <method>buckaroo3extended_request_addcustomvars</method>
-                    </buckaroo3extended_paymentmethod_observer_giropay>
                     <buckaroo3extended_paymentmethod_observer_paysafecard>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_paysafecard_observer</class>
@@ -1429,26 +1399,11 @@
                         <class>buckaroo3extended/paymentMethods_paypal_observer</class>
                         <method>buckaroo3extended_request_setmethod</method>
                     </buckaroo3extended_paymentmethod_observer_paypal>
-                    <buckaroo3extended_paymentmethod_observer_payconiq>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_payconiq_observer</class>
-                        <method>buckaroo3extended_request_setmethod</method>
-                    </buckaroo3extended_paymentmethod_observer_payconiq>
-                    <buckaroo3extended_paymentmethod_observer_sofortueberweisung>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_sofortueberweisung_observer</class>
-                        <method>buckaroo3extended_request_setmethod</method>
-                    </buckaroo3extended_paymentmethod_observer_sofortueberweisung>
                     <buckaroo3extended_paymentmethod_observer_eps>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_eps_observer</class>
                         <method>buckaroo3extended_request_setmethod</method>
                     </buckaroo3extended_paymentmethod_observer_eps>
-                    <buckaroo3extended_paymentmethod_observer_giropay>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_giropay_observer</class>
-                        <method>buckaroo3extended_request_setmethod</method>
-                    </buckaroo3extended_paymentmethod_observer_giropay>
                     <buckaroo3extended_paymentmethod_observer_paysafecard>
                         <type>Singleton</type>
                         <class>buckaroo3extended/paymentMethods_paysafecard_observer</class>
@@ -1882,11 +1837,6 @@
                         <class>buckaroo3extended/paymentMethods_klarna_observer</class>
                         <method>buckaroo3extended_cancelauthorize_request_addservices</method>
                     </buckaroo3extended_paymentmethod_observer_klarna>
-                    <buckaroo3extended_paymentmethod_observer_payconiq>
-                        <type>Singleton</type>
-                        <class>buckaroo3extended/paymentMethods_payconiq_observer</class>
-                        <method>buckaroo3extended_cancelauthorize_request_addservices</method>
-                    </buckaroo3extended_paymentmethod_observer_payconiq>
                 </observers>
             </buckaroo3extended_cancelauthorize_request_addservices>
             <buckaroo3extended_cancelauthorize_request_addcustomvars>
@@ -2008,7 +1958,7 @@
                 <group>buckaroo3extended</group>
             </buckaroo3extended_paypal>
             <buckaroo3extended_payconiq>
-                <active>1</active>
+                <active>0</active>
                 <model>buckaroo3extended/paymentMethods_payconiq_paymentMethod</model>
                 <title>Payconiq</title>
                 <sort_order>95</sort_order>
@@ -2043,7 +1993,7 @@
                 <group>buckaroo3extended</group>
             </buckaroo3extended_paysafecard>
             <buckaroo3extended_sofortueberweisung>
-                <active>1</active>
+                <active>0</active>
                 <model>buckaroo3extended/paymentMethods_sofortueberweisung_paymentMethod</model>
                 <title>Sofortbanking</title>
                 <sort_order>150</sort_order>
@@ -2057,7 +2007,7 @@
                 <group>buckaroo3extended</group>
             </buckaroo3extended_bancontactmrcash>
             <buckaroo3extended_giropay>
-                <active>1</active>
+                <active>0</active>
                 <model>buckaroo3extended/paymentMethods_giropay_paymentMethod</model>
                 <title>Giropay</title>
                 <sort_order>160</sort_order>

@@ -22,91 +22,9 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Payconiq_Observer extends 
     protected $_code = 'buckaroo3extended_payconiq';
     protected $_method = 'payconiq';
 
-    /**
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     */
-    public function buckaroo3extended_request_addservices(Varien_Event_Observer $observer)
-    {
-        if ($this->_isChosenMethod($observer) === false) {
-            return $this;
-        }
 
-        $request = $observer->getRequest();
-        $vars = $request->getVars();
 
-        $array = array(
-            $this->_method => array(
-                'action'  => 'Pay',
-                'version' => 1,
-            ),
-        );
 
-        if (array_key_exists('services', $vars) && is_array($vars['services'])) {
-            $vars['services'] = array_merge($vars['services'], $array);
-        } else {
-            $vars['services'] = $array;
-        }
-
-        $request->setVars($vars);
-
-        return $this;
-    }
-
-    /**
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     */
-    public function buckaroo3extended_request_addcustomvars(Varien_Event_Observer $observer)
-    {
-        if ($this->_isChosenMethod($observer) === false) {
-            return $this;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Varien_Event_Observer $observer
-     *
-     * @return $this
-     */
-    public function buckaroo3extended_request_setmethod(Varien_Event_Observer $observer)
-    {
-        if ($this->_isChosenMethod($observer) === false) {
-            return $this;
-        }
-
-        $request = $observer->getRequest();
-
-        $codeBits = explode('_', $this->_code);
-        $code = end($codeBits);
-        $request->setMethod($code);
-
-        return $this;
-    }
-
-    public function buckaroo3extended_cancelauthorize_request_addservices(Varien_Event_Observer $observer)
-    {
-        if($this->_isChosenMethod($observer) === false) {
-            return $this;
-        }
-
-        $request = $observer->getRequest();
-        $vars = $request->getVars();
-
-        /** @var Mage_Sales_Model_Order $order */
-        $order = $observer->getOrder();
-
-        $vars['request_type'] = 'CancelTransaction';
-        $vars['TransactionKey'] = $order->getTransactionKey();
-
-        $request->setVars($vars);
-
-        return $this;
-    }
 
     /**
      * @param Varien_Event_Observer $observer
