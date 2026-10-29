@@ -759,6 +759,13 @@ class Buckaroo_Buckaroo3Extended_Model_Response_Push extends Buckaroo_Buckaroo3E
         $canInvoice = $skip ? true : $this->_order->canInvoice();
         if ($canInvoice && !$this->_order->hasInvoices()) {
             $payment = $this->_order->getPayment();
+
+            //the Buckaroo transaction key is stored as the transaction of the payment, so the capture shows up
+            //on the Transactions tab of the order. Without a transaction id Magento does not create one.
+            if (!empty($this->_postArray['brq_transactions']) && is_string($this->_postArray['brq_transactions'])) {
+                $payment->setTransactionId($this->_postArray['brq_transactions']);
+            }
+
             $payment->registerCaptureNotification($this->_order->getBaseGrandTotal());
 
             $this->_order->save();
