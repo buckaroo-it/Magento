@@ -146,9 +146,18 @@ class Buckaroo_Buckaroo3Extended_Model_PaymentMethods_Giftcards_Observer extends
 
         // Add transaction to transactionManager for managing (partial) refunds
         // with different payment methods
-        if (!empty($postData['brq_mutationtype']) &&
-            $postData['brq_mutationtype'] == 'Processing'
-        ) {
+        //The part that is paid with a giftcard arrives as 'Processing'. The part that is paid for the remaining amount
+        //(for example iDEAL) arrives as a successful 'Collecting' push that belongs to the partial payment. The push
+        //of the combined transaction has no payment method and is not a payment of its own.
+        $isGiftcardPart = !empty($postData['brq_mutationtype']) && $postData['brq_mutationtype'] == 'Processing';
+        $isRemainingPart = !empty($postData['brq_mutationtype'])
+            && $postData['brq_mutationtype'] == 'Collecting'
+            && !empty($postData['brq_relatedtransaction_partialpayment'])
+            && !empty($postData['brq_transaction_method'])
+            && isset($postData['brq_statuscode'])
+            && $postData['brq_statuscode'] == '190';
+
+        if ($isGiftcardPart || $isRemainingPart) {
             $payment = $order->getPayment();
             $transactions = $payment->getAdditionalInformation('transactions');
 
